@@ -136,7 +136,7 @@ public class UserController {
         userDtoTemp.setAccount(userDto.getAccount());
         userDtoTemp = userService.selectOne(userDtoTemp);
         if (userDtoTemp.getPassword().equals(userDto.getPassword())) {
-            return new ResponseBean(200, "Login success", JWTUtil.sign(userDto.getAccount(), userDto.getPassword()));
+            return new ResponseBean(200, "login success", JWTUtil.sign(userDto.getAccount(), userDto.getPassword()));
         } else {
             throw new UnauthorizedException();
         }

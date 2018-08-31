@@ -7,6 +7,7 @@ import com.wang.model.PermissionDto;
 import com.wang.model.RoleDto;
 import com.wang.model.UserDto;
 import com.wang.util.JWTUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -57,7 +58,7 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        String account = JWTUtil.getUsername(principals.toString());
+        String account = JWTUtil.getAccount(principals.toString());
         UserDto userDto = new UserDto();
         userDto.setAccount(account);
         // 查询用户角色
@@ -83,19 +84,21 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         String token = (String) auth.getCredentials();
-        // 解密获得username，用于和数据库进行对比
-        String username = JWTUtil.getUsername(token);
-        if (username == null) {
-            throw new AuthenticationException("token invalid");
+        // 解密获得account，用于和数据库进行对比
+        String account = JWTUtil.getAccount(token);
+        // 帐号为空
+        if (StringUtils.isBlank(account)) {
+            throw new AuthenticationException("token account is null");
         }
         // 查询用户是否存在
         UserDto userDto = new UserDto();
-        userDto.setAccount(username);
+        userDto.setAccount(account);
         userDto = userMapper.selectOne(userDto);
         if (userDto == null) {
-            throw new AuthenticationException("User didn't existed!");
+            throw new AuthenticationException("user didn't existed!");
         }
-        if (! JWTUtil.verify(token, username, userDto.getPassword())) {
+        // Token认证
+        if (!JWTUtil.verify(token, userDto.getPassword())) {
             throw new AuthenticationException("username or password error");
         }
         return new SimpleAuthenticationInfo(token, token, "userRealm");
