@@ -6,13 +6,13 @@
 
 #### 项目介绍
 
-1. SpringBoot整合Mybatis + 分页插件PageHelper + 通用Mapper插件 + Maven集成Mybatis Geneator
-2. 整合Shiro + JWT认证方式
-3. RESTful API
+1. RESTful API
+2. Maven集成Mybatis Geneator
+3. 密码加密(未使用Shiro自带的MD5 + 盐的方式)，采用AES-128 + Base64的方式
 
 #### 软件架构
 
-1. SpringBoot + Mybatis + PageHelper + 通用Mapper + Shiro + Java-JWT
+1. SpringBoot + Mybatis + PageHelper + 通用Mapper + Shiro + Java-JWT + AES-128
 
 #### 安装教程
 

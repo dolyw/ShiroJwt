@@ -7,7 +7,7 @@ use sbapijwt;
 create table user (
 id int primary key auto_increment COMMENT "ID",
 account varchar(20)  COMMENT "帐号",
-password varchar(20) COMMENT "密码",
+password varchar(80) COMMENT "密码",
 username varchar(20) COMMENT "昵称",
 reg_time datetime not null COMMENT "注册时间"
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT "用户表";
@@ -44,9 +44,10 @@ foreign key (role_id) references role (id),
 foreign key (permission_id) references permission (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT "角色资源表";
 
-insert into user values(null, "admin", "admin", "admin", now());
-insert into user values(null, "wang", "wang", "wang", now());
-insert into user values(null, "guest", "guest", "guest", now());
+/* 密码都是帐号 */
+insert into user values(null, "admin", "QUY2MjMzRTY1NTU1RDEyNUJDRUI4QUM4Qjk2MjVBNkQ=", "admin", now());
+insert into user values(null, "wang", "QTU3RjE0N0YzNDU2Rjg0RDlDRjBBOEVCQTI2QkM2MzY=", "wang", now());
+insert into user values(null, "guest", "MkRCRjYzQzU3MEVEQThCMERDOTk3Mzg0QjkxNTM1RjU=", "guest", now());
 
 insert into role values(null, "admin");
 insert into role values(null, "customer");

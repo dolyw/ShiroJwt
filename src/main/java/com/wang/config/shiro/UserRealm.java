@@ -6,6 +6,7 @@ import com.wang.mapper.UserMapper;
 import com.wang.model.PermissionDto;
 import com.wang.model.RoleDto;
 import com.wang.model.UserDto;
+import com.wang.util.EncrypAESUtil;
 import com.wang.util.JWTUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -98,7 +99,9 @@ public class UserRealm extends AuthorizingRealm {
             throw new AuthenticationException("user didn't existed!");
         }
         // Token认证
-        if (!JWTUtil.verify(token, userDto.getPassword())) {
+        // 进行AES解密
+        String key = EncrypAESUtil.Decryptor(userDto.getPassword());
+        if (!JWTUtil.verify(token, key)) {
             throw new AuthenticationException("username or password error");
         }
         return new SimpleAuthenticationInfo(token, token, "userRealm");

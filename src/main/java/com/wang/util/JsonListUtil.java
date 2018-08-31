@@ -15,37 +15,28 @@ public class JsonListUtil {
     /**
      * JSON 转 POJO
      */
-    public static <T> T jsonToObject(String pojo, Class<T> tclass) {
-        try {
-            return JSONObject.parseObject(pojo, tclass);
-        } catch (Exception e) {
-            System.out.println(tclass + "转JSON失败");
-        }
-        return null;
+    public static <T> T jsonToObject(String pojo, Class<T> clazz) {
+        return JSONObject.parseObject(pojo, clazz);
     }
 
     /**
      * POJO 转 JSON
      */
-    public static <T> String objectToJson(T tResponse){
-        String pojo = JSONObject.toJSONString(tResponse);
-        return pojo;
+    public static <T> String objectToJson(T t){
+        return JSONObject.toJSONString(t);
     }
 
     /**
-     * List<T> 转 json
-     */
-    public static <T> String listToJson(List<T> ts) {
-        String jsons = JSON.toJSONString(ts);
-        return jsons;
-    }
-
-    /**
-     * json 转 List<T>
+     * JSON 转 List<T>
      */
     public static <T> List<T> jsonToList(String jsonString, Class<T> clazz) {
-        @SuppressWarnings("unchecked")
-        List<T> ts = (List<T>) JSONArray.parseArray(jsonString, clazz);
-        return ts;
+        return (List<T>) JSONArray.parseArray(jsonString, clazz);
+    }
+
+    /**
+     * List<T> 转 JSON
+     */
+    public static <T> String listToJson(List<T> t) {
+        return JSON.toJSONString(t);
     }
 }

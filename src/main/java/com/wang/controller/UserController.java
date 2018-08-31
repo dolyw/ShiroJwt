@@ -4,6 +4,7 @@ import com.wang.exception.UnauthorizedException;
 import com.wang.model.UserDto;
 import com.wang.model.common.ResponseBean;
 import com.wang.service.IUserService;
+import com.wang.util.EncrypAESUtil;
 import com.wang.util.JWTUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -77,8 +78,11 @@ public class UserController {
      */
     @PostMapping("/user")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> add(@RequestBody UserDto userDto){
+    public Map<String,Object> add(@RequestBody UserDto userDto) {
         userDto.setRegTime(new Date());
+        // 密码以帐号+密码的形式进行AES加密
+        String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
+        userDto.setPassword(key);
         int count = userService.insert(userDto);
         Map<String, Object> map = new HashMap<String, Object>(16);
         map.put("code", "200");
@@ -96,7 +100,10 @@ public class UserController {
      */
     @PutMapping("/user")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> update(@RequestBody UserDto userDto){
+    public Map<String,Object> update(@RequestBody UserDto userDto) {
+        // 密码以帐号+密码的形式进行AES加密
+        String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
+        userDto.setPassword(key);
         int count = userService.updateByPrimaryKeySelective(userDto);
         Map<String, Object> map = new HashMap<String, Object>(16);
         map.put("code", "200");
@@ -134,9 +141,13 @@ public class UserController {
     public ResponseBean login(@RequestBody UserDto userDto) {
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
+        // 查询数据库中的密码
         userDtoTemp = userService.selectOne(userDtoTemp);
-        if (userDtoTemp.getPassword().equals(userDto.getPassword())) {
-            return new ResponseBean(200, "login success", JWTUtil.sign(userDto.getAccount(), userDto.getPassword()));
+        // 进行AES解密
+        String key = EncrypAESUtil.Decryptor(userDtoTemp.getPassword());
+        // 对比，因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
+        if (key.equals(userDto.getAccount() + userDto.getPassword())) {
+            return new ResponseBean(200, "login success", JWTUtil.sign(userDto.getAccount(), key));
         } else {
             throw new UnauthorizedException();
         }
