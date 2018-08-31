@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wang.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.wang.model.RoleDto">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+
+  <select id="findRoleByUser" resultType="com.wang.model.RoleDto" parameterType="com.wang.model.UserDto">
+    SELECT
+      r.id as id,
+      r.name as name
+    FROM
+      USER u
+    LEFT JOIN user_role ur ON u.id = ur.user_id
+    LEFT JOIN role r ON r.id = ur.role_id
+    <where>
+      1 = 1
+      <if test="account != null and account != '' ">
+        AND u.account = #{account}
+      </if>
+      <if test="username != null and username != '' ">
+        AND u.username LIKE CONCAT('%',#{username},'%')
+      </if>
+    </where>
+  </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wang.mapper.PermissionMapper">
+  <resultMap id="BaseResultMap" type="com.wang.model.PermissionDto">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="per_code" jdbcType="VARCHAR" property="perCode" />
+  </resultMap>
+
+  <select id="findPermissionByRole" resultType="com.wang.model.PermissionDto"
+          parameterType="com.wang.model.RoleDto">
+    SELECT
+        p.id as id,
+        p.name as name,
+        p.per_code as perCode
+    FROM
+        role r
+    LEFT JOIN role_permission rp ON r.id = rp.role_id
+    LEFT JOIN permission p ON p.id = rp.permission_id
+    <where>
+      1 = 1
+      <if test="name != null and name != '' ">
+        AND r.name = #{name}
+      </if>
+    </where>
+  </select>
+
+</mapper>

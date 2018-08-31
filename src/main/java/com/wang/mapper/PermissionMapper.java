@@ -1,0 +1,23 @@
+package com.wang.mapper;
+
+import com.wang.model.PermissionDto;
+import com.wang.model.RoleDto;
+import tk.mybatis.mapper.common.Mapper;
+
+import java.util.List;
+
+/**
+ * TODO：PermissionMapper
+ * @author Wang926454
+ * @date 2018/8/31 14:42
+ */
+public interface PermissionMapper extends Mapper<PermissionDto> {
+    /**
+     * TODO：根据Role查询Permission
+     * @param roleDto
+     * @return java.util.List<com.wang.model.PermissionDto>
+     * @author Wang926454
+     * @date 2018/8/31 11:30
+     */
+    public List<PermissionDto> findPermissionByRole(RoleDto roleDto);
+}
