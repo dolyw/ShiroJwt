@@ -1,5 +1,6 @@
 package com.wang.controller;
 
+import com.wang.exception.CustomException;
 import com.wang.exception.UnauthorizedException;
 import com.wang.model.common.ResponseBean;
 import org.apache.shiro.ShiroException;
@@ -18,24 +19,34 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class ExceptionController {
     /**
-     * 捕捉Shiro的异常
+     * 捕捉Shiro异常
      * @param e
      * @return
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ShiroException.class)
     public ResponseBean handle401(ShiroException e) {
-        return new ResponseBean(401, "Shiro异常:" + e.getMessage(), null);
+        return new ResponseBean(401, "无权访问(Unauthorized):" + e.getMessage(), null);
     }
 
     /**
-     * 捕捉UnauthorizedException
+     * 捕捉UnauthorizedException自定义异常
      * @return
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseBean handle401() {
-        return new ResponseBean(401, "无权访问(Unauthorized)", null);
+    public ResponseBean handle401(UnauthorizedException e) {
+        return new ResponseBean(401, "无权访问(Unauthorized):" + e.getMessage(), null);
+    }
+
+    /**
+     * 捕捉其他所有自定义异常
+     * @return
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CustomException.class)
+    public ResponseBean handle(HttpServletRequest request, CustomException e) {
+        return new ResponseBean(this.getStatus(request).value(), e.getMessage(), null);
     }
 
     /**
@@ -44,10 +55,10 @@ public class ExceptionController {
      * @param ex
      * @return
      */
-    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(Exception.class)
     public ResponseBean globalException(HttpServletRequest request, Throwable ex) {
-        return new ResponseBean(this.getStatus(request).value(), "未知异常:" + ex.getMessage(), null);
+        return new ResponseBean(this.getStatus(request).value(), ex.getMessage(), null);
     }
 
     /**

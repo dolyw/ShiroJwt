@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Map;
  * @date 2018/8/29 15:45
  */
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     private final IUserService userService;
@@ -42,7 +44,7 @@ public class UserController {
      * @author Wang926454
      * @date 2018/8/30 10:41
      */
-    @GetMapping("/user")
+    @GetMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
     public Map<String,Object> user(){
         List<UserDto> userDtos = userService.selectAll();
@@ -59,7 +61,7 @@ public class UserController {
      * @author Wang926454
      * @date 2018/8/30 10:42
      */
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
     public Map<String,Object> findById(@PathVariable("id") Integer id){
         UserDto userDto = userService.selectByPrimaryKey(id);
@@ -76,7 +78,7 @@ public class UserController {
      * @author Wang926454
      * @date 2018/8/30 10:42
      */
-    @PostMapping("/user")
+    @PostMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public Map<String,Object> add(@RequestBody UserDto userDto) {
         userDto.setRegTime(new Date());
@@ -98,7 +100,7 @@ public class UserController {
      * @author Wang926454
      * @date 2018/8/30 10:42
      */
-    @PutMapping("/user")
+    @PutMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public Map<String,Object> update(@RequestBody UserDto userDto) {
         // 密码以帐号+密码的形式进行AES加密
@@ -119,7 +121,7 @@ public class UserController {
      * @author Wang926454
      * @date 2018/8/30 10:43
      */
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public Map<String,Object> delete(@PathVariable("id") Integer id){
         int count = userService.deleteByPrimaryKey(id);
@@ -137,7 +139,7 @@ public class UserController {
      * @author Wang926454
      * @date 2018/8/30 16:21
      */
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public ResponseBean login(@RequestBody UserDto userDto) {
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
@@ -149,7 +151,7 @@ public class UserController {
         if (key.equals(userDto.getAccount() + userDto.getPassword())) {
             return new ResponseBean(200, "login success", JWTUtil.sign(userDto.getAccount(), key));
         } else {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException("username or password error");
         }
     }
 
@@ -160,7 +162,7 @@ public class UserController {
      * @author Wang926454
      * @date 2018/8/30 16:18
      */
-    @GetMapping("/user/article")
+    @GetMapping("/article")
     public ResponseBean article() {
         Subject subject = SecurityUtils.getSubject();
         // 登录了返回true
@@ -178,22 +180,10 @@ public class UserController {
      * @author Wang926454
      * @date 2018/8/30 16:18
      */
-    @GetMapping("/user/article2")
+    @GetMapping("/article2")
     @RequiresAuthentication
     public ResponseBean requireAuth() {
         return new ResponseBean(200, "You are already logged in", null);
     }
 
-    /**
-     * TODO：401没有权限异常
-     * @param
-     * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
-     * @date 2018/8/30 16:18
-     */
-    @RequestMapping(path = "/401")
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseBean unauthorized() {
-        return new ResponseBean(401, "Unauthorized", null);
-    }
 }

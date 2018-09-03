@@ -1,5 +1,6 @@
 package com.wang.util;
 
+import com.wang.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ public class EncrypAESUtil {
             PropertiesUtil.readProperties("config.properties");
             String key = EncrypBase64Util.decode(PropertiesUtil.getProperty("encrypAESKey"));
             // 将key进行转换为byte[]数组
-            keygen.init(128, new SecureRandom(new String("key").getBytes()));
+            keygen.init(128, new SecureRandom(key.getBytes()));
             // SecretKey 负责保存对称密钥 生成密钥
             SecretKey deskey = keygen.generateKey();
             // 生成Cipher对象,指定其支持的AES算法，Cipher负责完成加密或解密工作
@@ -58,22 +59,22 @@ public class EncrypAESUtil {
             return EncrypBase64Util.encode(HexConvertUtil.parseByte2HexStr(cipherByte));
         } catch (NoSuchAlgorithmException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (UnsupportedEncodingException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("Bsae64加密异常:" + e.getMessage());
         } catch (NoSuchPaddingException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (InvalidKeyException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
         } catch (IllegalBlockSizeException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("加密异常，密钥有误:" + e.getMessage());
         } catch (BadPaddingException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("加密异常，密钥有误:" + e.getMessage());
         }
     }
 
@@ -94,7 +95,7 @@ public class EncrypAESUtil {
             PropertiesUtil.readProperties("config.properties");
             String key = EncrypBase64Util.decode(PropertiesUtil.getProperty("encrypAESKey"));
             // 将key进行转换为byte[]数组
-            keygen.init(128, new SecureRandom(new String("key").getBytes()));
+            keygen.init(128, new SecureRandom(key.getBytes()));
             // SecretKey 负责保存对称密钥 生成密钥
             SecretKey deskey = keygen.generateKey();
             // 生成Cipher对象,指定其支持的AES算法，Cipher负责完成加密或解密工作
@@ -106,22 +107,22 @@ public class EncrypAESUtil {
             return new String(cipherByte);
         } catch (NoSuchAlgorithmException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (UnsupportedEncodingException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("Bsae64加密异常:" + e.getMessage());
         } catch (NoSuchPaddingException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (InvalidKeyException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
         } catch (IllegalBlockSizeException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("解密异常，密钥有误:" + e.getMessage());
         } catch (BadPaddingException e){
             logger.error(e.getMessage());
-            return null;
+            throw new UnauthorizedException("解密异常，密钥有误:" + e.getMessage());
         }
     }
 }

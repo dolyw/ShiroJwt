@@ -6,9 +6,9 @@ use sbapijwt;
 
 create table user (
 id int primary key auto_increment COMMENT "ID",
-account varchar(20)  COMMENT "帐号",
-password varchar(80) COMMENT "密码",
-username varchar(20) COMMENT "昵称",
+account varchar(20) not null unique COMMENT "帐号",
+password varchar(80) not null COMMENT "密码",
+username varchar(20) not null COMMENT "昵称",
 reg_time datetime not null COMMENT "注册时间"
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT "用户表";
 
@@ -30,24 +30,24 @@ per_code varchar(128) not null unique COMMENT '权限代码字符串'
 
 CREATE TABLE user_role (
 id int primary key auto_increment COMMENT "ID",
-user_id int COMMENT '用户id',
-role_id int COMMENT '角色id',
+user_id int not null COMMENT '用户id',
+role_id int not null COMMENT '角色id',
 foreign key (user_id) references user (id),
 foreign key (role_id) references role (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT "用户角色表";
 
 CREATE TABLE role_permission (
 id int primary key auto_increment COMMENT "ID",
-role_id int COMMENT '角色id',
-permission_id int COMMENT '权限id',
+role_id int not null COMMENT '角色id',
+permission_id int not null COMMENT '权限id',
 foreign key (role_id) references role (id),
 foreign key (permission_id) references permission (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT "角色资源表";
 
 /* 密码都是帐号 */
-insert into user values(null, "admin", "QUY2MjMzRTY1NTU1RDEyNUJDRUI4QUM4Qjk2MjVBNkQ=", "admin", now());
-insert into user values(null, "wang", "QTU3RjE0N0YzNDU2Rjg0RDlDRjBBOEVCQTI2QkM2MzY=", "wang", now());
-insert into user values(null, "guest", "MkRCRjYzQzU3MEVEQThCMERDOTk3Mzg0QjkxNTM1RjU=", "guest", now());
+insert into user values(null, "admin", "QUJBNUYyM0M3OTNEN0I4MUFBOTZBOTkwOEI1NDI0MUE=", "admin", now());
+insert into user values(null, "wang", "RTM3MDJENjU0MDg5QURFNUZEQTkxNTNCOEZFQ0MzMkM=", "wang", now());
+insert into user values(null, "guest", "QTNCMzMwREY3MkMwQjRGQjNBQzUyOTM0NTFFMzJCNDg=", "guest", now());
 
 insert into role values(null, "admin");
 insert into role values(null, "customer");
