@@ -89,20 +89,20 @@ public class UserRealm extends AuthorizingRealm {
         String account = JWTUtil.getAccount(token);
         // 帐号为空
         if (StringUtils.isBlank(account)) {
-            throw new AuthenticationException("token account is null");
+            throw new AuthenticationException("Token中帐号为空(The account in Token is empty.)");
         }
         // 查询用户是否存在
         UserDto userDto = new UserDto();
         userDto.setAccount(account);
         userDto = userMapper.selectOne(userDto);
         if (userDto == null) {
-            throw new AuthenticationException("user didn't existed!");
+            throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
         // Token认证
         // 进行AES解密
         String key = EncrypAESUtil.Decryptor(userDto.getPassword());
         if (!JWTUtil.verify(token, key)) {
-            throw new AuthenticationException("username or password error");
+            throw new AuthenticationException("帐号或密码错误(Account or Password Error)");
         }
         return new SimpleAuthenticationInfo(token, token, "userRealm");
     }

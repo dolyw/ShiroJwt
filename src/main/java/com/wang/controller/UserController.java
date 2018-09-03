@@ -50,9 +50,9 @@ public class UserController {
     public ResponseBean user(){
         List<UserDto> userDtos = userService.selectAll();
         if(userDtos == null || userDtos.size() <= 0){
-            throw new CustomException("查询失败");
+            throw new CustomException("查询失败(Query Failure)");
         }
-        return new ResponseBean(200, "查询成功", userDtos);
+        return new ResponseBean(200, "查询成功(Query was successful)", userDtos);
     }
 
     /**
@@ -67,9 +67,9 @@ public class UserController {
     public ResponseBean findById(@PathVariable("id") Integer id){
         UserDto userDto = userService.selectByPrimaryKey(id);
         if(userDto == null){
-            throw new CustomException("查询失败");
+            throw new CustomException("查询失败(Query Failure)");
         }
-        return new ResponseBean(200, "查询成功成功", userDto);
+        return new ResponseBean(200, "查询成功(Query was successful)", userDto);
     }
 
     /**
@@ -94,9 +94,9 @@ public class UserController {
         userDto.setPassword(key);
         int count = userService.insert(userDto);
         if(count <= 0){
-            throw new CustomException("新增失败");
+            throw new CustomException("新增失败(Insert Failure)");
         }
-        return new ResponseBean(200, "新增成功", userDto);
+        return new ResponseBean(200, "新增成功(Insert Success)", userDto);
     }
 
     /**
@@ -120,9 +120,9 @@ public class UserController {
         userDto.setPassword(key);
         int count = userService.updateByPrimaryKeySelective(userDto);
         if(count <= 0){
-            throw new CustomException("更新失败");
+            throw new CustomException("更新失败(Update Failure)");
         }
-        return new ResponseBean(200, "更新成功", userDto);
+        return new ResponseBean(200, "更新成功(Update Success)", userDto);
     }
 
     /**
@@ -137,9 +137,9 @@ public class UserController {
     public ResponseBean delete(@PathVariable("id") Integer id){
         int count = userService.deleteByPrimaryKey(id);
         if(count <= 0){
-            throw new CustomException("删除失败，ID不存在(Deletion failed. ID does not exist.)");
+            throw new CustomException("删除失败，ID不存在(Deletion Failed. ID does not exist.)");
         }
-        return new ResponseBean(200, "删除成功", null);
+        return new ResponseBean(200, "删除成功(Delete Success)", null);
     }
 
     /**
@@ -159,9 +159,9 @@ public class UserController {
         String key = EncrypAESUtil.Decryptor(userDtoTemp.getPassword());
         // 对比，因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
         if (key.equals(userDto.getAccount() + userDto.getPassword())) {
-            return new ResponseBean(200, "login success", JWTUtil.sign(userDto.getAccount(), key));
+            return new ResponseBean(200, "登录成功(Login Success)", JWTUtil.sign(userDto.getAccount(), key));
         } else {
-            throw new UnauthorizedException("username or password error");
+            throw new UnauthorizedException("帐号或密码错误(Account or Password Error)");
         }
     }
 
@@ -177,9 +177,9 @@ public class UserController {
         Subject subject = SecurityUtils.getSubject();
         // 登录了返回true
         if (subject.isAuthenticated()) {
-            return new ResponseBean(200, "You are already logged in", null);
+            return new ResponseBean(200, "您已经登录了(You are already logged in)", null);
         } else {
-            return new ResponseBean(200, "You are guest", null);
+            return new ResponseBean(200, "你是游客(You are guest)", null);
         }
     }
 
@@ -193,7 +193,7 @@ public class UserController {
     @GetMapping("/article2")
     @RequiresAuthentication
     public ResponseBean requireAuth() {
-        return new ResponseBean(200, "You are already logged in", null);
+        return new ResponseBean(200, "您已经登录了(You are already logged in)", null);
     }
 
 }
