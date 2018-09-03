@@ -46,7 +46,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomException.class)
     public ResponseBean handle(HttpServletRequest request, CustomException e) {
-        return new ResponseBean(this.getStatus(request).value(), e.getMessage(), null);
+        return new ResponseBean(200, e.getMessage(), null);
     }
 
     /**

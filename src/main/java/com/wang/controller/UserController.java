@@ -1,5 +1,6 @@
 package com.wang.controller;
 
+import com.wang.exception.CustomException;
 import com.wang.exception.UnauthorizedException;
 import com.wang.model.UserDto;
 import com.wang.model.common.ResponseBean;
@@ -46,12 +47,12 @@ public class UserController {
      */
     @GetMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public Map<String,Object> user(){
+    public ResponseBean user(){
         List<UserDto> userDtos = userService.selectAll();
-        Map<String, Object> map = new HashMap<String, Object>(16);
-        map.put("code", "200");
-        map.put("data", userDtos);
-        return map;
+        if(userDtos == null || userDtos.size() <= 0){
+            throw new CustomException("查询失败");
+        }
+        return new ResponseBean(200, "查询成功", userDtos);
     }
 
     /**
@@ -63,12 +64,12 @@ public class UserController {
      */
     @GetMapping("/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public Map<String,Object> findById(@PathVariable("id") Integer id){
+    public ResponseBean findById(@PathVariable("id") Integer id){
         UserDto userDto = userService.selectByPrimaryKey(id);
-        Map<String, Object> map = new HashMap<String, Object>(16);
-        map.put("code", "200");
-        map.put("data", userDto);
-        return map;
+        if(userDto == null){
+            throw new CustomException("查询失败");
+        }
+        return new ResponseBean(200, "查询成功成功", userDto);
     }
 
     /**
@@ -80,17 +81,22 @@ public class UserController {
      */
     @PostMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> add(@RequestBody UserDto userDto) {
+    public ResponseBean add(@RequestBody UserDto userDto) {
+        // 判断当前帐号是否存在
+        UserDto userDtoTemp = new UserDto();
+        userDtoTemp.setAccount(userDto.getAccount());
+        if(userService.selectOne(userDtoTemp) != null){
+            throw new CustomException("account already exists");
+        }
         userDto.setRegTime(new Date());
         // 密码以帐号+密码的形式进行AES加密
         String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
         userDto.setPassword(key);
         int count = userService.insert(userDto);
-        Map<String, Object> map = new HashMap<String, Object>(16);
-        map.put("code", "200");
-        map.put("count", count);
-        map.put("data", userDto);
-        return map;
+        if(count <= 0){
+            throw new CustomException("新增失败");
+        }
+        return new ResponseBean(200, "新增成功", userDto);
     }
 
     /**
@@ -102,16 +108,21 @@ public class UserController {
      */
     @PutMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> update(@RequestBody UserDto userDto) {
+    public ResponseBean update(@RequestBody UserDto userDto) {
+        // 判断当前帐号是否存在
+        UserDto userDtoTemp = new UserDto();
+        userDtoTemp.setAccount(userDto.getAccount());
+        if(userService.selectOne(userDtoTemp) != null){
+            throw new CustomException("account already exists");
+        }
         // 密码以帐号+密码的形式进行AES加密
         String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
         userDto.setPassword(key);
         int count = userService.updateByPrimaryKeySelective(userDto);
-        Map<String, Object> map = new HashMap<String, Object>(16);
-        map.put("code", "200");
-        map.put("count", count);
-        map.put("data", userDto);
-        return map;
+        if(count <= 0){
+            throw new CustomException("更新失败");
+        }
+        return new ResponseBean(200, "更新成功", userDto);
     }
 
     /**
@@ -123,13 +134,12 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public Map<String,Object> delete(@PathVariable("id") Integer id){
+    public ResponseBean delete(@PathVariable("id") Integer id){
         int count = userService.deleteByPrimaryKey(id);
-        Map<String, Object> map = new HashMap<String, Object>(16);
-        map.put("code", "200");
-        map.put("count", count);
-        map.put("data", null);
-        return map;
+        if(count <= 0){
+            throw new CustomException("删除失败，ID不存在(Deletion failed. ID does not exist.)");
+        }
+        return new ResponseBean(200, "删除成功", null);
     }
 
     /**
