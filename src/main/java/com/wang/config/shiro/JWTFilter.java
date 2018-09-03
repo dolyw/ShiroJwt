@@ -82,7 +82,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) req;
             HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-            // httpServletResponse.sendRedirect("/401");
             // 传递错误信息msg
             req.setAttribute("msg", msg);
             httpServletRequest.getRequestDispatcher("/401").forward(httpServletRequest, httpServletResponse);
