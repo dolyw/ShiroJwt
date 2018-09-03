@@ -17,9 +17,9 @@ import java.util.Date;
 public class JWTUtil {
 
     /**
-     * 过期时间-5分钟
+     * 过期时间改为从配置文件获取
      */
-    private static final long EXPIRE_TIME = 5 * 60 * 1000;
+    // private static final long EXPIRE_TIME = 5 * 60 * 1000;
 
     /**
      * TODO：校验token是否正确
@@ -67,7 +67,10 @@ public class JWTUtil {
      */
     public static String sign(String account, String secret) {
         try {
-            Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+            // 获取过期时间，读取配置文件
+            PropertiesUtil.readProperties("config.properties");
+            String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
+            Date date = new Date(System.currentTimeMillis() + Long.parseLong(tokenExpireTime));
             Algorithm algorithm = Algorithm.HMAC256(secret);
             // 附带account帐号信息
             return JWT.create()

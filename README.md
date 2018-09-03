@@ -1,5 +1,7 @@
 # SBAPIJWT
 
+> 前端地址:[https://github.com/wang926454/VueStudy/tree/master/VueStudy08-JWT](https://github.com/wang926454/VueStudy/tree/master/VueStudy08-JWT)
+
 #### 搭建参考
 
 1. 感谢SmithCruise的Shiro+JWT+Spring Boot Restful简易教程:[https://www.jianshu.com/p/f37f8c295057](https://www.jianshu.com/p/f37f8c295057)
@@ -9,6 +11,11 @@
 1. RESTful API
 2. Maven集成Mybatis Geneator
 3. 密码加密(未使用Shiro自带的MD5 + 盐的方式)，采用AES-128 + Base64的方式
+
+##### 关于AES-128 + Base64加密后当两个用户的密码相同时，会发现数据库中存在相同结构的密码
+```txt
+Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，我采用AES-128 + Base64是以帐号+密码的形式进行加密，因为帐号具有唯一性，所以也不会出现相同结构密码这个问题
+```
 
 #### 软件架构
 
