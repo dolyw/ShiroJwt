@@ -18,19 +18,14 @@ import java.util.*;
 public class CustomCache<K,V> implements Cache<K,V> {
 
     /**
-     * 缓存的key前缀
-     */
-    private String keyPrefix = "shiro_cache:";
-
-    /**
-     * TODO：缓存的key名称获取为shiro_cache:account
+     * TODO：缓存的key名称获取为shiro:cache:account
      * @param key
      * @return java.lang.String
      * @author Wang926454
      * @date 2018/9/4 18:33
      */
     private String getKey(Object key){
-        return this.keyPrefix + JWTUtil.getAccount(key.toString());
+        return Constant.PREFIX_SHIRO_CACHE + JWTUtil.getAccount(key.toString());
     }
 
     /**
@@ -46,10 +41,10 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public Object put(Object key, Object value) throws CacheException {
-        // 读取配置文件，获取Shiro缓存过期时间
+        // 读取配置文件，获取Redis的Shiro缓存过期时间
         PropertiesUtil.readProperties("config.properties");
         String shiroCacheExpireTime = PropertiesUtil.getProperty("shiroCacheExpireTime");
-        // 设置过期时间和Token过期时间一致
+        // 设置Redis的Shiro缓存
         return JedisUtil.setObject(this.getKey(key), value, Integer.parseInt(shiroCacheExpireTime));
 
     }

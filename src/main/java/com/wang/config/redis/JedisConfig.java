@@ -54,8 +54,7 @@ public class JedisConfig {
         jedisPoolConfig.setMinIdle(minIdle);
         // JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
         JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, null);
-        logger.info("JedisPool注入成功");
-        logger.info("Redis地址：" + host + ":" + port);
+        logger.info("JedisPool注入成功!" + " Redis地址: " + host + ":" + port);
         return jedisPool;
     }
 

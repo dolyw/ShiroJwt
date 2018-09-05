@@ -25,7 +25,7 @@ public class JWTUtil {
     /**
      * TODO：校验token是否正确
      * @param token Token
-	 * @param secret 私钥(这里私钥都是取密码加Redis中保留的随机UUID)
+	 * @param secret 私钥
      * @return boolean 是否正确
      * @author Wang926454
      * @date 2018/8/31 9:05
@@ -63,17 +63,18 @@ public class JWTUtil {
     /**
      * TODO：生成签名
      * @param account 帐号
-	 * @param secret 私钥(这里私钥都是取密码加Redis中保留的随机UUID)
+	 * @param secret 私钥
      * @return java.lang.String 返回加密的Token
      * @author Wang926454
      * @date 2018/8/31 9:07
      */
     public static String sign(String account, String secret) {
         try {
-            // 获取过期时间，读取配置文件
+            // 获取Token过期时间，读取配置文件
             PropertiesUtil.readProperties("config.properties");
             String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
-            Date date = new Date(System.currentTimeMillis() + Long.parseLong(tokenExpireTime));
+            // 此处过期时间是以毫秒为单位，所以乘以1000
+            Date date = new Date(System.currentTimeMillis() + Long.parseLong(tokenExpireTime) * 1000);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             // 附带account帐号信息
             return JWT.create()

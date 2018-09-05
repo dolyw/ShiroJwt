@@ -16,6 +16,7 @@
 3. 密码加密(未使用Shiro自带的MD5 + 盐的方式)，采用AES-128 + Base64的方式
 4. 集成Redis(Jedis)，重写Shiro缓存机制(Redis)
 5. 将Jedis工具类与SpringBoot整合，启动时注入JedisPool连接池
+6. Redis中保存Token信息，做到JWT的可控性
 
 ##### 关于AES-128 + Base64加密后当两个用户的密码相同时，会发现数据库中存在相同结构的密码
 ```txt
@@ -27,6 +28,13 @@ Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，�
 ```txt
 本来是直接将JedisUtil注入为Bean，每次使用直接@Autowired注入使用即可，但是在重写Shiro的CustomCache无法注入JedisUtil，所以就
 改成静态注入JedisPool连接池，JedisUtil工具类还是直接调用静态方法，无需@Autowired注入
+```
+
+##### 关于Redis中保存Token信息，做到JWT的可控性
+```txt
+登录认证通过后返回Token信息，同时在Redis中设置一条以帐号为Key的和Token过期时间一样的Value数据，现在认证时必须Token没失效以及Redis中有存在
+当前帐号的Value数据才算认证通过，这样可以做到JWT的可控性，Redis中的Value数据就是在线用户，如果删除某个Value数据，那这个Token之后也无法通过
+认证了，就相当于控制了用户的登录，可以剔除用户
 ```
 
 #### 软件架构

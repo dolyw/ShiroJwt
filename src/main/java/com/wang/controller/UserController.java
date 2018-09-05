@@ -1,10 +1,13 @@
 package com.wang.controller;
 
+import com.wang.config.redis.JedisUtil;
 import com.wang.exception.CustomException;
 import com.wang.exception.UnauthorizedException;
 import com.wang.model.UserDto;
+import com.wang.model.common.Constant;
 import com.wang.model.common.ResponseBean;
 import com.wang.service.IUserService;
+import com.wang.util.PropertiesUtil;
 import com.wang.util.encryp.EncrypAESUtil;
 import com.wang.config.jwt.JWTUtil;
 import org.apache.shiro.SecurityUtils;
@@ -155,9 +158,14 @@ public class UserController {
         String key = EncrypAESUtil.Decryptor(userDtoTemp.getPassword());
         // 对比，因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
         if (key.equals(userDto.getAccount() + userDto.getPassword())) {
-            return new ResponseBean(200, "登录成功(Login Success)", JWTUtil.sign(userDto.getAccount(), key));
+            // 获取Token过期时间，读取配置文件
+            PropertiesUtil.readProperties("config.properties");
+            String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
+            // 设置Redis中的Token
+            JedisUtil.setObject(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount(), key, Integer.parseInt(tokenExpireTime));
+            return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), key));
         } else {
-            throw new UnauthorizedException("帐号或密码错误(Account or Password Error)");
+            throw new UnauthorizedException("帐号或密码错误(Account or Password Error.)");
         }
     }
 

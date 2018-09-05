@@ -1,12 +1,15 @@
 package com.wang.config.shiro;
 
 import com.wang.config.jwt.JWTToken;
+import com.wang.config.redis.JedisUtil;
 import com.wang.mapper.PermissionMapper;
 import com.wang.mapper.RoleMapper;
 import com.wang.mapper.UserMapper;
 import com.wang.model.PermissionDto;
 import com.wang.model.RoleDto;
 import com.wang.model.UserDto;
+import com.wang.model.common.Constant;
+import com.wang.util.PropertiesUtil;
 import com.wang.util.encryp.EncrypAESUtil;
 import com.wang.config.jwt.JWTUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -99,11 +102,11 @@ public class UserRealm extends AuthorizingRealm {
         if (userDto == null) {
             throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
-        // Token认证
         // 进行AES解密
         String key = EncrypAESUtil.Decryptor(userDto.getPassword());
-        if (!JWTUtil.verify(token, key)) {
-            throw new AuthenticationException("帐号或密码错误(Account or Password Error)");
+        // 开始Token认证以及认证Redis中是否存在Token
+        if (!JWTUtil.verify(token, key) || !JedisUtil.exists(Constant.PREFIX_SHIRO_ACCESS + account)) {
+            throw new AuthenticationException("Token过期或者不正确(Token expired or incorrect.)");
         }
         return new SimpleAuthenticationInfo(token, token, "userRealm");
     }
