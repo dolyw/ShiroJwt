@@ -1,6 +1,8 @@
-package com.wang.util;
+package com.wang.util.encryp;
 
 import com.wang.exception.UnauthorizedException;
+import com.wang.util.convert.HexConvertUtil;
+import com.wang.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

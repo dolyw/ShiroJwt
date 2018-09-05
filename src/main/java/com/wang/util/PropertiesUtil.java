@@ -26,12 +26,21 @@ public class PropertiesUtil {
      * @date 2018/8/31 17:29
      */
     public static void readProperties(String fileName){
+        InputStream in = null;
         try {
-            InputStream in = PropertiesUtil.class.getResourceAsStream("/" + fileName);
+            in = PropertiesUtil.class.getResourceAsStream("/" + fileName);
             BufferedReader bf = new BufferedReader(new InputStreamReader(in));
             PROP.load(bf);
         } catch (IOException e){
             e.printStackTrace();
+        } finally {
+            try{
+                if(in != null){
+                    in.close();
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
     }
 

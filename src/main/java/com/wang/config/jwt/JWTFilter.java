@@ -1,4 +1,4 @@
-package com.wang.config.shiro;
+package com.wang.config.jwt;
 
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;

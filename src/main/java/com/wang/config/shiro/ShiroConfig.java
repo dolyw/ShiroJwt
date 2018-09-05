@@ -1,5 +1,7 @@
 package com.wang.config.shiro;
 
+import com.wang.config.jwt.JWTFilter;
+import com.wang.config.shiro.cache.CustomCacheManager;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -42,6 +44,8 @@ public class ShiroConfig {
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
         manager.setSubjectDAO(subjectDAO);
+        // 设置自定义缓存
+        manager.setCacheManager(new CustomCacheManager());
         return manager;
     }
 

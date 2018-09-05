@@ -5,12 +5,14 @@
 #### 搭建参考
 
 1. 感谢SmithCruise的Shiro+JWT+Spring Boot Restful简易教程:[https://www.jianshu.com/p/f37f8c295057](https://www.jianshu.com/p/f37f8c295057)
+2. 感谢王洪玉的[Shiro入门]（一）使用Redis作为缓存管理器:[https://blog.csdn.net/why15732625998/article/details/78729254](https://blog.csdn.net/why15732625998/article/details/78729254)
 
 #### 项目介绍
 
 1. RESTful API
 2. Maven集成Mybatis Geneator
 3. 密码加密(未使用Shiro自带的MD5 + 盐的方式)，采用AES-128 + Base64的方式
+4. 集成Redis(Jedis)，重写Shiro缓存机制(Redis)
 
 ##### 关于AES-128 + Base64加密后当两个用户的密码相同时，会发现数据库中存在相同结构的密码
 ```txt
@@ -20,13 +22,17 @@ Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，�
 
 #### 软件架构
 
-1. SpringBoot + Mybatis + PageHelper + 通用Mapper + Shiro + Java-JWT + AES-128
+1. SpringBoot + Mybatis核心框架
+2. PageHelper插件 + 通用Mapper插件
+3. Shiro + Java-JWT + AES-128认证
+4. Redis(Jedis)缓存
 
 #### 安装教程
 
 1. 数据库帐号密码默认为root，如有修改，请自行修改配置文件application.yml
 2. 解压后执行src\main\resources\sql\MySQL.sql脚本创建数据库和表
-3. SpringBoot直接启动即可，测试工具PostMan
+3. Redis需要自行安装Redis服务，端口密码默认，启动服务后正常启动即可
+4. SpringBoot直接启动即可，测试工具PostMan
 
 #### 使用说明
 

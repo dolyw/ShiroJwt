@@ -5,22 +5,18 @@ import com.wang.exception.UnauthorizedException;
 import com.wang.model.UserDto;
 import com.wang.model.common.ResponseBean;
 import com.wang.service.IUserService;
-import com.wang.util.EncrypAESUtil;
-import com.wang.util.JWTUtil;
+import com.wang.util.encryp.EncrypAESUtil;
+import com.wang.config.jwt.JWTUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * TODO：

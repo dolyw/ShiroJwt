@@ -30,6 +30,7 @@
         <shiro.version>1.3.2</shiro.version>
         <jwt.version>3.3.0</jwt.version>
         <commons-lang3.version>3.4</commons-lang3.version>
+        <jedis.version>2.9.0</jedis.version>
     </properties>
 
     <dependencies>
@@ -116,6 +117,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+
+        <!-- Redis-Jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
         </dependency>
 
     </dependencies>

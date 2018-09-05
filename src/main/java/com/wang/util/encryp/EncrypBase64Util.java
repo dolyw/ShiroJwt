@@ -1,4 +1,4 @@
-package com.wang.util;
+package com.wang.util.encryp;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
