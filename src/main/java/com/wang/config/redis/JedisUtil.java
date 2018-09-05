@@ -1,104 +1,39 @@
-package com.wang.util;
+package com.wang.config.redis;
 
+import com.wang.model.common.Constant;
+import com.wang.util.StringUtil;
 import com.wang.util.convert.SerializableUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * TODO：JedisUtil(推荐存Byte数组，存Json字符串效率更慢)
  * @author Wang926454
  * @date 2018/9/4 15:45
  */
-public final class JedisUtil {
+@Component
+public class JedisUtil {
 
+    /**
+     * Logger
+     */
     private static Logger logger = LoggerFactory.getLogger(JedisUtil.class);
 
     /**
-     * Redis服务器IP
+     * 静态注入JedisPool连接池
+     * 本来是正常注入JedisUtil，可以在Controller和Service层使用，但是重写Shiro的CustomCache无法注入JedisUtil
+     * 现在改为静态注入JedisPool连接池，JedisUtil直接调用静态方法即可
+     * https://blog.csdn.net/W_Z_W_888/article/details/79979103
      */
-    private static String ADDR = "127.0.0.1";
+    private static JedisPool jedisPool;
 
-    /**
-     * Redis的端口号
-     */
-    private static int PORT = 6379;
-
-    /**
-     * 访问密码
-     */
-    private static String AUTH = null;
-
-    /**
-     * 可用连接实例的最大数目，默认值为8
-     * 如果赋值为-1，则表示不限制
-     * 如果pool已经分配了maxActive个jedis实例，则此时pool的状态为exhausted(耗尽)
-     */
-    private static int MAX_ACTIVE = 1024;
-
-    /**
-     * 控制一个pool最多有多少个状态为idle(空闲的)的jedis实例，默认值也是8
-     */
-    private static int MAX_IDLE = 200;
-
-    /**
-     * 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时
-     * 如果超过等待时间，则直接抛出JedisConnectionException
-     */
-    private static int MAX_WAIT = 10000;
-
-    /**
-     * 连接超时时间
-     */
-    private static int TIMEOUT = 10000;
-
-    /**
-     * 在borrow一个jedis实例时，是否提前进行validate操作
-     * 如果为true，则得到的jedis实例均是可用的
-     */
-    private static boolean TEST_ON_BORROW = true;
-
-    /**
-     * redis过期时间，以秒为单位，一分钟
-     */
-    public final static int EXRP_MINUTE = 60;
-
-    /**
-     * redis过期时间，以秒为单位，一小时
-     */
-    public final static int EXRP_HOUR = 60 * 60;
-
-    /**
-     * redis过期时间，以秒为单位，一天
-     */
-    public final static int EXRP_DAY = 60 * 60 * 24;
-
-    /**
-     * redis-OK
-     */
-    public final static String OK = "OK";
-
-    /**
-     * 连接池
-     */
-    private static JedisPool jedisPool = null;
-
-    /**
-     * 初始化Redis连接池
-     */
-    static {
-        try {
-            JedisPoolConfig config = new JedisPoolConfig();
-            config.setMaxTotal(MAX_ACTIVE);
-            config.setMaxIdle(MAX_IDLE);
-            config.setMaxWaitMillis(MAX_WAIT);
-            config.setTestOnBorrow(TEST_ON_BORROW);
-            jedisPool = new JedisPool(config, ADDR, PORT, TIMEOUT, AUTH);
-        } catch (Exception e) {
-            logger.error("初始化Redis连接池异常" + e.getMessage());
-        }
+    @Autowired
+    public void setJedisPool(JedisPool jedisPool) {
+        JedisUtil.jedisPool = jedisPool;
     }
 
     /**
@@ -108,7 +43,7 @@ public final class JedisUtil {
      * @author Wang926454
      * @date 2018/9/4 15:47
      */
-    public synchronized static Jedis getJedis() {
+    public static synchronized Jedis getJedis() {
         try {
             if (jedisPool != null) {
                 Jedis resource = jedisPool.getResource();
@@ -124,13 +59,17 @@ public final class JedisUtil {
 
     /**
      * TODO：释放Jedis资源
-     * @param 
+     * @param
      * @return void
      * @author Wang926454
      * @date 2018/9/5 9:16
      */
     public static void closePool() {
-        jedisPool.close();
+        try {
+            jedisPool.close();
+        }catch (Exception e){
+            logger.error("释放Jedis资源异常" + e.getMessage());
+        }
     }
 
     /**
@@ -196,7 +135,7 @@ public final class JedisUtil {
         try {
             jedis = jedisPool.getResource();
             result = jedis.set(key.getBytes(), SerializableUtil.serializable(value));
-            if(OK.equals(result)) {
+            if(Constant.OK.equals(result)) {
                 jedis.expire(key.getBytes(), expiretime);
             }
             return result;
@@ -270,7 +209,7 @@ public final class JedisUtil {
         try {
             jedis = jedisPool.getResource();
             result = jedis.set(key, value);
-            if(OK.equals(result)) {
+            if(Constant.OK.equals(result)) {
                 jedis.expire(key, expiretime);
             }
             return result;

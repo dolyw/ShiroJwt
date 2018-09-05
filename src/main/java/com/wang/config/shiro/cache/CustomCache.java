@@ -1,10 +1,13 @@
 package com.wang.config.shiro.cache;
 
 import com.wang.config.jwt.JWTUtil;
-import com.wang.util.JedisUtil;
+import com.wang.config.redis.JedisUtil;
+import com.wang.model.common.Constant;
+import com.wang.util.PropertiesUtil;
 import com.wang.util.convert.SerializableUtil;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
+
 import java.util.*;
 
 /**
@@ -43,8 +46,11 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public Object put(Object key, Object value) throws CacheException {
-        JedisUtil.setObject(this.getKey(key), value, JedisUtil.EXRP_MINUTE);
-        return JedisUtil.getObject(this.getKey(key));
+        // 读取配置文件，获取Shiro缓存过期时间
+        PropertiesUtil.readProperties("config.properties");
+        String shiroCacheExpireTime = PropertiesUtil.getProperty("shiroCacheExpireTime");
+        // 设置过期时间和Token过期时间一致
+        return JedisUtil.setObject(this.getKey(key), value, Integer.parseInt(shiroCacheExpireTime));
 
     }
 
@@ -53,9 +59,8 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public Object remove(Object key) throws CacheException {
-        Object object = JedisUtil.getObject(this.getKey(key));
         JedisUtil.delKey(this.getKey(key));
-        return object;
+        return null;
     }
 
     /**
