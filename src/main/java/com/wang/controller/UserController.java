@@ -10,6 +10,7 @@ import com.wang.service.IUserService;
 import com.wang.util.PropertiesUtil;
 import com.wang.util.encryp.EncrypAESUtil;
 import com.wang.config.jwt.JWTUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -110,11 +111,15 @@ public class UserController {
         // 判断当前帐号是否存在
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
-        if(userService.selectOne(userDtoTemp) != null){
-            throw new UnauthorizedException("该帐号不存在(The account does not exist.)");
+        userDtoTemp = userService.selectOne(userDtoTemp);
+        if(userDtoTemp != null && StringUtils.isNotBlank(userDtoTemp.getPassword())){
+            throw new UnauthorizedException("该帐号已存在(Account exist.)");
         }
         userDto.setRegTime(new Date());
         // 密码以帐号+密码的形式进行AES加密
+        if(userDto.getPassword().length() > 8){
+            throw new CustomException("密码最多8位(Password up to 8 bits.)");
+        }
         String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
         userDto.setPassword(key);
         int count = userService.insert(userDto);
@@ -134,15 +139,19 @@ public class UserController {
     @PutMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public ResponseBean update(@RequestBody UserDto userDto) {
-        // 判断当前帐号是否存在
+        // 查询数据库密码
         UserDto userDtoTemp = new UserDto();
-        userDtoTemp.setAccount(userDto.getAccount());
-        if(userService.selectOne(userDtoTemp) != null){
-            throw new UnauthorizedException("该帐号不存在(The account does not exist.)");
+        userDtoTemp.setId(userDto.getId());
+        userDtoTemp = userService.selectOne(userDtoTemp);
+        // 如果不一样就说明用户修改了密码，重新加密密码
+        if(!userDtoTemp.getPassword().equals(userDto.getPassword())){
+            // 密码以帐号+密码的形式进行AES加密
+            if(userDto.getPassword().length() > 8){
+                throw new CustomException("密码最多8位(Password up to 8 bits.)");
+            }
+            String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
+            userDto.setPassword(key);
         }
-        // 密码以帐号+密码的形式进行AES加密
-        String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
-        userDto.setPassword(key);
         int count = userService.updateByPrimaryKeySelective(userDto);
         if(count <= 0){
             throw new CustomException("更新失败(Update Failure)");
