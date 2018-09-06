@@ -18,8 +18,10 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * TODO：
@@ -48,6 +50,30 @@ public class UserController {
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
     public ResponseBean user(){
         List<UserDto> userDtos = userService.selectAll();
+        if(userDtos == null || userDtos.size() <= 0){
+            throw new CustomException("查询失败(Query Failure)");
+        }
+        return new ResponseBean(200, "查询成功(Query was successful)", userDtos);
+    }
+
+    /**
+     * TODO：查询Redis中的Token
+     * @param 
+     * @return com.wang.model.common.ResponseBean
+     * @author Wang926454
+     * @date 2018/9/6 9:58
+     */
+    @GetMapping("/online")
+    @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
+    public ResponseBean online(){
+        List<UserDto> userDtos = new ArrayList<UserDto>();
+        // 查询所有Redis键
+        Set<String> keys = JedisUtil.keysS(Constant.PREFIX_SHIRO_ACCESS + "*");
+        for (String key : keys) {
+            if(JedisUtil.exists(key)){
+                userDtos.add((UserDto) JedisUtil.getObject(key));
+            }
+        }
         if(userDtos == null || userDtos.size() <= 0){
             throw new CustomException("查询失败(Query Failure)");
         }
@@ -85,7 +111,7 @@ public class UserController {
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
         if(userService.selectOne(userDtoTemp) != null){
-            throw new CustomException("account already exists");
+            throw new UnauthorizedException("该帐号不存在(The account does not exist.)");
         }
         userDto.setRegTime(new Date());
         // 密码以帐号+密码的形式进行AES加密
@@ -112,7 +138,7 @@ public class UserController {
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
         if(userService.selectOne(userDtoTemp) != null){
-            throw new CustomException("account already exists");
+            throw new UnauthorizedException("该帐号不存在(The account does not exist.)");
         }
         // 密码以帐号+密码的形式进行AES加密
         String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
@@ -142,6 +168,25 @@ public class UserController {
     }
 
     /**
+     * TODO：剔除在线用户
+     * @param id
+     * @return com.wang.model.common.ResponseBean
+     * @author Wang926454
+     * @date 2018/9/6 10:20
+     */
+    @DeleteMapping("/online/{id}")
+    @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
+    public ResponseBean deleteOnline(@PathVariable("id") Integer id){
+        UserDto userDto = userService.selectByPrimaryKey(id);
+        if(JedisUtil.exists(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount())){
+            if(JedisUtil.delKey(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount()) > 0){
+                return new ResponseBean(200, "剔除成功(Delete Success)", null);
+            }
+        }
+        throw new CustomException("剔除失败，Account不存在(Deletion Failed. Account does not exist.)");
+    }
+
+    /**
      * TODO：登录授权
      * @param userDto
      * @return com.wang.model.common.ResponseBean
@@ -150,19 +195,22 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseBean login(@RequestBody UserDto userDto) {
+        // 查询数据库中的帐号信息
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
-        // 查询数据库中的密码
         userDtoTemp = userService.selectOne(userDtoTemp);
-        // 进行AES解密
+        if(userDtoTemp == null){
+            throw new UnauthorizedException("该帐号不存在(The account does not exist.)");
+        }
+        // 密码进行AES解密
         String key = EncrypAESUtil.Decryptor(userDtoTemp.getPassword());
-        // 对比，因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
+        // 因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
         if (key.equals(userDto.getAccount() + userDto.getPassword())) {
             // 获取Token过期时间，读取配置文件
             PropertiesUtil.readProperties("config.properties");
             String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
             // 设置Redis中的Token
-            JedisUtil.setObject(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount(), key, Integer.parseInt(tokenExpireTime));
+            JedisUtil.setObject(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount(), userDtoTemp, Integer.parseInt(tokenExpireTime));
             return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), key));
         } else {
             throw new UnauthorizedException("帐号或密码错误(Account or Password Error.)");

@@ -1,6 +1,7 @@
 package com.wang.model.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * TODO：Permission
@@ -8,7 +9,10 @@ import javax.persistence.*;
  * @date 2018/8/31 14:41
  */
 @Table(name = "permission")
-public class Permission {
+public class Permission implements Serializable {
+
+    private static final long serialVersionUID = -8834983208597107688L;
+
     /**
      * ID
      */

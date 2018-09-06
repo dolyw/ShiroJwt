@@ -102,7 +102,7 @@ public class UserRealm extends AuthorizingRealm {
         if (userDto == null) {
             throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
-        // 进行AES解密
+        // 密码进行AES解密
         String key = EncrypAESUtil.Decryptor(userDto.getPassword());
         // 开始Token认证以及认证Redis中是否存在Token
         if (!JWTUtil.verify(token, key) || !JedisUtil.exists(Constant.PREFIX_SHIRO_ACCESS + account)) {

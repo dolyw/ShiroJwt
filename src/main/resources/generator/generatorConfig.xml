@@ -52,7 +52,7 @@
         <javaClientGenerator targetPackage="com.wang.mapper.reverse" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="user">
+        <!--<table tableName="user">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
         <table tableName="role">
@@ -66,6 +66,6 @@
         </table>
         <table tableName="role_permission">
             <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
+        </table>-->
     </context>
 </generatorConfiguration>

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.util.Set;
+
 /**
  * TODO：JedisUtil(推荐存Byte数组，存Json字符串效率更慢)
  * @author Wang926454
@@ -259,6 +261,50 @@ public class JedisUtil {
             return jedis.exists(key.getBytes());
         }catch(Exception e) {
             logger.error("查询key:" + key + "异常:" + e.getMessage());
+        }finally{
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * TODO：模糊查询获取key集合
+     * @param key
+     * @return java.util.Set<java.lang.String>
+     * @author Wang926454
+     * @date 2018/9/6 9:43
+     */
+    public static Set<String> keysS(String key) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            return jedis.keys(key);
+        }catch(Exception e) {
+            logger.error("模糊查询key值:" + key + "异常:" + e.getMessage());
+        }finally{
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * TODO：模糊查询获取key集合
+     * @param key
+     * @return java.util.Set<java.lang.String>
+     * @author Wang926454
+     * @date 2018/9/6 9:43
+     */
+    public static Set<byte[]> keysB(String key) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            return jedis.keys(key.getBytes());
+        }catch(Exception e) {
+            logger.error("模糊查询key值:" + key + "异常:" + e.getMessage());
         }finally{
             if(jedis != null) {
                 jedis.close();
