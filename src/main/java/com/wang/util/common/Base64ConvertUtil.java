@@ -1,14 +1,14 @@
-package com.wang.util.encryp;
+package com.wang.util.common;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 /**
- * Base64加密解密工具
+ * Base64工具
  * @author Wang926454
  * @date 2018/8/21 15:14
  */
-public class EncrypBase64Util {
+public class Base64ConvertUtil {
 
     /**
      * 加密JDK1.8

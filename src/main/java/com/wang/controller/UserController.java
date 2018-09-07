@@ -1,15 +1,15 @@
 package com.wang.controller;
 
-import com.wang.config.redis.JedisUtil;
+import com.wang.util.JedisUtil;
 import com.wang.exception.CustomException;
 import com.wang.exception.UnauthorizedException;
 import com.wang.model.UserDto;
 import com.wang.model.common.Constant;
 import com.wang.model.common.ResponseBean;
 import com.wang.service.IUserService;
-import com.wang.util.PropertiesUtil;
-import com.wang.util.encryp.EncrypAESUtil;
-import com.wang.config.jwt.JWTUtil;
+import com.wang.util.common.PropertiesUtil;
+import com.wang.util.EncrypAESUtil;
+import com.wang.util.JWTUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;

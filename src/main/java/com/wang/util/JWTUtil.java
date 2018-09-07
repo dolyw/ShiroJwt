@@ -1,11 +1,11 @@
-package com.wang.config.jwt;
+package com.wang.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.wang.util.PropertiesUtil;
+import com.wang.util.common.PropertiesUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;

@@ -1,8 +1,9 @@
-package com.wang.util.encryp;
+package com.wang.util;
 
 import com.wang.exception.UnauthorizedException;
-import com.wang.util.convert.HexConvertUtil;
-import com.wang.util.PropertiesUtil;
+import com.wang.util.common.Base64ConvertUtil;
+import com.wang.util.common.HexConvertUtil;
+import com.wang.util.common.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public class EncrypAESUtil {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
             // 获取私钥，读取配置文件
             PropertiesUtil.readProperties("config.properties");
-            String encrypAESKey = EncrypBase64Util.decode(PropertiesUtil.getProperty("encrypAESKey"));
+            String encrypAESKey = Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypAESKey"));
             // 将key进行转换为byte[]数组
             keygen.init(128, new SecureRandom(encrypAESKey.getBytes()));
             // SecretKey 负责保存对称密钥 生成密钥
@@ -58,7 +59,7 @@ public class EncrypAESUtil {
             // 该字节数组负责保存加密的结果
             byte[] cipherByte = c.doFinal(src);
             // 先将二进制转换成16进制，再返回Bsae64加密后的String
-            return EncrypBase64Util.encode(HexConvertUtil.parseByte2HexStr(cipherByte));
+            return Base64ConvertUtil.encode(HexConvertUtil.parseByte2HexStr(cipherByte));
         } catch (NoSuchAlgorithmException e){
             logger.error(e.getMessage());
             throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
@@ -95,7 +96,7 @@ public class EncrypAESUtil {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
             // 获取私钥，读取配置文件
             PropertiesUtil.readProperties("config.properties");
-            String encrypAESKey = EncrypBase64Util.decode(PropertiesUtil.getProperty("encrypAESKey"));
+            String encrypAESKey = Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypAESKey"));
             // 将key进行转换为byte[]数组
             keygen.init(128, new SecureRandom(encrypAESKey.getBytes()));
             // SecretKey 负责保存对称密钥 生成密钥
@@ -105,7 +106,7 @@ public class EncrypAESUtil {
             // 根据密钥，对Cipher对象进行初始化，DECRYPT_MODE表示解密模式
             c.init(Cipher.DECRYPT_MODE, deskey);
             // 该字节数组负责保存加密的结果，先对str进行Bsae64解密，将16进制转换为二进制
-            byte[] cipherByte = c.doFinal(HexConvertUtil.parseHexStr2Byte(EncrypBase64Util.decode(str)));
+            byte[] cipherByte = c.doFinal(HexConvertUtil.parseHexStr2Byte(Base64ConvertUtil.decode(str)));
             return new String(cipherByte);
         } catch (NoSuchAlgorithmException e){
             logger.error(e.getMessage());

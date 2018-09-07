@@ -1,10 +1,10 @@
 package com.wang.config.shiro.cache;
 
-import com.wang.config.jwt.JWTUtil;
-import com.wang.config.redis.JedisUtil;
+import com.wang.util.JWTUtil;
+import com.wang.util.JedisUtil;
 import com.wang.model.common.Constant;
-import com.wang.util.PropertiesUtil;
-import com.wang.util.convert.SerializableUtil;
+import com.wang.util.common.PropertiesUtil;
+import com.wang.util.common.SerializableUtil;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 

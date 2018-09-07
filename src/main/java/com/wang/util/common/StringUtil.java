@@ -1,7 +1,7 @@
-package com.wang.util;
+package com.wang.util.common;
 
 /**
- * String工具类
+ * String工具
  * @author Wang926454
  * @date 2018/9/4 14:48
  */

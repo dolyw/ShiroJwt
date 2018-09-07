@@ -37,17 +37,17 @@ public class Constant {
     public final static int EXRP_DAY = 60 * 60 * 24;
 
     /**
-     * redis-key-prefix-shiro:cache:account
+     * redis-key-前缀-shiro:cache:
      */
     public final static String PREFIX_SHIRO_CACHE = "shiro:cache:";
 
     /**
-     * redis-key-prefix-shiro:access_token:account
+     * redis-key-前缀-shiro:access_token:
      */
     public final static String PREFIX_SHIRO_ACCESS = "shiro:access_token:";
 
     /**
-     * redis-key-prefix-shiro:refresh_token:account
+     * redis-key-前缀-shiro:refresh_token:
      */
     public final static String PREFIX_SHIRO_REFRESH = "shiro:refresh_token:";
 

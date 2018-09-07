@@ -1,4 +1,4 @@
-package com.wang.util.convert;
+package com.wang.util.common;
 
 import com.alibaba.fastjson.JSONObject;
 

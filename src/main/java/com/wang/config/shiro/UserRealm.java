@@ -1,7 +1,7 @@
 package com.wang.config.shiro;
 
 import com.wang.config.jwt.JWTToken;
-import com.wang.config.redis.JedisUtil;
+import com.wang.util.JedisUtil;
 import com.wang.mapper.PermissionMapper;
 import com.wang.mapper.RoleMapper;
 import com.wang.mapper.UserMapper;
@@ -9,9 +9,8 @@ import com.wang.model.PermissionDto;
 import com.wang.model.RoleDto;
 import com.wang.model.UserDto;
 import com.wang.model.common.Constant;
-import com.wang.util.PropertiesUtil;
-import com.wang.util.encryp.EncrypAESUtil;
-import com.wang.config.jwt.JWTUtil;
+import com.wang.util.EncrypAESUtil;
+import com.wang.util.JWTUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;

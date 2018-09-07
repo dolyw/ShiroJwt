@@ -1,4 +1,4 @@
-package com.wang.util;
+package com.wang.util.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
- * PropertiesUtil获取配置信息
+ * Properties工具
  * @author Wang926454
  * @date 2018/8/31 17:29
  */

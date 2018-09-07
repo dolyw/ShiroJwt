@@ -1,8 +1,8 @@
-package com.wang.config.redis;
+package com.wang.util;
 
 import com.wang.model.common.Constant;
-import com.wang.util.StringUtil;
-import com.wang.util.convert.SerializableUtil;
+import com.wang.util.common.StringUtil;
+import com.wang.util.common.SerializableUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
