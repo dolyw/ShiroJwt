@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO：
+ * UserController
  * @author Wang926454
  * @date 2018/8/29 15:45
  */
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     /**
-     * TODO：获取所有用户
+     * 获取所有用户
      * @param 
      * @return java.util.Map<java.lang.String,java.lang.Object>
      * @author Wang926454
@@ -58,7 +58,7 @@ public class UserController {
     }
 
     /**
-     * TODO：查询Redis中的Token
+     * 查询Redis中的Token(在线用户)
      * @param 
      * @return com.wang.model.common.ResponseBean
      * @author Wang926454
@@ -82,7 +82,7 @@ public class UserController {
     }
 
     /**
-     * TODO：获取指定用户
+     * 获取指定用户
      * @param id
      * @return java.util.Map<java.lang.String,java.lang.Object>
      * @author Wang926454
@@ -99,7 +99,7 @@ public class UserController {
     }
 
     /**
-     * TODO：新增用户
+     * 新增用户
      * @param userDto
      * @return java.util.Map<java.lang.String,java.lang.Object>
      * @author Wang926454
@@ -130,7 +130,7 @@ public class UserController {
     }
 
     /**
-     * TODO：更新用户
+     * 更新用户
      * @param userDto
      * @return java.util.Map<java.lang.String,java.lang.Object>
      * @author Wang926454
@@ -143,7 +143,7 @@ public class UserController {
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setId(userDto.getId());
         userDtoTemp = userService.selectOne(userDtoTemp);
-        // 如果不一样就说明用户修改了密码，重新加密密码
+        // FIXME: 如果不一样就说明用户修改了密码，重新加密密码(这个处理不太好，但是没有想到好的处理方式)
         if(!userDtoTemp.getPassword().equals(userDto.getPassword())){
             // 密码以帐号+密码的形式进行AES加密
             if(userDto.getPassword().length() > 8){
@@ -160,7 +160,7 @@ public class UserController {
     }
 
     /**
-     * TODO：删除用户
+     * 删除用户
      * @param id
      * @return java.util.Map<java.lang.String,java.lang.Object>
      * @author Wang926454
@@ -177,7 +177,7 @@ public class UserController {
     }
 
     /**
-     * TODO：剔除在线用户
+     * 剔除在线用户
      * @param id
      * @return com.wang.model.common.ResponseBean
      * @author Wang926454
@@ -196,7 +196,7 @@ public class UserController {
     }
 
     /**
-     * TODO：登录授权
+     * 登录授权
      * @param userDto
      * @return com.wang.model.common.ResponseBean
      * @author Wang926454
@@ -227,7 +227,7 @@ public class UserController {
     }
 
     /**
-     * TODO：测试登录
+     * 测试登录
      * @param
      * @return com.wang.model.common.ResponseBean
      * @author Wang926454
@@ -245,7 +245,7 @@ public class UserController {
     }
 
     /**
-     * TODO：@RequiresAuthentication和subject.isAuthenticated()返回true一个性质
+     * @RequiresAuthentication和subject.isAuthenticated()返回true一个性质
      * @param 
      * @return com.wang.model.common.ResponseBean
      * @author Wang926454

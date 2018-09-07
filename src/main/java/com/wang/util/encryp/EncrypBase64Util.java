@@ -4,14 +4,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 /**
- * TODO：Base64加密解密工具
+ * Base64加密解密工具
  * @author Wang926454
  * @date 2018/8/21 15:14
  */
 public class EncrypBase64Util {
 
     /**
-     * TODO：加密JDK1.8
+     * 加密JDK1.8
      * @param str
      * @return java.lang.String
      * @author Wang926454
@@ -23,7 +23,7 @@ public class EncrypBase64Util {
     }
 
     /**
-     * TODO：解密JDK1.8
+     * 解密JDK1.8
      * @param str
      * @return java.lang.String
      * @author Wang926454

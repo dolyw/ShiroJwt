@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * TODO：Permission
+ * Permission
  * @author Wang926454
  * @date 2018/8/31 14:41
  */

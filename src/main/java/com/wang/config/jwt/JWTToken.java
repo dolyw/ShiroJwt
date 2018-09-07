@@ -3,7 +3,7 @@ package com.wang.config.jwt;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
- * TODO：JWTToken
+ * JWTToken
  * @author Wang926454
  * @date 2018/8/30 14:06
  */

@@ -12,8 +12,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
- * TODO：Jedis配置，项目启动注入JedisPool
- * TODO: http://www.cnblogs.com/GodHeng/p/9301330.html
+ * Jedis配置，项目启动注入JedisPool
+ * http://www.cnblogs.com/GodHeng/p/9301330.html
  * @author Wang926454
  * @date 2018/9/5 10:35
  */

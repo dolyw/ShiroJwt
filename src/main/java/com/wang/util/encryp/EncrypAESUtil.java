@@ -14,7 +14,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 
 /**
- * TODO：AES加密解密工具类
+ * AES加密解密工具类
  * @author Wang926454
  * @date 2018/8/31 16:39
  */
@@ -31,7 +31,7 @@ public class EncrypAESUtil {
     private static final Logger logger = LoggerFactory.getLogger(EncrypAESUtil.class);
 
     /**
-     * TODO：加密
+     * 加密
      * @param str
      * @return java.lang.String
      * @author Wang926454
@@ -81,7 +81,7 @@ public class EncrypAESUtil {
     }
 
     /**
-     * TODO：解密
+     * 解密
      * @param str
      * @return java.lang.String
      * @author Wang926454

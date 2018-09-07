@@ -1,7 +1,7 @@
 package com.wang.model.common;
 
 /**
- * TODO：常量
+ * 常量
  * @author Wang926454
  * @date 2018/9/3 16:03
  */

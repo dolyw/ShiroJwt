@@ -1,7 +1,7 @@
 package com.wang.model.common;
 
 /**
- * TODO：
+ * ResponseBean
  * @author Wang926454
  * @date 2018/8/30 11:39
  */

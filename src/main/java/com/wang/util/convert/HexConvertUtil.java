@@ -3,14 +3,14 @@ package com.wang.util.convert;
 import com.wang.model.common.Constant;
 
 /**
- * TODO：进制转换
+ * 进制转换
  * @author Wang926454
  * @date 2018/8/31 17:23
  */
 public class HexConvertUtil {
 
     /**
-     * TODO：将二进制转换成16进制
+     * 将二进制转换成16进制
      * @param buff
      * @return java.lang.String
      * @author Wang926454
@@ -29,7 +29,7 @@ public class HexConvertUtil {
     }
 
     /**
-     * TODO：将16进制转换为二进制
+     * 将16进制转换为二进制
      * @param hexStr
      * @return byte[]
      * @author Wang926454

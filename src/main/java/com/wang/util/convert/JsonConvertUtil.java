@@ -3,7 +3,7 @@ package com.wang.util.convert;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * TODO：Json和Object的互相转换，转List必须Json最外层加[]，转Object，Json最外层不要加[]
+ * Json和Object的互相转换，转List必须Json最外层加[]，转Object，Json最外层不要加[]
  * @author Wang926454
  * @date 2018/8/9 15:37
  */

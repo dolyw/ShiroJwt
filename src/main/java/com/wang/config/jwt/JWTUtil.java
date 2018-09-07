@@ -11,7 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 /**
- * TODO：JAVA-JWT工具类
+ * JAVA-JWT工具类
  * @author Wang926454
  * @date 2018/8/30 11:45
  */
@@ -23,7 +23,7 @@ public class JWTUtil {
     // private static final long EXPIRE_TIME = 5 * 60 * 1000;
 
     /**
-     * TODO：校验token是否正确
+     * 校验token是否正确
      * @param token Token
 	 * @param secret 私钥
      * @return boolean 是否正确
@@ -44,7 +44,7 @@ public class JWTUtil {
     }
 
     /**
-     * TODO：获得Token中的信息无需secret解密也能获得
+     * 获得Token中的信息无需secret解密也能获得
      * @param token
      * @return java.lang.String Token中包含的帐号
      * @author Wang926454
@@ -61,7 +61,7 @@ public class JWTUtil {
     }
 
     /**
-     * TODO：生成签名
+     * 生成签名
      * @param account 帐号
 	 * @param secret 私钥
      * @return java.lang.String 返回加密的Token

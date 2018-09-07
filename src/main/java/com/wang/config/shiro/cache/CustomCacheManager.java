@@ -5,7 +5,7 @@ import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
 
 /**
- * TODO：重写Shiro缓存管理器
+ * 重写Shiro缓存管理器
  * @author Wang926454
  * @date 2018/9/4 17:41
  */

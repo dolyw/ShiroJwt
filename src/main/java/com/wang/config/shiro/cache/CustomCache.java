@@ -11,14 +11,14 @@ import org.apache.shiro.cache.CacheException;
 import java.util.*;
 
 /**
- * TODO：重写Shiro的Cache保存读取
+ * 重写Shiro的Cache保存读取
  * @author Wang926454
  * @date 2018/9/4 17:31
  */
 public class CustomCache<K,V> implements Cache<K,V> {
 
     /**
-     * TODO：缓存的key名称获取为shiro:cache:account
+     * 缓存的key名称获取为shiro:cache:account
      * @param key
      * @return java.lang.String
      * @author Wang926454

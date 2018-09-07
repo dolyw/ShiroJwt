@@ -3,14 +3,14 @@ package com.wang.util.convert;
 import java.io.*;
 
 /**
- * TODO：序列化工具(JDK)(也可以使用Protobuf自行百度)
+ * 序列化工具(JDK)(也可以使用Protobuf自行百度)
  * @author Wang926454
  * @date 2018/9/4 15:13
  */
 public class SerializableUtil {
 
     /**
-     * TODO：序列化
+     * 序列化
      * @param object
      * @return byte[]
      * @author Wang926454
@@ -43,7 +43,7 @@ public class SerializableUtil {
     }
 
     /**
-     * TODO：反序列化
+     * 反序列化
      * @param bytes
      * @return java.lang.Object
      * @author Wang926454

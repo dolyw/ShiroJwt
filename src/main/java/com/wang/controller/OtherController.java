@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * TODO：
  *
  * @author Wang926454
  * @date 2018/9/3 11:12
@@ -18,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class OtherController {
     /**
-     * TODO：401没有权限异常
+     * 401没有权限异常
      * @param
      * @return com.wang.model.common.ResponseBean
      * @author Wang926454

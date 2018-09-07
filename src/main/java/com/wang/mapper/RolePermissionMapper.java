@@ -4,7 +4,7 @@ import com.wang.model.RolePermissionDto;
 import tk.mybatis.mapper.common.Mapper;
 
 /**
- * TODO：RolePermissionMapper
+ * RolePermissionMapper
  * @author Wang926454
  * @date 2018/8/31 14:43
  */
