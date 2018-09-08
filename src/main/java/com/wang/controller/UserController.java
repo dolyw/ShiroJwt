@@ -19,10 +19,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * UserController
@@ -67,12 +64,23 @@ public class UserController {
     @GetMapping("/online")
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
     public ResponseBean online(){
-        List<UserDto> userDtos = new ArrayList<UserDto>();
+        List<Object> userDtos = new ArrayList<Object>();
         // 查询所有Redis键
         Set<String> keys = JedisUtil.keysS(Constant.PREFIX_SHIRO_ACCESS + "*");
         for (String key : keys) {
             if(JedisUtil.exists(key)){
-                userDtos.add((UserDto) JedisUtil.getObject(key));
+                Map<String, Object> userDto = new HashMap<String, Object>();
+                // 根据:分割key，获取最后一个字符(帐号)
+                String[] strArray = key.split(":");
+                UserDto userDtoTemp = new UserDto();
+                userDtoTemp.setAccount(strArray[strArray.length - 1]);
+                userDtoTemp = userService.selectOne(userDtoTemp);
+                userDto.put("id", userDtoTemp.getId());
+                userDto.put("account", userDtoTemp.getAccount());
+                userDto.put("username", userDtoTemp.getUsername());
+                userDto.put("regTime", userDtoTemp.getRegTime());
+                userDto.put("loginTime", JedisUtil.getObject(key));
+                userDtos.add(userDto);
             }
         }
         if(userDtos == null || userDtos.size() <= 0){
@@ -218,9 +226,15 @@ public class UserController {
             // 获取Token过期时间，读取配置文件
             PropertiesUtil.readProperties("config.properties");
             String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
-            // 设置Redis中的Token
-            JedisUtil.setObject(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount(), userDtoTemp, Integer.parseInt(tokenExpireTime));
-            return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), key));
+            // 设置Redis中的Token，保存当前时间戳，直接设置，会直接覆盖已有的Redis键数据
+            String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+            JedisUtil.setObject(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount(), currentTimeMillis, Integer.parseInt(tokenExpireTime));
+            // 清除可能存在的Shiro权限信息缓存
+            if(JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount())){
+                JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount());
+            }
+            // 返回Tolen，设置Token的时间戳
+            return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), currentTimeMillis));
         } else {
             throw new UnauthorizedException("帐号或密码错误(Account or Password Error.)");
         }

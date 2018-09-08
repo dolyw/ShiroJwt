@@ -62,7 +62,7 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        String account = JWTUtil.getAccount(principals.toString());
+        String account = JWTUtil.getClaim(principals.toString(), "account");
         UserDto userDto = new UserDto();
         userDto.setAccount(account);
         // 查询用户角色
@@ -89,7 +89,7 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         String token = (String) auth.getCredentials();
         // 解密获得account，用于和数据库进行对比
-        String account = JWTUtil.getAccount(token);
+        String account = JWTUtil.getClaim(token, "account");
         // 帐号为空
         if (StringUtils.isBlank(account)) {
             throw new AuthenticationException("Token中帐号为空(The account in Token is empty.)");
@@ -101,12 +101,15 @@ public class UserRealm extends AuthorizingRealm {
         if (userDto == null) {
             throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
-        // 密码进行AES解密
-        String key = EncrypAESUtil.Decryptor(userDto.getPassword());
-        // 开始Token认证以及认证Redis中是否存在Token
-        if (!JWTUtil.verify(token, key) || !JedisUtil.exists(Constant.PREFIX_SHIRO_ACCESS + account)) {
-            throw new AuthenticationException("Token过期或者不正确(Token expired or incorrect.)");
+        // 开始认证，要Token认证通过，且Redis中存在Token，且两个时间戳一致
+        if(JWTUtil.verify(token) && JedisUtil.exists(Constant.PREFIX_SHIRO_ACCESS + account)){
+            // Redis的时间戳
+            String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_ACCESS + account).toString();
+            // 获取Token时间戳，与Redis的时间戳对比
+            if(JWTUtil.getClaim(token, "currentTimeMillis").equals(currentTimeMillisRedis)){
+                return new SimpleAuthenticationInfo(token, token, "userRealm");
+            }
         }
-        return new SimpleAuthenticationInfo(token, token, "userRealm");
+        throw new AuthenticationException("Token已过期(Token expired or incorrect.)");
     }
 }

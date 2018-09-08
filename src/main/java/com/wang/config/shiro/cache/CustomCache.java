@@ -25,7 +25,7 @@ public class CustomCache<K,V> implements Cache<K,V> {
      * @date 2018/9/4 18:33
      */
     private String getKey(Object key){
-        return Constant.PREFIX_SHIRO_CACHE + JWTUtil.getAccount(key.toString());
+        return Constant.PREFIX_SHIRO_CACHE + JWTUtil.getClaim(key.toString(), "account");
     }
 
     /**
@@ -33,6 +33,9 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public Object get(Object key) throws CacheException {
+        if(!JedisUtil.exists(this.getKey(key))){
+            return null;
+        }
         return JedisUtil.getObject(this.getKey(key));
     }
 
@@ -46,7 +49,6 @@ public class CustomCache<K,V> implements Cache<K,V> {
         String shiroCacheExpireTime = PropertiesUtil.getProperty("shiroCacheExpireTime");
         // 设置Redis的Shiro缓存
         return JedisUtil.setObject(this.getKey(key), value, Integer.parseInt(shiroCacheExpireTime));
-
     }
 
     /**
@@ -54,6 +56,9 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public Object remove(Object key) throws CacheException {
+        if(!JedisUtil.exists(this.getKey(key))){
+            return null;
+        }
         JedisUtil.delKey(this.getKey(key));
         return null;
     }

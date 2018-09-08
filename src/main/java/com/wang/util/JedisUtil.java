@@ -1,5 +1,6 @@
 package com.wang.util;
 
+import com.wang.exception.CustomException;
 import com.wang.model.common.Constant;
 import com.wang.util.common.StringUtil;
 import com.wang.util.common.SerializableUtil;
@@ -54,9 +55,8 @@ public class JedisUtil {
                 return null;
             }
         } catch (Exception e) {
-            logger.error("获取Jedis实例异常:" + e.getMessage());
+            throw new CustomException("获取Jedis资源异常:" + e.getMessage());
         }
-        return null;
     }
 
     /**
@@ -70,7 +70,7 @@ public class JedisUtil {
         try {
             jedisPool.close();
         }catch (Exception e){
-            logger.error("释放Jedis资源异常" + e.getMessage());
+            throw new CustomException("释放Jedis资源异常:" + e.getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ public class JedisUtil {
                 return SerializableUtil.unserializable(bytes);
             }
         } catch (Exception e) {
-            logger.error("getObject获取redis键值异常:key=" + key + " cause:" + e.getMessage());
+            throw new CustomException("获取Redis键值getObject方法异常:key=" + key + " cause=" + e.getMessage());
         } finally {
             if(jedis != null) {
                 jedis.close();
@@ -113,13 +113,12 @@ public class JedisUtil {
             jedis = jedisPool.getResource();
             return jedis.set(key.getBytes(), SerializableUtil.serializable(value));
         } catch (Exception e) {
-            logger.error("setObject设置redis键值异常:key=" + key + " value=" + value + " cause:" + e.getMessage());
+            throw new CustomException("设置Redis键值setObject方法异常:key=" + key + " value=" + value + " cause=" + e.getMessage());
         } finally {
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return null;
     }
 
     /**
@@ -142,13 +141,12 @@ public class JedisUtil {
             }
             return result;
         } catch (Exception e) {
-            logger.error("setObject设置redis键值异常:key=" + key + " value=" + value + " cause:" + e.getMessage());
+            throw new CustomException("设置Redis键值setObject方法异常:key=" + key + " value=" + value + " cause=" + e.getMessage());
         } finally {
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return result;
     }
 
     /**
@@ -164,13 +162,12 @@ public class JedisUtil {
             jedis = jedisPool.getResource();
             return jedis.get(key);
         } catch (Exception e) {
-            logger.error("getJson获取redis键值异常:key=" + key + " cause:" + e.getMessage());
+            throw new CustomException("获取Redis键值getJson方法异常:key=" + key + " cause=" + e.getMessage());
         } finally {
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return null;
     }
 
     /**
@@ -187,13 +184,12 @@ public class JedisUtil {
             jedis = jedisPool.getResource();
             return jedis.set(key, value);
         } catch (Exception e) {
-            logger.error("setJson设置redis键值异常:key=" + key + " value=" + value + " cause:" + e.getMessage());
+            throw new CustomException("设置Redis键值setJson方法异常:key=" + key + " value=" + value + " cause=" + e.getMessage());
         } finally {
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return null;
     }
 
     /**
@@ -216,13 +212,12 @@ public class JedisUtil {
             }
             return result;
         } catch (Exception e) {
-            logger.error("setJson设置redis键值异常:key=" + key + " value=" + value + " cause:" + e.getMessage());
+            throw new CustomException("设置Redis键值setJson方法异常:key=" + key + " value=" + value + " cause=" + e.getMessage());
         } finally {
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return result;
     }
 
     /**
@@ -238,13 +233,12 @@ public class JedisUtil {
             jedis = jedisPool.getResource();
             return jedis.del(key.getBytes());
         }catch(Exception e) {
-            logger.error("删除key:" + key + "异常:" + e.getMessage());
+            throw new CustomException("删除Redis的键delKey方法异常:key=" + key + " cause=" + e.getMessage());
         }finally{
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return null;
     }
 
     /**
@@ -260,13 +254,12 @@ public class JedisUtil {
             jedis = jedisPool.getResource();
             return jedis.exists(key.getBytes());
         }catch(Exception e) {
-            logger.error("查询key:" + key + "异常:" + e.getMessage());
+            throw new CustomException("查询Redis的键是否存在exists方法异常:key=" + key + " cause=" + e.getMessage());
         }finally{
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return null;
     }
 
     /**
@@ -282,13 +275,12 @@ public class JedisUtil {
             jedis = jedisPool.getResource();
             return jedis.keys(key);
         }catch(Exception e) {
-            logger.error("模糊查询key值:" + key + "异常:" + e.getMessage());
+            throw new CustomException("模糊查询Redis的键集合keysS方法异常:key=" + key + " cause=" + e.getMessage());
         }finally{
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return null;
     }
 
     /**
@@ -304,12 +296,11 @@ public class JedisUtil {
             jedis = jedisPool.getResource();
             return jedis.keys(key.getBytes());
         }catch(Exception e) {
-            logger.error("模糊查询key值:" + key + "异常:" + e.getMessage());
+            throw new CustomException("模糊查询Redis的键集合keysB方法异常:key=" + key + " cause=" + e.getMessage());
         }finally{
             if(jedis != null) {
                 jedis.close();
             }
         }
-        return null;
     }
 }

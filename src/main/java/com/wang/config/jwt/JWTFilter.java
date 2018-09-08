@@ -1,5 +1,7 @@
 package com.wang.config.jwt;
 
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +41,23 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                 // 进行Shiro的登录UserRealm
                 this.executeLogin(request, response);
             } catch (Exception e) {
-                // 出现异常跳转到 /401，传递错误信息msg
-                Throwable throwable = e.getCause();
+                // 认证出现异常跳转到 /401，传递错误信息msg
                 String msg = e.getMessage();
-                if(throwable != null) {
-                    msg = throwable.getMessage();
+                // 获取应用异常(该Cause是导致抛出此throwable(异常)的throwable(异常))
+                Throwable throwable = e.getCause();
+                if(throwable != null && throwable instanceof SignatureVerificationException ){
+                    // 该异常为JWT的Token验证密钥不正确
+                    // throw (SignatureVerificationException) throwable;
+                    msg = "Token或者密钥不正确(" + throwable.getMessage() + ")";
+                } else if(throwable != null && throwable instanceof TokenExpiredException){
+                    // 该异常为JWT的Token已过期
+                    msg = "Token已过期(" + throwable.getMessage() + ")";
+                } else{
+                    // 应用异常不为空
+                    if(throwable != null) {
+                        // 获取应用异常msg
+                        msg = throwable.getMessage();
+                    }
                 }
                 this.response401(request, response, msg);
             }

@@ -47,15 +47,20 @@ public class JedisConfig {
 
     @Bean
     public JedisPool redisPoolFactory(){
-        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxIdle(maxIdle);
-        jedisPoolConfig.setMaxWaitMillis(maxWait);
-        jedisPoolConfig.setMaxTotal(maxActive);
-        jedisPoolConfig.setMinIdle(minIdle);
-        // JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
-        JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, null);
-        logger.info("JedisPool注入成功!" + " Redis地址: " + host + ":" + port);
-        return jedisPool;
+        try {
+            JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+            jedisPoolConfig.setMaxIdle(maxIdle);
+            jedisPoolConfig.setMaxWaitMillis(maxWait);
+            jedisPoolConfig.setMaxTotal(maxActive);
+            jedisPoolConfig.setMinIdle(minIdle);
+            // JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
+            JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, null);
+            logger.info("初始化Redis连接池JedisPool成功!" + " Redis地址: " + host + ":" + port);
+            return jedisPool;
+        } catch (Exception e) {
+            logger.error("初始化Redis连接池JedisPool异常:" + e.getMessage());
+        }
+        return null;
     }
 
     public String getHost() {
