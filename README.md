@@ -19,6 +19,14 @@
 6. 将Jedis工具类与SpringBoot整合，启动时注入JedisPool连接池
 7. Redis中保存Token信息，做到JWT的可控性
 
+##### 关于Shiro + Java-JWT实现无状态鉴权
+```txt
+首先Post用户名与密码到user/login进行登入，如果成功返回一个加密Token，失败的话直接返回401错误，以后访问都带上这个Token即可
+鉴权流程主要是重写了Shiro的入口过滤器JWTFilter(BasicHttpAuthenticationFilter)，判断Header里面是否包含Authorization字段
+，有就进行Shiro的Token登录认证授权(用户访问每一个需要权限的网址请求必须在Header中添加Authorization字段)，没有就以游客直接
+访问(网址有权限管控的话，以游客访问就会被拦截)
+```
+
 ##### 关于AES-128 + Base64加密后当两个用户的密码相同时，会发现数据库中存在相同结构的密码
 ```txt
 Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，我采用AES-128 + Base64是以帐号+密码的形式进行加密，因为帐号具有唯
@@ -51,7 +59,7 @@ Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，�
 
 1. 数据库帐号密码默认为root，如有修改，请自行修改配置文件application.yml
 2. 解压后执行src\main\resources\sql\MySQL.sql脚本创建数据库和表
-3. Redis需要自行安装Redis服务，端口密码默认，启动服务后正常启动即可
+3. Redis需要自行安装Redis服务，端口密码默认
 4. SpringBoot直接启动即可，测试工具PostMan
 
 #### 使用说明
