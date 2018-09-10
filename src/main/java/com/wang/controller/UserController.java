@@ -2,7 +2,7 @@ package com.wang.controller;
 
 import com.wang.util.JedisUtil;
 import com.wang.exception.CustomException;
-import com.wang.exception.UnauthorizedException;
+import com.wang.exception.CustomUnauthorizedException;
 import com.wang.model.UserDto;
 import com.wang.model.common.Constant;
 import com.wang.model.common.ResponseBean;
@@ -121,7 +121,7 @@ public class UserController {
         userDtoTemp.setAccount(userDto.getAccount());
         userDtoTemp = userService.selectOne(userDtoTemp);
         if(userDtoTemp != null && StringUtils.isNotBlank(userDtoTemp.getPassword())){
-            throw new UnauthorizedException("该帐号已存在(Account exist.)");
+            throw new CustomUnauthorizedException("该帐号已存在(Account exist.)");
         }
         userDto.setRegTime(new Date());
         // 密码以帐号+密码的形式进行AES加密
@@ -217,7 +217,7 @@ public class UserController {
         userDtoTemp.setAccount(userDto.getAccount());
         userDtoTemp = userService.selectOne(userDtoTemp);
         if(userDtoTemp == null){
-            throw new UnauthorizedException("该帐号不存在(The account does not exist.)");
+            throw new CustomUnauthorizedException("该帐号不存在(The account does not exist.)");
         }
         // 密码进行AES解密
         String key = EncrypAESUtil.Decryptor(userDtoTemp.getPassword());
@@ -226,7 +226,7 @@ public class UserController {
             // 获取Token过期时间，读取配置文件
             PropertiesUtil.readProperties("config.properties");
             String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
-            // 设置Redis中的Token，保存当前时间戳，直接设置，会直接覆盖已有的Redis键数据
+            // 设置Redis中的Token，保存当前时间戳，直接设置即可(不用先删后设，会覆盖已有的Redis键数据)
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
             JedisUtil.setObject(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount(), currentTimeMillis, Integer.parseInt(tokenExpireTime));
             // 清除可能存在的Shiro权限信息缓存
@@ -236,7 +236,7 @@ public class UserController {
             // 返回Tolen，设置Token的时间戳
             return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), currentTimeMillis));
         } else {
-            throw new UnauthorizedException("帐号或密码错误(Account or Password Error.)");
+            throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");
         }
     }
 

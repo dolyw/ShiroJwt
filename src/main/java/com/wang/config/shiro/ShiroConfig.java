@@ -1,6 +1,6 @@
 package com.wang.config.shiro;
 
-import com.wang.config.jwt.JWTFilter;
+import com.wang.config.shiro.jwt.JWTFilter;
 import com.wang.config.shiro.cache.CustomCacheManager;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -44,7 +44,7 @@ public class ShiroConfig {
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
         manager.setSubjectDAO(subjectDAO);
-        // 设置自定义缓存
+        // 设置自定义Cache缓存
         manager.setCacheManager(new CustomCacheManager());
         return manager;
     }
@@ -70,7 +70,7 @@ public class ShiroConfig {
         Map<String, String> filterRuleMap = new HashMap<>(16);
         // 所有请求通过我们自己的JWTFilter
         filterRuleMap.put("/**", "jwt");
-        // 访问401和404页面不通过我们的Filter
+        // 设置公开地址/401(访问/401不通过我们的Filter，谁都可以访问)
         filterRuleMap.put("/401", "anon");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;

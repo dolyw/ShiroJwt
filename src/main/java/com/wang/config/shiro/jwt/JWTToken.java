@@ -1,4 +1,4 @@
-package com.wang.config.jwt;
+package com.wang.config.shiro.jwt;
 
 import org.apache.shiro.authc.AuthenticationToken;
 

@@ -1,7 +1,7 @@
 package com.wang.controller;
 
 import com.wang.exception.CustomException;
-import com.wang.exception.UnauthorizedException;
+import com.wang.exception.CustomUnauthorizedException;
 import com.wang.model.common.ResponseBean;
 import org.apache.shiro.ShiroException;
 import org.springframework.http.HttpStatus;
@@ -34,8 +34,8 @@ public class ExceptionController {
      * @return
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseBean handle401(UnauthorizedException e) {
+    @ExceptionHandler(CustomUnauthorizedException.class)
+    public ResponseBean handle401(CustomUnauthorizedException e) {
         return new ResponseBean(401, "无权访问(Unauthorized):" + e.getMessage(), null);
     }
 

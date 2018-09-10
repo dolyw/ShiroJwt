@@ -13,30 +13,31 @@
 
 1. RESTful API
 2. Maven集成Mybatis Geneator
-3. 密码加密(未使用Shiro自带的MD5 + 盐的方式)，采用AES-128 + Base64的方式
-4. 集成Redis(Jedis)，重写Shiro缓存机制(Redis)
-5. 将Jedis工具类与SpringBoot整合，启动时注入JedisPool连接池
-6. Redis中保存Token信息，做到JWT的可控性
+3. Shiro + Java-JWT实现无状态鉴权
+4. 密码加密(未使用Shiro自带的MD5 + 盐的方式)，采用AES-128 + Base64的方式
+5. 集成Redis(Jedis)，重写Shiro缓存机制(Redis)
+6. 将Jedis工具类与SpringBoot整合，启动时注入JedisPool连接池
+7. Redis中保存Token信息，做到JWT的可控性
 
 ##### 关于AES-128 + Base64加密后当两个用户的密码相同时，会发现数据库中存在相同结构的密码
 ```txt
-Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，我采用AES-128 + Base64是以帐号+密码的形式进行加密，因为帐号具有唯一
-性，所以也不会出现相同结构密码这个问题
+Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，我采用AES-128 + Base64是以帐号+密码的形式进行加密，因为帐号具有唯
+一性，所以也不会出现相同结构密码这个问题
 ```
 
 ##### 关于将Jedis工具类与SpringBoot整合
 ```txt
-本来是直接将JedisUtil注入为Bean，每次使用直接@Autowired注入使用即可，但是在重写Shiro的CustomCache无法注入JedisUtil，所以就
-改成静态注入JedisPool连接池，JedisUtil工具类还是直接调用静态方法，无需@Autowired注入
+本来是直接将JedisUtil注入为Bean，每次使用直接@Autowired注入使用即可，但是在重写Shiro的CustomCache无法注入JedisUtil，所以
+就改成静态注入JedisPool连接池，JedisUtil工具类还是直接调用静态方法，无需@Autowired注入
 ```
 
 ##### 关于Redis中保存Token信息，做到JWT的可控性
 ```txt
-登录认证通过后返回Token信息(在Token中保存当前的时间戳和帐号)，同时在Redis中设置一条以帐号为Key，Value为当前时间戳(登录时间)的
-和Token过期时间一样的数据，现在认证时必须Token没失效以及Redis中有存在当前帐号的Key数据并且时间戳和Token信息中时间戳一致才算认
-证通过，这样可以做到JWT的可控性，如果重新获取了新的Token，旧的Token就认证不了，因为Redis中的时间戳只和最新的Token信息中携带的
-时间戳一致，每个用户只能使用最新的Token认证，Redis中的以帐号为Key，Value为当前时间戳的数据可以用来判断用户是否在线，如果删除某
-个Value数据，那这个Token之后也无法通过认证了，就相当于控制了用户的登录，可以剔除用户
+登录认证通过后返回Token信息(在Token中保存当前的时间戳和帐号)，同时在Redis中设置一条以帐号为Key，Value为当前时间戳(登录时间)
+的和Token过期时间一样的数据，现在认证时必须Token没失效以及Redis中有存在当前帐号的Key数据并且时间戳和Token信息中时间戳一致才
+算认证通过，这样可以做到JWT的可控性，如果重新获取了新的Token，旧的Token就认证不了，因为Redis中的时间戳只和最新的Token信息中
+携带的时间戳一致，每个用户只能使用最新的Token认证，Redis中的以帐号为Key，Value为当前时间戳的数据可以用来判断用户是否在线，如
+果删除某个Value数据，那这个Token之后也无法通过认证了，就相当于控制了用户的登录，可以剔除用户
 ```
 
 #### 软件架构

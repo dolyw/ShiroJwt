@@ -1,4 +1,4 @@
-package com.wang.config.jwt;
+package com.wang.config.shiro.jwt;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
@@ -41,16 +41,17 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                 // 进行Shiro的登录UserRealm
                 this.executeLogin(request, response);
             } catch (Exception e) {
-                // 认证出现异常跳转到 /401，传递错误信息msg
+                // 认证出现异常跳转到/401，传递错误信息msg
                 String msg = e.getMessage();
                 // 获取应用异常(该Cause是导致抛出此throwable(异常)的throwable(异常))
                 Throwable throwable = e.getCause();
                 if(throwable != null && throwable instanceof SignatureVerificationException ){
-                    // 该异常为JWT的Token验证密钥不正确
+                    // 该异常为JWT的Token认证失败(Token或者密钥不正确)
                     // throw (SignatureVerificationException) throwable;
                     msg = "Token或者密钥不正确(" + throwable.getMessage() + ")";
                 } else if(throwable != null && throwable instanceof TokenExpiredException){
                     // 该异常为JWT的Token已过期
+                    // TODO: 此处为进行判断refreshToken是否过期，未过期就进行正常访问且返回新的accessToken
                     msg = "Token已过期(" + throwable.getMessage() + ")";
                 } else{
                     // 应用异常不为空
@@ -59,14 +60,14 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                         msg = throwable.getMessage();
                     }
                 }
-                this.response401(request, response, msg);
+                this.forward401(request, response, msg);
             }
         }
         return true;
     }
 
     /**
-     * 检测header里面是否包含Authorization字段，有就登录
+     * 检测Header里面是否包含Authorization字段，有就进行Token登录认证授权
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
@@ -76,23 +77,23 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
-     * 登录
+     * 进行Token登录认证授权
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String authorization = httpServletRequest.getHeader("Authorization");
         JWTToken token = new JWTToken(authorization);
-        // 提交给UserRealm进行登入，如果错误他会抛出异常并被捕获
+        // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获
         this.getSubject(request, response).login(token);
         // 如果没有抛出异常则代表登入成功，返回true
         return true;
     }
 
     /**
-     * 将非法请求跳转到 /401
+     * 将非法请求转发到/401
      */
-    private void response401(ServletRequest req, ServletResponse resp, String msg) {
+    private void forward401(ServletRequest req, ServletResponse resp, String msg) {
         try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) req;
             HttpServletResponse httpServletResponse = (HttpServletResponse) resp;

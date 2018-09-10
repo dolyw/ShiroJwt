@@ -1,6 +1,6 @@
 package com.wang.util;
 
-import com.wang.exception.UnauthorizedException;
+import com.wang.exception.CustomUnauthorizedException;
 import com.wang.util.common.Base64ConvertUtil;
 import com.wang.util.common.HexConvertUtil;
 import com.wang.util.common.PropertiesUtil;
@@ -62,22 +62,22 @@ public class EncrypAESUtil {
             return Base64ConvertUtil.encode(HexConvertUtil.parseByte2HexStr(cipherByte));
         } catch (NoSuchAlgorithmException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (UnsupportedEncodingException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("Bsae64加密异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("Bsae64加密异常:" + e.getMessage());
         } catch (NoSuchPaddingException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (InvalidKeyException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
         } catch (IllegalBlockSizeException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("加密异常，密钥有误:" + e.getMessage());
+            throw new CustomUnauthorizedException("加密异常，密钥有误:" + e.getMessage());
         } catch (BadPaddingException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("加密异常，密钥有误:" + e.getMessage());
+            throw new CustomUnauthorizedException("加密异常，密钥有误:" + e.getMessage());
         }
     }
 
@@ -110,22 +110,22 @@ public class EncrypAESUtil {
             return new String(cipherByte);
         } catch (NoSuchAlgorithmException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (UnsupportedEncodingException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("Bsae64加密异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("Bsae64加密异常:" + e.getMessage());
         } catch (NoSuchPaddingException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("getInstance()方法异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (InvalidKeyException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
         } catch (IllegalBlockSizeException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("解密异常，密钥有误:" + e.getMessage());
+            throw new CustomUnauthorizedException("解密异常，密钥有误:" + e.getMessage());
         } catch (BadPaddingException e){
             logger.error(e.getMessage());
-            throw new UnauthorizedException("解密异常，密钥有误:" + e.getMessage());
+            throw new CustomUnauthorizedException("解密异常，密钥有误:" + e.getMessage());
         }
     }
 }
