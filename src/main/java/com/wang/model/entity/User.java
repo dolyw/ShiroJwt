@@ -1,5 +1,7 @@
 package com.wang.model.entity;
 
+import com.wang.model.common.BaseDto;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
@@ -10,7 +12,7 @@ import javax.persistence.*;
  * @date 2018/8/31 14:43
  */
 @Table(name = "user")
-public class User implements Serializable {
+public class User extends BaseDto implements Serializable {
 
     private static final long serialVersionUID = 3342723124953988435L;
 

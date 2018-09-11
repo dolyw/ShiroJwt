@@ -44,11 +44,11 @@ public class Constant {
     /**
      * redis-key-前缀-shiro:access_token:
      */
-    public final static String PREFIX_SHIRO_ACCESS = "shiro:access_token:";
+    public final static String PREFIX_SHIRO_ACCESS_TOKEN = "shiro:access_token:";
 
     /**
      * redis-key-前缀-shiro:refresh_token:
      */
-    public final static String PREFIX_SHIRO_REFRESH = "shiro:refresh_token:";
+    public final static String PREFIX_SHIRO_REFRESH_TOKEN = "shiro:refresh_token:";
 
 }

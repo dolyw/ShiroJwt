@@ -1,5 +1,7 @@
 package com.wang.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.wang.util.JedisUtil;
 import com.wang.exception.CustomException;
 import com.wang.exception.CustomUnauthorizedException;
@@ -46,12 +48,17 @@ public class UserController {
      */
     @GetMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public ResponseBean user(){
+    public ResponseBean user(UserDto userDto){
+        PageHelper.startPage(userDto.getPage(), userDto.getRows());
         List<UserDto> userDtos = userService.selectAll();
+        PageInfo<UserDto> selectPage = new PageInfo<UserDto>(userDtos);
         if(userDtos == null || userDtos.size() <= 0){
             throw new CustomException("查询失败(Query Failure)");
         }
-        return new ResponseBean(200, "查询成功(Query was successful)", userDtos);
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        map.put("count", selectPage.getTotal());
+        map.put("data", selectPage.getList());
+        return new ResponseBean(200, "查询成功(Query was successful)", map);
     }
 
     /**
@@ -66,7 +73,7 @@ public class UserController {
     public ResponseBean online(){
         List<Object> userDtos = new ArrayList<Object>();
         // 查询所有Redis键
-        Set<String> keys = JedisUtil.keysS(Constant.PREFIX_SHIRO_ACCESS + "*");
+        Set<String> keys = JedisUtil.keysS(Constant.PREFIX_SHIRO_REFRESH_TOKEN + "*");
         for (String key : keys) {
             if(JedisUtil.exists(key)){
                 Map<String, Object> userDto = new HashMap<String, Object>();
@@ -195,8 +202,8 @@ public class UserController {
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
     public ResponseBean deleteOnline(@PathVariable("id") Integer id){
         UserDto userDto = userService.selectByPrimaryKey(id);
-        if(JedisUtil.exists(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount())){
-            if(JedisUtil.delKey(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount()) > 0){
+        if(JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount())){
+            if(JedisUtil.delKey(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount()) > 0){
                 return new ResponseBean(200, "剔除成功(Delete Success)", null);
             }
         }
@@ -223,16 +230,16 @@ public class UserController {
         String key = EncrypAESUtil.Decryptor(userDtoTemp.getPassword());
         // 因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
         if (key.equals(userDto.getAccount() + userDto.getPassword())) {
+            // 清除可能存在的Shiro权限信息缓存
+            if(JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount())){
+                JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount());
+            }
             // 获取Token过期时间，读取配置文件
             PropertiesUtil.readProperties("config.properties");
             String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
             // 设置Redis中的Token，保存当前时间戳，直接设置即可(不用先删后设，会覆盖已有的Redis键数据)
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-            JedisUtil.setObject(Constant.PREFIX_SHIRO_ACCESS + userDto.getAccount(), currentTimeMillis, Integer.parseInt(tokenExpireTime));
-            // 清除可能存在的Shiro权限信息缓存
-            if(JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount())){
-                JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount());
-            }
+            JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(tokenExpireTime));
             // 返回Tolen，设置Token的时间戳
             return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), currentTimeMillis));
         } else {

@@ -14,11 +14,11 @@ public class BaseDto implements Serializable {
 
     /** 页数 */
     @Transient
-    private int page;
+    private Integer page;
 
     /** 每页条数 */
     @Transient
-    private int rows;
+    private Integer rows;
 
     /** 排序的列名 */
     @Transient
@@ -28,19 +28,19 @@ public class BaseDto implements Serializable {
     @Transient
     private String sord;
 
-    public int getPage() {
+    public Integer getPage() {
         return page;
     }
 
-    public void setPage(int page) {
+    public void setPage(Integer page) {
         this.page = page;
     }
 
-    public int getRows() {
+    public Integer getRows() {
         return rows;
     }
 
-    public void setRows(int rows) {
+    public void setRows(Integer rows) {
         this.rows = rows;
     }
 
