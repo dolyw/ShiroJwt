@@ -2,6 +2,10 @@ package com.wang.config.shiro.jwt;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.wang.model.common.Constant;
+import com.wang.util.JWTUtil;
+import com.wang.util.JedisUtil;
+import com.wang.util.common.PropertiesUtil;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +55,37 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                     msg = "Token或者密钥不正确(" + throwable.getMessage() + ")";
                 } else if(throwable != null && throwable instanceof TokenExpiredException){
                     // 该异常为JWT的Token已过期
-                    // TODO: 此处为进行判断refreshToken是否过期，未过期就进行正常访问且返回新的accessToken
+                    // TODO: 此处为Token(AccessToken)刷新，进行判断RefreshToken是否过期，未过期就进行正常访问且返回新的Token(AccessToken)
+                    String token = this.getToken(request, response);
+                    String account = JWTUtil.getClaim(token, "account");
+                    if(JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
+                        // Redis(refreshToken)还存在
+                        String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
+                        // 获取Token时间戳，与Redis(refreshToken)的时间戳对比
+                        if(JWTUtil.getClaim(token, "currentTimeMillis").equals(currentTimeMillisRedis)){
+                            // 通过说明该Token时间戳与Redis(refreshToken)时间戳一致，进行Token刷新
+                            String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+                            // 获取Redis(refreshToken)剩余过期时间
+                            Long refreshTokenExpireTimeRedis = JedisUtil.getExpireTime(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account);
+                            // 获取Token(accessToken)过期时间，读取配置文件
+                            PropertiesUtil.readProperties("config.properties");
+                            String accessTokenExpireTime = PropertiesUtil.getProperty("accessTokenExpireTime");
+                            // 设置Redis(refreshToken)中的时间戳为最新Token的时间戳，且剩余过期时间加上一个Token(accessToken)过期时间
+                            JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account, currentTimeMillis, refreshTokenExpireTimeRedis.intValue() + Integer.parseInt(accessTokenExpireTime));
+                            // 刷新Token
+                            token = JWTUtil.sign(account, currentTimeMillis);
+                            // 将Token存放在Response的Header中返回
+                            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+                            httpServletResponse.setHeader("Authorization", token);
+                            httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
+                            // 进行Shiro的登录UserRealm
+                            JWTToken JToken = new JWTToken(token);
+                            // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获
+                            this.getSubject(request, response).login(JToken);
+                            // 如果没有抛出异常则代表登入成功，返回true
+                            return true;
+                        }
+                    }
                     msg = "Token已过期(" + throwable.getMessage() + ")";
                 } else{
                     // 应用异常不为空
@@ -81,13 +115,20 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String authorization = httpServletRequest.getHeader("Authorization");
-        JWTToken token = new JWTToken(authorization);
+        JWTToken token = new JWTToken(this.getToken(request, response));
         // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获
         this.getSubject(request, response).login(token);
         // 如果没有抛出异常则代表登入成功，返回true
         return true;
+    }
+
+    /**
+     * 获取Token
+     */
+    private String getToken(ServletRequest request, ServletResponse response) {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        String token = httpServletRequest.getHeader("Authorization");
+        return token;
     }
 
     /**

@@ -234,13 +234,13 @@ public class UserController {
             if(JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount())){
                 JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount());
             }
-            // 获取Token过期时间，读取配置文件
+            // 获取Token(refreshToken)过期时间，读取配置文件
             PropertiesUtil.readProperties("config.properties");
-            String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
-            // 设置Redis中的Token，保存当前时间戳，直接设置即可(不用先删后设，会覆盖已有的Redis键数据)
+            String refreshTokenExpireTime = PropertiesUtil.getProperty("refreshTokenExpireTime");
+            // 设置Redis(refreshToken)，保存当前时间戳，直接设置即可(不用先删后设，会覆盖已有的Redis(refreshToken)键数据)
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-            JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(tokenExpireTime));
-            // 返回Tolen，设置Token的时间戳
+            JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
+            // 返回Tolen(accessToken)，设置Token(accessToken)的时间戳
             return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), currentTimeMillis));
         } else {
             throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");

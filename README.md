@@ -9,6 +9,8 @@
 3. 感谢袋🐴饲养员的springboot(七).springboot整合jedis实现redis缓存:[http://www.cnblogs.com/GodHeng/p/9301330.html](http://www.cnblogs.com/GodHeng/p/9301330.html)
 4. 感谢W_Z_W_888的spring注入静态变量的三种方法及其注意事项:[https://blog.csdn.net/W_Z_W_888/article/details/79979103](https://blog.csdn.net/W_Z_W_888/article/details/79979103)
 5. 感谢天降风云的Vue2.0+ElementUI+PageHelper实现的表格分页:[https://blog.csdn.net/u012907049/article/details/70237457](https://blog.csdn.net/u012907049/article/details/70237457)
+6. 感谢yaxx的Vuejs之axios获取Http响应头:[https://segmentfault.com/a/1190000009125333](https://segmentfault.com/a/1190000009125333)
+7. 感谢Twilight的解决使用jwt刷新token带来的问题:[https://segmentfault.com/a/1190000013151506](https://segmentfault.com/a/1190000013151506)
 
 #### 项目介绍
 
@@ -18,7 +20,8 @@
 4. 密码加密(未使用Shiro自带的MD5 + 盐的方式)，采用AES-128 + Base64的方式
 5. 集成Redis(Jedis)，重写Shiro缓存机制(Redis)
 6. 将Jedis工具类与SpringBoot整合，启动时注入JedisPool连接池
-7. Redis中保存Token信息，做到JWT的可控性
+7. Redis中保存refreshToken信息，做到JWT的可控性
+8. Token刷新
 
 ##### 关于Shiro + Java-JWT实现无状态鉴权
 ```txt
@@ -47,6 +50,15 @@ Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，�
 算认证通过，这样可以做到JWT的可控性，如果重新获取了新的Token，旧的Token就认证不了，因为Redis中的时间戳只和最新的Token信息中
 携带的时间戳一致，每个用户只能使用最新的Token认证，Redis中的以帐号为Key，Value为当前时间戳的数据可以用来判断用户是否在线，如
 果删除某个Value数据，那这个Token之后也无法通过认证了，就相当于控制了用户的登录，可以剔除用户
+```
+
+##### 关于Token刷新
+```txt
+本身Token(AccessToken)的过期时间为5分钟(配置文件可配置)，RefreshToken过期时间为30分钟(配置文件可配置)，当登录后操作时间到
+了5分钟，Token(AccessToken)便会过期，再次带Token(AccessToken)访问JWT会抛出TokenExpiredException异常说明Token过期，开始
+Token(AccessToken)刷新，首先Redis查询RefreshToken是否存在，以及时间戳和过期Token所携带的时间戳是否一致，如果存在且一致就
+进行Token(AccessToken)刷新，且设置RefreshToken的过期时间为剩余过期时间加上一个Token(AccessToken)的过期时间，主要详情查看
+JWTFilter代码，最终将Token(AccessToken)存放在Response的Header中的Authorization返回
 ```
 
 #### 软件架构

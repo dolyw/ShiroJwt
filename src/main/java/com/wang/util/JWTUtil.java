@@ -76,12 +76,12 @@ public class JWTUtil {
      */
     public static String sign(String account, String currentTimeMillis) {
         try {
-            // 获取Token过期时间以及私钥，读取配置文件
+            // 获取获取Token(accessToken)过期时间以及私钥，读取配置文件
             PropertiesUtil.readProperties("config.properties");
-            String tokenExpireTime = PropertiesUtil.getProperty("tokenExpireTime");
+            String accessTokenExpireTime = PropertiesUtil.getProperty("accessTokenExpireTime");
             String secret = account + Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypJWTKey"));
             // 此处过期时间是以毫秒为单位，所以乘以1000
-            Date date = new Date(System.currentTimeMillis() + Long.parseLong(tokenExpireTime) * 1000);
+            Date date = new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpireTime) * 1000);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             // 附带account帐号信息
             return JWT.create()
