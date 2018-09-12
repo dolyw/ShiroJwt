@@ -12,7 +12,7 @@ import com.wang.service.IUserService;
 import com.wang.util.common.PropertiesUtil;
 import com.wang.util.EncrypAESUtil;
 import com.wang.util.JWTUtil;
-import org.apache.commons.lang3.StringUtils;
+import com.wang.util.common.StringUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -127,7 +127,7 @@ public class UserController {
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
         userDtoTemp = userService.selectOne(userDtoTemp);
-        if(userDtoTemp != null && StringUtils.isNotBlank(userDtoTemp.getPassword())){
+        if(userDtoTemp != null && StringUtil.isNotBlank(userDtoTemp.getPassword())){
             throw new CustomUnauthorizedException("该帐号已存在(Account exist.)");
         }
         userDto.setRegTime(new Date());

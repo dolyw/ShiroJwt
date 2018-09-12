@@ -10,7 +10,7 @@ import com.wang.model.RoleDto;
 import com.wang.model.UserDto;
 import com.wang.model.common.Constant;
 import com.wang.util.JWTUtil;
-import org.apache.commons.lang3.StringUtils;
+import com.wang.util.common.StringUtil;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -90,7 +90,7 @@ public class UserRealm extends AuthorizingRealm {
         // 解密获得account，用于和数据库进行对比
         String account = JWTUtil.getClaim(token, "account");
         // 帐号为空
-        if (StringUtils.isBlank(account)) {
+        if (StringUtil.isBlank(account)) {
             throw new AuthenticationException("Token中帐号为空(The account in Token is empty.)");
         }
         // 查询用户是否存在
