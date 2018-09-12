@@ -4,6 +4,8 @@ import com.wang.exception.CustomException;
 import com.wang.exception.CustomUnauthorizedException;
 import com.wang.model.common.ResponseBean;
 import org.apache.shiro.ShiroException;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class ExceptionController {
     /**
-     * 捕捉Shiro异常
+     * 捕捉所有Shiro异常
      * @param e
      * @return
      */
@@ -27,6 +29,30 @@ public class ExceptionController {
     @ExceptionHandler(ShiroException.class)
     public ResponseBean handle401(ShiroException e) {
         return new ResponseBean(401, "无权访问(Unauthorized):" + e.getMessage(), null);
+    }
+
+    /**
+     * 单独捕捉Shiro(UnauthorizedException)异常
+     * 该异常为访问有权限管控的请求而该用户没有所需权限所抛出的异常
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseBean handle401(UnauthorizedException e) {
+        return new ResponseBean(401, "无权访问(Unauthorized):当前Subject没有此请求所需权限(" + e.getMessage() + ")", null);
+    }
+
+    /**
+     * 单独捕捉Shiro(UnauthenticatedException)异常
+     * 该异常为以游客身份访问有权限管控的请求无法对匿名主体进行授权，而授权失败所抛出的异常
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthenticatedException.class)
+    public ResponseBean handle401(UnauthenticatedException e) {
+        return new ResponseBean(401, "无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)", null);
     }
 
     /**
