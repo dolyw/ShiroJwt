@@ -87,7 +87,7 @@ public class UserController {
                 userDto.put("account", userDtoTemp.getAccount());
                 userDto.put("username", userDtoTemp.getUsername());
                 userDto.put("regTime", userDtoTemp.getRegTime());
-                userDto.put("loginTime", JedisUtil.getObject(key));
+                userDto.put("loginTime", new Date(Long.parseLong(JedisUtil.getObject(key).toString())));
                 userDtos.add(userDto);
             }
         }
