@@ -2,6 +2,7 @@ package com.wang.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wang.model.common.BaseDto;
 import com.wang.util.JedisUtil;
 import com.wang.exception.CustomException;
 import com.wang.exception.CustomUnauthorizedException;
@@ -48,8 +49,8 @@ public class UserController {
      */
     @GetMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public ResponseBean user(UserDto userDto){
-        PageHelper.startPage(userDto.getPage(), userDto.getRows());
+    public ResponseBean user(BaseDto baseDto){
+        PageHelper.startPage(baseDto.getPage(), baseDto.getRows());
         List<UserDto> userDtos = userService.selectAll();
         PageInfo<UserDto> selectPage = new PageInfo<UserDto>(userDtos);
         if(userDtos == null || userDtos.size() <= 0){

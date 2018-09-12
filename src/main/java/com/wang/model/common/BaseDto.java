@@ -4,7 +4,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
- * 所有Dto的基类
+ * 分页排序通用Dto
  * @author Wang926454
  * @date 2018/9/10 10:10
  */
