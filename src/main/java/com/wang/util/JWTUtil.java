@@ -34,7 +34,7 @@ public class JWTUtil {
      */
     public static boolean verify(String token) {
         try {
-            // 获取Token私钥，读取配置文件
+            // 获取JWT私钥，读取配置文件
             PropertiesUtil.readProperties("config.properties");
             String secret = getClaim(token, "account") + Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypJWTKey"));
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -76,7 +76,7 @@ public class JWTUtil {
      */
     public static String sign(String account, String currentTimeMillis) {
         try {
-            // 获取获取Token(accessToken)过期时间以及私钥，读取配置文件
+            // 获取获取AccessToken过期时间以及JWT私钥，读取配置文件
             PropertiesUtil.readProperties("config.properties");
             String accessTokenExpireTime = PropertiesUtil.getProperty("accessTokenExpireTime");
             String secret = account + Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypJWTKey"));

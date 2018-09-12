@@ -100,11 +100,11 @@ public class UserRealm extends AuthorizingRealm {
         if (userDto == null) {
             throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
-        // 开始认证，要Token认证通过，且Redis中存在Token(refreshToken)，且两个时间戳一致
+        // 开始认证，要AccessToken认证通过，且Redis中存在RefreshToken，且两个Token时间戳一致
         if(JWTUtil.verify(token) && JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
-            // Redis(refreshToken)的时间戳
+            // 获取RefreshToken的时间戳
             String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
-            // 获取Token时间戳，与Redis(refreshToken)的时间戳对比
+            // 获取AccessToken时间戳，与RefreshToken的时间戳对比
             if(JWTUtil.getClaim(token, "currentTimeMillis").equals(currentTimeMillisRedis)){
                 return new SimpleAuthenticationInfo(token, token, "userRealm");
             }

@@ -62,7 +62,7 @@ public class UserController {
     }
 
     /**
-     * 查询Redis中的Token(在线用户)
+     * 查询Redis中的RefreshToken(在线用户)
      * @param 
      * @return com.wang.model.common.ResponseBean
      * @author Wang926454
@@ -234,13 +234,13 @@ public class UserController {
             if(JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount())){
                 JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount());
             }
-            // 获取Token(refreshToken)过期时间，读取配置文件
+            // 获取RefreshToken过期时间，读取配置文件
             PropertiesUtil.readProperties("config.properties");
             String refreshTokenExpireTime = PropertiesUtil.getProperty("refreshTokenExpireTime");
-            // 设置Redis(refreshToken)，保存当前时间戳，直接设置即可(不用先删后设，会覆盖已有的Redis(refreshToken)键数据)
+            // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
             JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
-            // 返回Tolen(accessToken)，设置Token(accessToken)的时间戳
+            // 返回AccessToken，时间戳为当前时间戳
             return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), currentTimeMillis));
         } else {
             throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");
