@@ -4,26 +4,42 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wang.util.common.Base64ConvertUtil;
-import com.wang.util.common.PropertiesUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * JAVA-JWT工具类
  * @author Wang926454
  * @date 2018/8/30 11:45
  */
+@Component
 public class JWTUtil {
 
     /**
      * 过期时间改为从配置文件获取
      */
+    private static String accessTokenExpireTime;
     // private static final long EXPIRE_TIME = 5 * 60 * 1000;
+
+    /**
+     * JWT认证加密私钥(Base64加密)
+     */
+    private static String encrypJWTKey;
+
+    @Value("${accessTokenExpireTime}")
+    public void setAccessTokenExpireTime(String accessTokenExpireTime) {
+        JWTUtil.accessTokenExpireTime = accessTokenExpireTime;
+    }
+
+    @Value("${encrypJWTKey}")
+    public void setEncrypJWTKey(String encrypJWTKey) {
+        JWTUtil.encrypJWTKey = encrypJWTKey;
+    }
 
     /**
      * 校验token是否正确
@@ -34,9 +50,8 @@ public class JWTUtil {
      */
     public static boolean verify(String token) {
         try {
-            // 获取JWT私钥，读取配置文件
-            PropertiesUtil.readProperties("config.properties");
-            String secret = getClaim(token, "account") + Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypJWTKey"));
+            // 帐号加JWT私钥解密
+            String secret = getClaim(token, "account") + Base64ConvertUtil.decode(encrypJWTKey);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
                     .build();
@@ -76,10 +91,8 @@ public class JWTUtil {
      */
     public static String sign(String account, String currentTimeMillis) {
         try {
-            // 获取获取AccessToken过期时间以及JWT私钥，读取配置文件
-            PropertiesUtil.readProperties("config.properties");
-            String accessTokenExpireTime = PropertiesUtil.getProperty("accessTokenExpireTime");
-            String secret = account + Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypJWTKey"));
+            // 帐号加JWT私钥加密
+            String secret = account + Base64ConvertUtil.decode(encrypJWTKey);
             // 此处过期时间是以毫秒为单位，所以乘以1000
             Date date = new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpireTime) * 1000);
             Algorithm algorithm = Algorithm.HMAC256(secret);

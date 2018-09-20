@@ -25,7 +25,9 @@ import java.io.IOException;
  * @date 2018/8/30 15:47
  */
 public class JWTFilter extends BasicHttpAuthenticationFilter {
-
+    /**
+     * Logger
+     */
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -81,9 +83,9 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                             httpServletResponse.setHeader("Authorization", token);
                             httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
                             // 进行Shiro的登录UserRealm
-                            JWTToken JToken = new JWTToken(token);
+                            JWTToken jwtToken = new JWTToken(token);
                             // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获
-                            this.getSubject(request, response).login(JToken);
+                            this.getSubject(request, response).login(jwtToken);
                             // 如果没有抛出异常则代表登入成功，返回true
                             return true;
                         }

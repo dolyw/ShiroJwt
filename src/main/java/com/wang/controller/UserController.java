@@ -10,7 +10,6 @@ import com.wang.model.UserDto;
 import com.wang.model.common.Constant;
 import com.wang.model.common.ResponseBean;
 import com.wang.service.IUserService;
-import com.wang.util.common.PropertiesUtil;
 import com.wang.util.EncrypAESUtil;
 import com.wang.util.JWTUtil;
 import com.wang.util.common.StringUtil;
@@ -20,6 +19,8 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -31,7 +32,14 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/user")
+@PropertySource("classpath:config.properties")
 public class UserController {
+
+    /**
+     * RefreshToken过期时间
+     */
+    @Value("${refreshTokenExpireTime}")
+    private String refreshTokenExpireTime;
 
     private final IUserService userService;
 
@@ -235,9 +243,6 @@ public class UserController {
             if(JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount())){
                 JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount());
             }
-            // 获取RefreshToken过期时间，读取配置文件
-            PropertiesUtil.readProperties("config.properties");
-            String refreshTokenExpireTime = PropertiesUtil.getProperty("refreshTokenExpireTime");
             // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
             JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));

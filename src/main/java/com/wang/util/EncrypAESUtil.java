@@ -3,9 +3,10 @@ package com.wang.util;
 import com.wang.exception.CustomUnauthorizedException;
 import com.wang.util.common.Base64ConvertUtil;
 import com.wang.util.common.HexConvertUtil;
-import com.wang.util.common.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.*;
 import java.io.UnsupportedEncodingException;
@@ -19,12 +20,19 @@ import java.security.Security;
  * @author Wang926454
  * @date 2018/8/31 16:39
  */
+@Component
 public class EncrypAESUtil {
 
     /**
-     * 私钥改为从配置文件获取
+     * AES密码加密私钥(Base64加密)
      */
+    private static String encrypAESKey;
     // private static final byte[] KEY = { 1, 1, 33, 82, -32, -85, -128, -65 };
+
+    @Value("${encrypAESKey}")
+    public void setEncrypAESKey(String encrypAESKey) {
+        EncrypAESUtil.encrypAESKey = encrypAESKey;
+    }
 
     /**
      * logger
@@ -44,11 +52,8 @@ public class EncrypAESUtil {
             // 实例化支持AES算法的密钥生成器(算法名称命名需按规定，否则抛出异常)
             // KeyGenerator 提供对称密钥生成器的功能，支持各种算法
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
-            // 获取私钥，读取配置文件
-            PropertiesUtil.readProperties("config.properties");
-            String encrypAESKey = Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypAESKey"));
-            // 将key进行转换为byte[]数组
-            keygen.init(128, new SecureRandom(encrypAESKey.getBytes()));
+            // 将私钥encrypAESKey先Base64解密后转换为byte[]数组按128位初始化
+            keygen.init(128, new SecureRandom(Base64ConvertUtil.decode(encrypAESKey).getBytes()));
             // SecretKey 负责保存对称密钥 生成密钥
             SecretKey deskey = keygen.generateKey();
             // 生成Cipher对象,指定其支持的AES算法，Cipher负责完成加密或解密工作
@@ -94,11 +99,8 @@ public class EncrypAESUtil {
             // 实例化支持AES算法的密钥生成器(算法名称命名需按规定，否则抛出异常)
             // KeyGenerator 提供对称密钥生成器的功能，支持各种算法
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
-            // 获取私钥，读取配置文件
-            PropertiesUtil.readProperties("config.properties");
-            String encrypAESKey = Base64ConvertUtil.decode(PropertiesUtil.getProperty("encrypAESKey"));
-            // 将key进行转换为byte[]数组
-            keygen.init(128, new SecureRandom(encrypAESKey.getBytes()));
+            // 将私钥encrypAESKey先Base64解密后转换为byte[]数组按128位初始化
+            keygen.init(128, new SecureRandom(Base64ConvertUtil.decode(encrypAESKey).getBytes()));
             // SecretKey 负责保存对称密钥 生成密钥
             SecretKey deskey = keygen.generateKey();
             // 生成Cipher对象,指定其支持的AES算法，Cipher负责完成加密或解密工作
