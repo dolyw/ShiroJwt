@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.wang.exception.CustomException;
 import com.wang.util.common.Base64ConvertUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -59,8 +60,8 @@ public class JWTUtil {
             return true;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            throw new CustomException("JWTToken认证解密出现UnsupportedEncodingException异常");
         }
-        return false;
     }
 
     /**
@@ -78,8 +79,8 @@ public class JWTUtil {
             return jwt.getClaim(claim).asString();
         } catch (JWTDecodeException e) {
             e.printStackTrace();
+            throw new CustomException("解密Token中的公共信息出现JWTDecodeException异常");
         }
-        return null;
     }
 
     /**
@@ -103,8 +104,7 @@ public class JWTUtil {
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw new CustomException("JWTToken加密出现UnsupportedEncodingException异常");
         }
-        return null;
     }
 }

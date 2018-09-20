@@ -1,5 +1,7 @@
 package com.wang.util.common;
 
+import com.wang.exception.CustomException;
+
 import java.io.*;
 
 /**
@@ -27,6 +29,7 @@ public class SerializableUtil {
             return bytes;
         } catch (IOException e) {
             e.printStackTrace();
+            throw new CustomException("SerializableUtil工具类序列化出现IOException异常");
         } finally {
             try {
                 if(oos != null) {
@@ -39,7 +42,6 @@ public class SerializableUtil {
                 e.printStackTrace();
             }
         }
-        return null;
     }
 
     /**
@@ -58,8 +60,10 @@ public class SerializableUtil {
             return ois.readObject();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            throw new CustomException("SerializableUtil工具类反序列化出现ClassNotFoundException异常");
         } catch (IOException e) {
             e.printStackTrace();
+            throw new CustomException("SerializableUtil工具类反序列化出现IOException异常");
         } finally {
             try {
                 if(ois != null) {
@@ -72,7 +76,6 @@ public class SerializableUtil {
                 e.printStackTrace();
             }
         }
-        return null;
     }
 
 }

@@ -2,6 +2,7 @@ package com.wang.config.shiro.jwt;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.wang.exception.CustomException;
 import com.wang.model.common.Constant;
 import com.wang.util.JWTUtil;
 import com.wang.util.JedisUtil;
@@ -147,8 +148,10 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             httpServletRequest.getRequestDispatcher("/401").forward(httpServletRequest, httpServletResponse);
         } catch (ServletException e) {
             logger.error(e.getMessage());
+            throw new CustomException("将非法请求转发到/401出现ServletException异常");
         } catch (IOException e) {
             logger.error(e.getMessage());
+            throw new CustomException("将非法请求转发到/401出现IOException异常");
         }
     }
 

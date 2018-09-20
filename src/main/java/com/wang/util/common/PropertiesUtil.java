@@ -1,5 +1,7 @@
 package com.wang.util.common;
 
+import com.wang.exception.CustomException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +42,7 @@ public class PropertiesUtil {
                 }
             }catch (IOException e){
                 e.printStackTrace();
+                throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常");
             }
         }
     }
