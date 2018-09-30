@@ -4,8 +4,10 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.wang.exception.CustomException;
 import com.wang.model.common.Constant;
+import com.wang.model.common.ResponseBean;
 import com.wang.util.JWTUtil;
 import com.wang.util.JedisUtil;
+import com.wang.util.common.JsonConvertUtil;
 import com.wang.util.common.PropertiesUtil;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * JWT过滤
@@ -48,7 +51,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                 // 进行Shiro的登录UserRealm
                 this.executeLogin(request, response);
             } catch (Exception e) {
-                // 认证出现异常跳转到/401，传递错误信息msg
+                // 认证出现异常，传递错误信息msg
                 String msg = e.getMessage();
                 // 获取应用异常(该Cause是导致抛出此throwable(异常)的throwable(异常))
                 Throwable throwable = e.getCause();
@@ -70,8 +73,17 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                         msg = throwable.getMessage();
                     }
                 }
+                /**
+                 * 错误两种处理方式
+                 * 1. 将非法请求转发到/401的Controller处理，抛出自定义无权访问异常被全局捕捉再返回Response信息
+                 * 2. 无需转发，直接返回Response信息
+                 * 一般使用第二种(更方便)
+                 */
                 // 将非法请求转发到/401
-                this.forward401(request, response, msg);
+                // this.forward401(request, response, msg);
+                // 直接返回Response信息
+                this.response401(request, response, msg);
+                return false;
             }
         }
         return true;
@@ -151,7 +163,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
-     * 将非法请求转发到/401
+     * 将非法请求转发到/401的Controller处理，抛出自定义无权访问异常被全局捕捉再返回Response信息
      */
     private void forward401(ServletRequest req, ServletResponse resp, String msg) {
         try {
@@ -166,6 +178,30 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         } catch (IOException e) {
             logger.error(e.getMessage());
             throw new CustomException("将非法请求转发到/401出现IOException异常");
+        }
+    }
+
+    /**
+     * 无需转发，直接返回Response信息
+     */
+    private void response401(ServletRequest req, ServletResponse resp, String msg) {
+        HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
+        httpServletResponse.setStatus(401);
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setContentType("application/json; charset=utf-8");
+        PrintWriter out = null;
+        try {
+            out = httpServletResponse.getWriter();
+            String data = JsonConvertUtil.objectToJson(new ResponseBean(401, "无权访问(Unauthorized):" + msg, null));
+            // data = data.replace("}", ",\"data\":null}");
+            out.append(data);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            throw new CustomException("直接返回Response信息出现IOException异常");
+        } finally {
+            if (out != null) {
+                out.close();
+            }
         }
     }
 
