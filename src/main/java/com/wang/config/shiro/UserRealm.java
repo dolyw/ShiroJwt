@@ -61,7 +61,7 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        String account = JWTUtil.getClaim(principals.toString(), "account");
+        String account = JWTUtil.getClaim(principals.toString(), Constant.ACCOUNT);
         UserDto userDto = new UserDto();
         userDto.setAccount(account);
         // 查询用户角色
@@ -88,7 +88,7 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         String token = (String) auth.getCredentials();
         // 解密获得account，用于和数据库进行对比
-        String account = JWTUtil.getClaim(token, "account");
+        String account = JWTUtil.getClaim(token, Constant.ACCOUNT);
         // 帐号为空
         if (StringUtil.isBlank(account)) {
             throw new AuthenticationException("Token中帐号为空(The account in Token is empty.)");
@@ -105,7 +105,7 @@ public class UserRealm extends AuthorizingRealm {
             // 获取RefreshToken的时间戳
             String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
             // 获取AccessToken时间戳，与RefreshToken的时间戳对比
-            if(JWTUtil.getClaim(token, "currentTimeMillis").equals(currentTimeMillisRedis)){
+            if(JWTUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){
                 return new SimpleAuthenticationInfo(token, token, "userRealm");
             }
         }

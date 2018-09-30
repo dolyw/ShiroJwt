@@ -1,5 +1,7 @@
 package com.wang.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
@@ -40,6 +42,7 @@ public class User implements Serializable {
      * 注册时间
      */
     @Column(name = "reg_time")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date regTime;
 
     /**

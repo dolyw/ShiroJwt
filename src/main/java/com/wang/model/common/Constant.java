@@ -51,4 +51,14 @@ public class Constant {
      */
     public final static String PREFIX_SHIRO_REFRESH_TOKEN = "shiro:refresh_token:";
 
+    /**
+     * JWT-account:
+     */
+    public final static String ACCOUNT = "account";
+
+    /**
+     * JWT-currentTimeMillis:
+     */
+    public final static String CURRENT_TIME_MILLIS = "currentTimeMillis";
+
 }

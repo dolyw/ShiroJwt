@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -94,8 +95,9 @@ public class UserController {
                 userDto.put("id", userDtoTemp.getId());
                 userDto.put("account", userDtoTemp.getAccount());
                 userDto.put("username", userDtoTemp.getUsername());
-                userDto.put("regTime", userDtoTemp.getRegTime());
-                userDto.put("loginTime", new Date(Long.parseLong(JedisUtil.getObject(key).toString())));
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                userDto.put("regTime", simpleDateFormat.format(userDtoTemp.getRegTime()));
+                userDto.put("loginTime", simpleDateFormat.format(new Date(Long.parseLong(JedisUtil.getObject(key).toString()))));
                 userDtos.add(userDto);
             }
         }

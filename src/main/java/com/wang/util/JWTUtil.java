@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wang.exception.CustomException;
+import com.wang.model.common.Constant;
 import com.wang.util.common.Base64ConvertUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -52,7 +53,7 @@ public class JWTUtil {
     public static boolean verify(String token) {
         try {
             // 帐号加JWT私钥解密
-            String secret = getClaim(token, "account") + Base64ConvertUtil.decode(encrypJWTKey);
+            String secret = getClaim(token, Constant.ACCOUNT) + Base64ConvertUtil.decode(encrypJWTKey);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
                     .build();

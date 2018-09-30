@@ -53,45 +53,16 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                 // 获取应用异常(该Cause是导致抛出此throwable(异常)的throwable(异常))
                 Throwable throwable = e.getCause();
                 if(throwable != null && throwable instanceof SignatureVerificationException ){
-                    // 该异常为JWT的Token认证失败(Token或者密钥不正确)
+                    // 该异常为JWT的AccessToken认证失败(Token或者密钥不正确)
                     // throw (SignatureVerificationException) throwable;
                     msg = "Token或者密钥不正确(" + throwable.getMessage() + ")";
                 } else if(throwable != null && throwable instanceof TokenExpiredException){
-                    // 该异常为JWT的Token已过期
-                    // TODO: 此处为AccessToken刷新，进行判断RefreshToken是否过期，未过期就进行正常访问且返回新的AccessToken
-                    String token = this.getToken(request, response);
-                    String account = JWTUtil.getClaim(token, "account");
-                    if(JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
-                        // Redis中RefreshToken还存在
-                        String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
-                        // 获取AccessToken时间戳，与RefreshToken的时间戳对比
-                        if(JWTUtil.getClaim(token, "currentTimeMillis").equals(currentTimeMillisRedis)){
-                            // 通过说明该AccessToken时间戳与RefreshToken时间戳一致，进行AccessToken刷新
-                            // 获取当前时间戳
-                            String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-                            // 获取RefreshToken剩余过期时间
-                            Long refreshTokenExpireTimeRedis = JedisUtil.getExpireTime(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account);
-                            // 获取AccessToken过期时间，读取配置文件
-                            PropertiesUtil.readProperties("config.properties");
-                            String accessTokenExpireTime = PropertiesUtil.getProperty("accessTokenExpireTime");
-                            // 设置RefreshToken中的时间戳为当前时间戳，且过期时间为之前剩余过期时间加上一个新的AccessToken过期时间
-                            JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account, currentTimeMillis,
-                                    refreshTokenExpireTimeRedis.intValue() + Integer.parseInt(accessTokenExpireTime));
-                            // 刷新AccessToken，设置时间戳为当前时间戳
-                            token = JWTUtil.sign(account, currentTimeMillis);
-                            // 将刷新的AccessToken存放在Response的Header中的Authorization字段返回
-                            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-                            httpServletResponse.setHeader("Authorization", token);
-                            httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
-                            // 进行Shiro的登录UserRealm
-                            JWTToken jwtToken = new JWTToken(token);
-                            // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获
-                            this.getSubject(request, response).login(jwtToken);
-                            // 如果没有抛出异常则代表登入成功，返回true
-                            return true;
-                        }
+                    // 该异常为JWT的AccessToken已过期，判断RefreshToken未过期就进行AccessToken刷新
+                    if(this.refreshToken(request, response)){
+                        return true;
+                    }else{
+                        msg = "Token已过期(" + throwable.getMessage() + ")";
                     }
-                    msg = "Token已过期(" + throwable.getMessage() + ")";
                 } else{
                     // 应用异常不为空
                     if(throwable != null) {
@@ -99,6 +70,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                         msg = throwable.getMessage();
                     }
                 }
+                // 将非法请求转发到/401
                 this.forward401(request, response, msg);
             }
         }
@@ -116,10 +88,11 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
-     * 进行Token登录认证授权
+     * 进行AccessToken登录认证授权
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
+        // 拿到当前Header中Authorization的AccessToken
         JWTToken token = new JWTToken(this.getToken(request, response));
         // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获
         this.getSubject(request, response).login(token);
@@ -128,12 +101,53 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
-     * 获取Token
+     * 获取Header中Authorization的AccessToken
      */
     private String getToken(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String token = httpServletRequest.getHeader("Authorization");
         return token;
+    }
+
+    /**
+     * TODO: 此处为AccessToken刷新，进行判断RefreshToken是否过期，未过期就返回新的AccessToken且继续正常访问
+     */
+    private boolean refreshToken(ServletRequest request, ServletResponse response) {
+        // 拿到当前Header中Authorization的AccessToken
+        String token = this.getToken(request, response);
+        // 获取当前Token的帐号信息
+        String account = JWTUtil.getClaim(token, Constant.ACCOUNT);
+        // 判断Redis中RefreshToken是否存在
+        if(JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
+            // Redis中RefreshToken还存在，获取RefreshToken的时间戳
+            String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
+            // 获取当前AccessToken中的时间戳，与RefreshToken的时间戳对比
+            if(JWTUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){
+                // 通过说明该AccessToken时间戳与RefreshToken时间戳一致，进行AccessToken刷新
+                // 获取当前最新时间戳
+                String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+                // 获取RefreshToken剩余过期时间
+                Long refreshTokenExpireTimeRedis = JedisUtil.getExpireTime(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account);
+                // 读取配置文件，获取一个AccessToken的过期时间
+                PropertiesUtil.readProperties("config.properties");
+                String accessTokenExpireTime = PropertiesUtil.getProperty("accessTokenExpireTime");
+                // 设置RefreshToken中的时间戳为当前最新时间戳，且过期时间为RefreshToken剩余过期时间加上一个新的AccessToken过期时间
+                JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account, currentTimeMillis,
+                        refreshTokenExpireTimeRedis.intValue() + Integer.parseInt(accessTokenExpireTime));
+                // 刷新AccessToken，设置时间戳为当前最新时间戳
+                token = JWTUtil.sign(account, currentTimeMillis);
+                // 将新刷新的AccessToken再次进行Shiro的登录
+                JWTToken jwtToken = new JWTToken(token);
+                // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获，如果没有抛出异常则代表登入成功，返回true
+                this.getSubject(request, response).login(jwtToken);
+                // 最后将刷新的AccessToken存放在Response的Header中的Authorization字段返回
+                HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+                httpServletResponse.setHeader("Authorization", token);
+                httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
