@@ -12,7 +12,7 @@ public class BaseDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 页数 */
+    /** 当前页数 */
     @Transient
     private Integer page;
 

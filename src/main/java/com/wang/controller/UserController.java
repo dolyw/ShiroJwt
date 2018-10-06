@@ -51,7 +51,7 @@ public class UserController {
     }
 
     /**
-     * 获取所有用户
+     * 获取用户列表
      * @param 
      * @return java.util.Map<java.lang.String,java.lang.Object>
      * @author Wang926454
@@ -73,7 +73,7 @@ public class UserController {
     }
 
     /**
-     * 查询Redis中的RefreshToken(在线用户)
+     * 获取在线用户(查询Redis中的RefreshToken)
      * @param 
      * @return com.wang.model.common.ResponseBean
      * @author Wang926454
@@ -101,6 +101,74 @@ public class UserController {
             throw new CustomException("查询失败(Query Failure)");
         }
         return new ResponseBean(200, "查询成功(Query was successful)", userDtos);
+    }
+
+    /**
+     * 登录授权
+     * @param userDto
+     * @return com.wang.model.common.ResponseBean
+     * @author Wang926454
+     * @date 2018/8/30 16:21
+     */
+    @PostMapping("/login")
+    public ResponseBean login(@RequestBody UserDto userDto, HttpServletResponse httpServletResponse) {
+        // 查询数据库中的帐号信息
+        UserDto userDtoTemp = new UserDto();
+        userDtoTemp.setAccount(userDto.getAccount());
+        userDtoTemp = userService.selectOne(userDtoTemp);
+        if(userDtoTemp == null){
+            throw new CustomUnauthorizedException("该帐号不存在(The account does not exist.)");
+        }
+        // 密码进行AES解密
+        String key = AesCipherUtil.deCrypto(userDtoTemp.getPassword());
+        // 因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
+        if (key.equals(userDto.getAccount() + userDto.getPassword())) {
+            // 清除可能存在的Shiro权限信息缓存
+            if(JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount())){
+                JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount());
+            }
+            // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
+            String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+            JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
+            // 从Header中Authorization返回AccessToken，时间戳为当前时间戳
+            String token = JwtUtil.sign(userDto.getAccount(), currentTimeMillis);
+            httpServletResponse.setHeader("Authorization", token);
+            httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
+            return new ResponseBean(200, "登录成功(Login Success.)", null);
+        } else {
+            throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");
+        }
+    }
+
+    /**
+     * 测试登录
+     * @param
+     * @return com.wang.model.common.ResponseBean
+     * @author Wang926454
+     * @date 2018/8/30 16:18
+     */
+    @GetMapping("/article")
+    public ResponseBean article() {
+        Subject subject = SecurityUtils.getSubject();
+        // 登录了返回true
+        if (subject.isAuthenticated()) {
+            return new ResponseBean(200, "您已经登录了(You are already logged in)", null);
+        } else {
+            return new ResponseBean(200, "你是游客(You are guest)", null);
+        }
+    }
+
+    /**
+     * 测试登录注解(@RequiresAuthentication和subject.isAuthenticated()返回true一个性质)
+     * @param
+     * @return com.wang.model.common.ResponseBean
+     * @author Wang926454
+     * @date 2018/8/30 16:18
+     */
+    @GetMapping("/article2")
+    @RequiresAuthentication
+    public ResponseBean requireAuth() {
+        return new ResponseBean(200, "您已经登录了(You are already logged in)", null);
     }
 
     /**
@@ -216,73 +284,4 @@ public class UserController {
         }
         throw new CustomException("剔除失败，Account不存在(Deletion Failed. Account does not exist.)");
     }
-
-    /**
-     * 登录授权
-     * @param userDto
-     * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
-     * @date 2018/8/30 16:21
-     */
-    @PostMapping("/login")
-    public ResponseBean login(@RequestBody UserDto userDto, HttpServletResponse httpServletResponse) {
-        // 查询数据库中的帐号信息
-        UserDto userDtoTemp = new UserDto();
-        userDtoTemp.setAccount(userDto.getAccount());
-        userDtoTemp = userService.selectOne(userDtoTemp);
-        if(userDtoTemp == null){
-            throw new CustomUnauthorizedException("该帐号不存在(The account does not exist.)");
-        }
-        // 密码进行AES解密
-        String key = AesCipherUtil.deCrypto(userDtoTemp.getPassword());
-        // 因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
-        if (key.equals(userDto.getAccount() + userDto.getPassword())) {
-            // 清除可能存在的Shiro权限信息缓存
-            if(JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount())){
-                JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + userDto.getAccount());
-            }
-            // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
-            String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-            JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
-            // 从Header中Authorization返回AccessToken，时间戳为当前时间戳
-            String token = JwtUtil.sign(userDto.getAccount(), currentTimeMillis);
-            httpServletResponse.setHeader("Authorization", token);
-            httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
-            return new ResponseBean(200, "登录成功(Login Success.)", null);
-        } else {
-            throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");
-        }
-    }
-
-    /**
-     * 测试登录
-     * @param
-     * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
-     * @date 2018/8/30 16:18
-     */
-    @GetMapping("/article")
-    public ResponseBean article() {
-        Subject subject = SecurityUtils.getSubject();
-        // 登录了返回true
-        if (subject.isAuthenticated()) {
-            return new ResponseBean(200, "您已经登录了(You are already logged in)", null);
-        } else {
-            return new ResponseBean(200, "你是游客(You are guest)", null);
-        }
-    }
-
-    /**
-     * @RequiresAuthentication和subject.isAuthenticated()返回true一个性质
-     * @param 
-     * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
-     * @date 2018/8/30 16:18
-     */
-    @GetMapping("/article2")
-    @RequiresAuthentication
-    public ResponseBean requireAuth() {
-        return new ResponseBean(200, "您已经登录了(You are already logged in)", null);
-    }
-
 }
