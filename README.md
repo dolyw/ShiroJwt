@@ -90,7 +90,27 @@ mvn mybatis-generator:generate
 
 ##### Token获取及使用
 ```txt
-先登录获取Token，拿到Token后再放在Header中的Authorization字段上访问即可
+先设置Content-Type为application/json
+```
+![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060001.PNG)
+```txt
+然后填写请求参数帐号密码信息
+```
+![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060002.PNG)
+```txt
+进行请求访问，请求访问成功
+```
+![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060003.PNG)
+```txt
+点击查看Header信息的Authorization属性即是Token字段
+```
+![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060004.PNG)
+```txt
+访问需要权限的请求将Token字段放在Header信息的Authorization属性访问即可
+```
+![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060005.PNG)
+```txt
+Token的自动刷新也是在Token失效时返回新的Token在Header信息的Authorization属性
 ```
 
 ### 接口文档
@@ -110,7 +130,7 @@ mvn mybatis-generator:generate
 
 #### 接口列表
 
-##### 1、获取用户列表
+#### 1、获取用户列表
 
 ##### 请求URL:  
 ```
@@ -156,7 +176,7 @@ GET
 }
 ```
 
-##### 2、获取在线用户
+#### 2、获取在线用户
 
 ##### 请求URL:  
 ```
@@ -196,7 +216,7 @@ GET
 }
 ```
 
-##### 3、登录授权
+#### 3、登录授权
 
 ##### 请求URL:  
 ```
@@ -225,7 +245,7 @@ POST
 }
 ```
 
-##### 4、测试登录
+#### 4、测试登录
 
 ##### 请求URL:  
 ```
@@ -256,7 +276,7 @@ GET
 }
 ```
 
-##### 5、测试登录注解
+#### 5、测试登录注解
 
 ##### 请求URL:  
 ```
@@ -287,7 +307,7 @@ GET
 }
 ```
 
-##### 6、获取指定用户
+#### 6、获取指定用户
 
 ##### 请求URL:  
 ```
@@ -326,7 +346,7 @@ GET
 }
 ```
 
-##### 7、新增用户
+#### 7、新增用户
 
 ##### 请求URL:  
 ```
@@ -364,7 +384,7 @@ POST
 }
 ```
 
-##### 8、更新用户
+#### 8、更新用户
 
 ##### 请求URL:  
 ```
@@ -403,7 +423,7 @@ PUT
 }
 ```
 
-##### 9、删除用户
+#### 9、删除用户
 
 ##### 请求URL:  
 ```
@@ -435,7 +455,7 @@ DELETE
 }
 ```
 
-##### 10、剔除在线用户
+#### 10、剔除在线用户
 
 ##### 请求URL:  
 ```
