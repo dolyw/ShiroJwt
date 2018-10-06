@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -86,18 +87,13 @@ public class UserController {
         Set<String> keys = JedisUtil.keysS(Constant.PREFIX_SHIRO_REFRESH_TOKEN + "*");
         for (String key : keys) {
             if(JedisUtil.exists(key)){
-                Map<String, Object> userDto = new HashMap<String, Object>();
                 // 根据:分割key，获取最后一个字符(帐号)
                 String[] strArray = key.split(":");
-                UserDto userDtoTemp = new UserDto();
-                userDtoTemp.setAccount(strArray[strArray.length - 1]);
-                userDtoTemp = userService.selectOne(userDtoTemp);
-                userDto.put("id", userDtoTemp.getId());
-                userDto.put("account", userDtoTemp.getAccount());
-                userDto.put("username", userDtoTemp.getUsername());
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                userDto.put("regTime", simpleDateFormat.format(userDtoTemp.getRegTime()));
-                userDto.put("loginTime", simpleDateFormat.format(new Date(Long.parseLong(JedisUtil.getObject(key).toString()))));
+                UserDto userDto = new UserDto();
+                userDto.setAccount(strArray[strArray.length - 1]);
+                userDto = userService.selectOne(userDto);
+                // 设置登录时间
+                userDto.setLoginTime(new Date(Long.parseLong(JedisUtil.getObject(key).toString())));
                 userDtos.add(userDto);
             }
         }
@@ -229,7 +225,7 @@ public class UserController {
      * @date 2018/8/30 16:21
      */
     @PostMapping("/login")
-    public ResponseBean login(@RequestBody UserDto userDto) {
+    public ResponseBean login(@RequestBody UserDto userDto, HttpServletResponse httpServletResponse) {
         // 查询数据库中的帐号信息
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
@@ -248,8 +244,11 @@ public class UserController {
             // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
             JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
-            // 返回AccessToken，时间戳为当前时间戳
-            return new ResponseBean(200, "登录成功(Login Success.)", JwtUtil.sign(userDto.getAccount(), currentTimeMillis));
+            // 从Header中Authorization返回AccessToken，时间戳为当前时间戳
+            String token = JwtUtil.sign(userDto.getAccount(), currentTimeMillis);
+            httpServletResponse.setHeader("Authorization", token);
+            httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
+            return new ResponseBean(200, "登录成功(Login Success.)", null);
         } else {
             throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");
         }
