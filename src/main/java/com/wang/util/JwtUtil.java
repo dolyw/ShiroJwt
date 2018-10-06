@@ -20,7 +20,7 @@ import java.util.Date;
  * @date 2018/8/30 11:45
  */
 @Component
-public class JWTUtil {
+public class JwtUtil {
 
     /**
      * 过期时间改为从配置文件获取
@@ -35,12 +35,12 @@ public class JWTUtil {
 
     @Value("${accessTokenExpireTime}")
     public void setAccessTokenExpireTime(String accessTokenExpireTime) {
-        JWTUtil.accessTokenExpireTime = accessTokenExpireTime;
+        JwtUtil.accessTokenExpireTime = accessTokenExpireTime;
     }
 
     @Value("${encrypJWTKey}")
     public void setEncrypJWTKey(String encrypJWTKey) {
-        JWTUtil.encrypJWTKey = encrypJWTKey;
+        JwtUtil.encrypJWTKey = encrypJWTKey;
     }
 
     /**

@@ -21,7 +21,7 @@ import java.security.Security;
  * @date 2018/8/31 16:39
  */
 @Component
-public class EncrypAESUtil {
+public class AesCipherUtil {
 
     /**
      * AES密码加密私钥(Base64加密)
@@ -31,13 +31,13 @@ public class EncrypAESUtil {
 
     @Value("${encrypAESKey}")
     public void setEncrypAESKey(String encrypAESKey) {
-        EncrypAESUtil.encrypAESKey = encrypAESKey;
+        AesCipherUtil.encrypAESKey = encrypAESKey;
     }
 
     /**
      * logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(EncrypAESUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(AesCipherUtil.class);
 
     /**
      * 加密
@@ -46,7 +46,7 @@ public class EncrypAESUtil {
      * @author Wang926454
      * @date 2018/8/31 16:56
      */
-    public static String Encrytor(String str) {
+    public static String enCrypto(String str) {
         try{
             Security.addProvider(new com.sun.crypto.provider.SunJCE());
             // 实例化支持AES算法的密钥生成器(算法名称命名需按规定，否则抛出异常)
@@ -93,7 +93,7 @@ public class EncrypAESUtil {
      * @author Wang926454
      * @date 2018/8/31 16:56
      */
-    public static String Decryptor(String str) {
+    public static String deCrypto(String str) {
         try{
             Security.addProvider(new com.sun.crypto.provider.SunJCE());
             // 实例化支持AES算法的密钥生成器(算法名称命名需按规定，否则抛出异常)

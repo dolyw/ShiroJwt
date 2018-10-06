@@ -10,8 +10,8 @@ import com.wang.model.UserDto;
 import com.wang.model.common.Constant;
 import com.wang.model.common.ResponseBean;
 import com.wang.service.IUserService;
-import com.wang.util.EncrypAESUtil;
-import com.wang.util.JWTUtil;
+import com.wang.util.AesCipherUtil;
+import com.wang.util.JwtUtil;
 import com.wang.util.common.StringUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -146,7 +146,7 @@ public class UserController {
         if(userDto.getPassword().length() > 8){
             throw new CustomException("密码最多8位(Password up to 8 bits.)");
         }
-        String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
+        String key = AesCipherUtil.enCrypto(userDto.getAccount() + userDto.getPassword());
         userDto.setPassword(key);
         int count = userService.insert(userDto);
         if(count <= 0){
@@ -175,7 +175,7 @@ public class UserController {
             if(userDto.getPassword().length() > 8){
                 throw new CustomException("密码最多8位(Password up to 8 bits.)");
             }
-            String key = EncrypAESUtil.Encrytor(userDto.getAccount() + userDto.getPassword());
+            String key = AesCipherUtil.enCrypto(userDto.getAccount() + userDto.getPassword());
             userDto.setPassword(key);
         }
         int count = userService.updateByPrimaryKeySelective(userDto);
@@ -238,7 +238,7 @@ public class UserController {
             throw new CustomUnauthorizedException("该帐号不存在(The account does not exist.)");
         }
         // 密码进行AES解密
-        String key = EncrypAESUtil.Decryptor(userDtoTemp.getPassword());
+        String key = AesCipherUtil.deCrypto(userDtoTemp.getPassword());
         // 因为密码加密是以帐号+密码的形式进行加密的，所以解密后的对比是帐号+密码
         if (key.equals(userDto.getAccount() + userDto.getPassword())) {
             // 清除可能存在的Shiro权限信息缓存
@@ -249,7 +249,7 @@ public class UserController {
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
             JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount(), currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
             // 返回AccessToken，时间戳为当前时间戳
-            return new ResponseBean(200, "登录成功(Login Success.)", JWTUtil.sign(userDto.getAccount(), currentTimeMillis));
+            return new ResponseBean(200, "登录成功(Login Success.)", JwtUtil.sign(userDto.getAccount(), currentTimeMillis));
         } else {
             throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");
         }

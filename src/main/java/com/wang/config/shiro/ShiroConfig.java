@@ -1,6 +1,6 @@
 package com.wang.config.shiro;
 
-import com.wang.config.shiro.jwt.JWTFilter;
+import com.wang.config.shiro.jwt.JwtFilter;
 import com.wang.config.shiro.cache.CustomCacheManager;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -62,7 +62,7 @@ public class ShiroConfig {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         // 添加自己的过滤器取名为jwt
         Map<String, Filter> filterMap = new HashMap<>(16);
-        filterMap.put("jwt", new JWTFilter());
+        filterMap.put("jwt", new JwtFilter());
         factoryBean.setFilters(filterMap);
         factoryBean.setSecurityManager(securityManager);
         factoryBean.setUnauthorizedUrl("/401");

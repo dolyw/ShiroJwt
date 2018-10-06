@@ -3,17 +3,17 @@ package com.wang.config.shiro.jwt;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
- * JWTToken
+ * JwtToken
  * @author Wang926454
  * @date 2018/8/30 14:06
  */
-public class JWTToken implements AuthenticationToken {
+public class JwtToken implements AuthenticationToken {
     /**
      * Token
      */
     private String token;
 
-    public JWTToken(String token) {
+    public JwtToken(String token) {
         this.token = token;
     }
 

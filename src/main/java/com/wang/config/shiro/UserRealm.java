@@ -1,6 +1,6 @@
 package com.wang.config.shiro;
 
-import com.wang.config.shiro.jwt.JWTToken;
+import com.wang.config.shiro.jwt.JwtToken;
 import com.wang.util.JedisUtil;
 import com.wang.mapper.PermissionMapper;
 import com.wang.mapper.RoleMapper;
@@ -9,7 +9,7 @@ import com.wang.model.PermissionDto;
 import com.wang.model.RoleDto;
 import com.wang.model.UserDto;
 import com.wang.model.common.Constant;
-import com.wang.util.JWTUtil;
+import com.wang.util.JwtUtil;
 import com.wang.util.common.StringUtil;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -52,7 +52,7 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof JWTToken;
+        return token instanceof JwtToken;
     }
 
     /**
@@ -61,7 +61,7 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        String account = JWTUtil.getClaim(principals.toString(), Constant.ACCOUNT);
+        String account = JwtUtil.getClaim(principals.toString(), Constant.ACCOUNT);
         UserDto userDto = new UserDto();
         userDto.setAccount(account);
         // 查询用户角色
@@ -88,7 +88,7 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         String token = (String) auth.getCredentials();
         // 解密获得account，用于和数据库进行对比
-        String account = JWTUtil.getClaim(token, Constant.ACCOUNT);
+        String account = JwtUtil.getClaim(token, Constant.ACCOUNT);
         // 帐号为空
         if (StringUtil.isBlank(account)) {
             throw new AuthenticationException("Token中帐号为空(The account in Token is empty.)");
@@ -101,11 +101,11 @@ public class UserRealm extends AuthorizingRealm {
             throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
         // 开始认证，要AccessToken认证通过，且Redis中存在RefreshToken，且两个Token时间戳一致
-        if(JWTUtil.verify(token) && JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
+        if(JwtUtil.verify(token) && JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
             // 获取RefreshToken的时间戳
             String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
             // 获取AccessToken时间戳，与RefreshToken的时间戳对比
-            if(JWTUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){
+            if(JwtUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){
                 return new SimpleAuthenticationInfo(token, token, "userRealm");
             }
         }
