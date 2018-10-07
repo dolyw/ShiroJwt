@@ -401,7 +401,6 @@ PUT
 |参数|是否必选|数据类型|参数类型|说明|
 |:- |:-: |:-:  |:-: |:- |
 |Authorization |Y |string |header |Token |
-|id |Y |int |param |用户ID |
 |account |Y |string |param |帐号 |
 |password |Y |string |param |密码 |
 |username |Y |string |param |用户名 |

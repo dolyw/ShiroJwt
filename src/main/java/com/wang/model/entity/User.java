@@ -1,10 +1,13 @@
 package com.wang.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wang.model.valid.group.UserEditValidGroup;
+import com.wang.model.valid.group.UserLoginValidGroup;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * User
@@ -26,16 +29,19 @@ public class User implements Serializable {
     /**
      * 帐号
      */
+    @NotNull(message = "帐号不能为空", groups = { UserLoginValidGroup.class, UserEditValidGroup.class })
     private String account;
 
     /**
      * 密码
      */
+    @NotNull(message = "密码不能为空", groups = { UserLoginValidGroup.class, UserEditValidGroup.class })
     private String password;
 
     /**
      * 昵称
      */
+    @NotNull(message = "用户名不能为空", groups = { UserEditValidGroup.class })
     private String username;
 
     /**

@@ -3,6 +3,8 @@ package com.wang.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wang.model.common.BaseDto;
+import com.wang.model.valid.group.UserEditValidGroup;
+import com.wang.model.valid.group.UserLoginValidGroup;
 import com.wang.util.JedisUtil;
 import com.wang.exception.CustomException;
 import com.wang.exception.CustomUnauthorizedException;
@@ -21,6 +23,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -59,17 +62,17 @@ public class UserController {
      */
     @GetMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
-    public ResponseBean user(BaseDto baseDto){
+    public ResponseBean user(@Validated BaseDto baseDto){
         PageHelper.startPage(baseDto.getPage(), baseDto.getRows());
         List<UserDto> userDtos = userService.selectAll();
         PageInfo<UserDto> selectPage = new PageInfo<UserDto>(userDtos);
         if(userDtos == null || userDtos.size() <= 0){
             throw new CustomException("查询失败(Query Failure)");
         }
-        Map<String, Object> map = new HashMap<String, Object>(16);
-        map.put("count", selectPage.getTotal());
-        map.put("data", selectPage.getList());
-        return new ResponseBean(200, "查询成功(Query was successful)", map);
+        Map<String, Object> result = new HashMap<String, Object>(16);
+        result.put("count", selectPage.getTotal());
+        result.put("data", selectPage.getList());
+        return new ResponseBean(200, "查询成功(Query was successful)", result);
     }
 
     /**
@@ -111,7 +114,7 @@ public class UserController {
      * @date 2018/8/30 16:21
      */
     @PostMapping("/login")
-    public ResponseBean login(@RequestBody UserDto userDto, HttpServletResponse httpServletResponse) {
+    public ResponseBean login(@Validated(UserLoginValidGroup.class) @RequestBody UserDto userDto, HttpServletResponse httpServletResponse) {
         // 查询数据库中的帐号信息
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
@@ -197,7 +200,7 @@ public class UserController {
      */
     @PostMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public ResponseBean add(@RequestBody UserDto userDto) {
+    public ResponseBean add(@Validated(UserEditValidGroup.class) @RequestBody UserDto userDto) {
         // 判断当前帐号是否存在
         UserDto userDtoTemp = new UserDto();
         userDtoTemp.setAccount(userDto.getAccount());
@@ -228,11 +231,16 @@ public class UserController {
      */
     @PutMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
-    public ResponseBean update(@RequestBody UserDto userDto) {
+    public ResponseBean update(@Validated(UserEditValidGroup.class) @RequestBody UserDto userDto) {
         // 查询数据库密码
         UserDto userDtoTemp = new UserDto();
-        userDtoTemp.setId(userDto.getId());
+        userDtoTemp.setAccount(userDto.getAccount());
         userDtoTemp = userService.selectOne(userDtoTemp);
+        if(userDtoTemp == null){
+            throw new CustomUnauthorizedException("该帐号不存在(Account not exist.)");
+        }else{
+            userDto.setId(userDtoTemp.getId());
+        }
         // FIXME: 如果不一样就说明用户修改了密码，重新加密密码(这个处理不太好，但是没有想到好的处理方式)
         if(!userDtoTemp.getPassword().equals(userDto.getPassword())){
             // 密码以帐号+密码的形式进行AES加密

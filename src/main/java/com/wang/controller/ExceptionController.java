@@ -7,11 +7,17 @@ import org.apache.shiro.ShiroException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 异常控制处理器
@@ -66,13 +72,37 @@ public class ExceptionController {
     }
 
     /**
+     * 捕捉校验异常(BindException)
+     * @return
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BindException.class)
+    public ResponseBean validException(BindException e) {
+        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
+        Map<String, Object> result = this.getValidError(fieldErrors);
+        return new ResponseBean(400, result.get("errorMsg").toString(), result.get("errorList"));
+    }
+
+    /**
+     * 捕捉校验异常(MethodArgumentNotValidException)
+     * @return
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseBean validException(MethodArgumentNotValidException e) {
+        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
+        Map<String, Object> result = this.getValidError(fieldErrors);
+        return new ResponseBean(400, result.get("errorMsg").toString(), result.get("errorList"));
+    }
+
+    /**
      * 捕捉其他所有自定义异常
      * @return
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomException.class)
-    public ResponseBean handle(HttpServletRequest request, CustomException e) {
-        return new ResponseBean(410, e.getMessage(), null);
+    public ResponseBean handle(CustomException e) {
+        return new ResponseBean(500, e.getMessage(), null);
     }
 
     /**
@@ -98,5 +128,23 @@ public class ExceptionController {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return HttpStatus.valueOf(statusCode);
+    }
+
+    /**
+     * 获取校验错误信息
+     * @param fieldErrors
+     * @return
+     */
+    private Map<String, Object> getValidError(List<FieldError> fieldErrors){
+        Map<String, Object> result = new HashMap<String, Object>(16);
+        List<String> errorList = new ArrayList<String>();
+        StringBuffer errorMsg = new StringBuffer("校验异常(ValidException):");
+        for (FieldError error : fieldErrors){
+            errorList.add(error.getField() + "-" + error.getDefaultMessage());
+            errorMsg.append(error.getField() + "-" + error.getDefaultMessage() + ".");
+        }
+        result.put("errorList", errorList);
+        result.put("errorMsg", errorMsg);
+        return result;
     }
 }
