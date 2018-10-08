@@ -70,8 +70,6 @@ public class ShiroConfig {
         Map<String, String> filterRuleMap = new HashMap<>(16);
         // 所有请求通过我们自己的JWTFilter
         filterRuleMap.put("/**", "jwt");
-        // 设置公开地址/401(访问/401不通过我们的Filter，谁都可以访问)
-        filterRuleMap.put("/401", "anon");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;
     }

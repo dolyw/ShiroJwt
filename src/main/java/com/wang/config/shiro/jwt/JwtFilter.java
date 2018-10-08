@@ -79,8 +79,6 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                  * 2. 无需转发，直接返回Response信息
                  * 一般使用第二种(更方便)
                  */
-                // 将非法请求转发到/401
-                // this.forward401(request, response, msg);
                 // 直接返回Response信息
                 this.response401(request, response, msg);
                 return false;
@@ -163,25 +161,6 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
-     * 将非法请求转发到/401的Controller处理，抛出自定义无权访问异常被全局捕捉再返回Response信息
-     */
-    private void forward401(ServletRequest req, ServletResponse resp, String msg) {
-        try {
-            HttpServletRequest httpServletRequest = (HttpServletRequest) req;
-            HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-            // 传递错误信息msg
-            req.setAttribute("msg", msg);
-            httpServletRequest.getRequestDispatcher("/401").forward(httpServletRequest, httpServletResponse);
-        } catch (ServletException e) {
-            logger.error(e.getMessage());
-            throw new CustomException("将非法请求转发到/401出现ServletException异常");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            throw new CustomException("将非法请求转发到/401出现IOException异常");
-        }
-    }
-
-    /**
      * 无需转发，直接返回Response信息
      */
     private void response401(ServletRequest req, ServletResponse resp, String msg) {
@@ -193,7 +172,6 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         try {
             out = httpServletResponse.getWriter();
             String data = JsonConvertUtil.objectToJson(new ResponseBean(401, "无权访问(Unauthorized):" + msg, null));
-            // data = data.replace("}", ",\"data\":null}");
             out.append(data);
         } catch (IOException e) {
             logger.error(e.getMessage());
