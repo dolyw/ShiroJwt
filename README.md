@@ -1,4 +1,4 @@
-# SBAPIJWT
+# ShiroJwt
 
 > 前端地址:[https://github.com/wang926454/VueStudy/tree/master/VueStudy08-JWT](https://github.com/wang926454/VueStudy/tree/master/VueStudy08-JWT)
 
