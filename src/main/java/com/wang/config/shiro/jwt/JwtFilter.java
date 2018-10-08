@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -88,13 +86,29 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
+     * 这里我们详细说明下为什么重写
+     * 可以对比父类方法，只是将executeLogin方法调用去除了
+     * 如果没有去除将会循环调用doGetAuthenticationInfo方法
+     */
+    @Override
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+        boolean loggedIn = false;
+
+        if (!loggedIn) {
+            this.sendChallenge(request, response);
+        }
+
+        return loggedIn;
+    }
+
+    /**
      * 检测Header里面是否包含Authorization字段，有就进行Token登录认证授权
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest req = (HttpServletRequest) request;
-        String authorization = req.getHeader("Authorization");
-        return authorization != null;
+        // 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
+        String token = this.getAuthzHeader(request);
+        return token != null;
     }
 
     /**
@@ -102,8 +116,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
-        // 拿到当前Header中Authorization的AccessToken
-        JwtToken token = new JwtToken(this.getToken(request, response));
+        // 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
+        JwtToken token = new JwtToken(this.getAuthzHeader(request));
         // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获
         this.getSubject(request, response).login(token);
         // 如果没有抛出异常则代表登入成功，返回true
@@ -111,20 +125,11 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
-     * 获取Header中Authorization的AccessToken
-     */
-    private String getToken(ServletRequest request, ServletResponse response) {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String token = httpServletRequest.getHeader("Authorization");
-        return token;
-    }
-
-    /**
      * TODO: 此处为AccessToken刷新，进行判断RefreshToken是否过期，未过期就返回新的AccessToken且继续正常访问
      */
     private boolean refreshToken(ServletRequest request, ServletResponse response) {
-        // 拿到当前Header中Authorization的AccessToken
-        String token = this.getToken(request, response);
+        // 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
+        String token = this.getAuthzHeader(request);
         // 获取当前Token的帐号信息
         String account = JwtUtil.getClaim(token, Constant.ACCOUNT);
         // 判断Redis中RefreshToken是否存在
