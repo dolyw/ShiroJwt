@@ -31,16 +31,16 @@ public class JwtUtil {
     /**
      * JWT认证加密私钥(Base64加密)
      */
-    private static String encrypJWTKey;
+    private static String encryptJWTKey;
 
     @Value("${accessTokenExpireTime}")
     public void setAccessTokenExpireTime(String accessTokenExpireTime) {
         JwtUtil.accessTokenExpireTime = accessTokenExpireTime;
     }
 
-    @Value("${encrypJWTKey}")
-    public void setEncrypJWTKey(String encrypJWTKey) {
-        JwtUtil.encrypJWTKey = encrypJWTKey;
+    @Value("${encryptJWTKey}")
+    public void setEncryptJWTKey(String encryptJWTKey) {
+        JwtUtil.encryptJWTKey = encryptJWTKey;
     }
 
     /**
@@ -53,7 +53,7 @@ public class JwtUtil {
     public static boolean verify(String token) {
         try {
             // 帐号加JWT私钥解密
-            String secret = getClaim(token, Constant.ACCOUNT) + Base64ConvertUtil.decode(encrypJWTKey);
+            String secret = getClaim(token, Constant.ACCOUNT) + Base64ConvertUtil.decode(encryptJWTKey);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
                     .build();
@@ -94,7 +94,7 @@ public class JwtUtil {
     public static String sign(String account, String currentTimeMillis) {
         try {
             // 帐号加JWT私钥加密
-            String secret = account + Base64ConvertUtil.decode(encrypJWTKey);
+            String secret = account + Base64ConvertUtil.decode(encryptJWTKey);
             // 此处过期时间是以毫秒为单位，所以乘以1000
             Date date = new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpireTime) * 1000);
             Algorithm algorithm = Algorithm.HMAC256(secret);

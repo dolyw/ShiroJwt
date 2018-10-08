@@ -26,12 +26,12 @@ public class AesCipherUtil {
     /**
      * AES密码加密私钥(Base64加密)
      */
-    private static String encrypAESKey;
+    private static String encryptAESKey;
     // private static final byte[] KEY = { 1, 1, 33, 82, -32, -85, -128, -65 };
 
-    @Value("${encrypAESKey}")
-    public void setEncrypAESKey(String encrypAESKey) {
-        AesCipherUtil.encrypAESKey = encrypAESKey;
+    @Value("${encryptAESKey}")
+    public void setEncryptAESKey(String encryptAESKey) {
+        AesCipherUtil.encryptAESKey = encryptAESKey;
     }
 
     /**
@@ -52,9 +52,9 @@ public class AesCipherUtil {
             // 实例化支持AES算法的密钥生成器(算法名称命名需按规定，否则抛出异常)
             // KeyGenerator 提供对称密钥生成器的功能，支持各种算法
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
-            // 将私钥encrypAESKey先Base64解密后转换为byte[]数组按128位初始化
+            // 将私钥encryptAESKey先Base64解密后转换为byte[]数组按128位初始化
             SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            secureRandom.setSeed(Base64ConvertUtil.decode(encrypAESKey).getBytes());
+            secureRandom.setSeed(Base64ConvertUtil.decode(encryptAESKey).getBytes());
             keygen.init(128, secureRandom);
             // SecretKey 负责保存对称密钥 生成密钥
             SecretKey deskey = keygen.generateKey();
@@ -101,9 +101,9 @@ public class AesCipherUtil {
             // 实例化支持AES算法的密钥生成器(算法名称命名需按规定，否则抛出异常)
             // KeyGenerator 提供对称密钥生成器的功能，支持各种算法
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
-            // 将私钥encrypAESKey先Base64解密后转换为byte[]数组按128位初始化
+            // 将私钥encryptAESKey先Base64解密后转换为byte[]数组按128位初始化
             SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            secureRandom.setSeed(Base64ConvertUtil.decode(encrypAESKey).getBytes());
+            secureRandom.setSeed(Base64ConvertUtil.decode(encryptAESKey).getBytes());
             keygen.init(128, secureRandom);
             // SecretKey 负责保存对称密钥 生成密钥
             SecretKey deskey = keygen.generateKey();
