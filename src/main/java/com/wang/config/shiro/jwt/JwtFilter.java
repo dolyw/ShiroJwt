@@ -5,8 +5,8 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.wang.exception.CustomException;
 import com.wang.model.common.Constant;
 import com.wang.model.common.ResponseBean;
-import com.wang.util.JwtUtil;
 import com.wang.util.JedisUtil;
+import com.wang.util.JwtUtil;
 import com.wang.util.common.JsonConvertUtil;
 import com.wang.util.common.PropertiesUtil;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -92,13 +93,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        boolean loggedIn = false;
 
-        if (!loggedIn) {
-            this.sendChallenge(request, response);
-        }
+        this.sendChallenge(request, response);
 
-        return loggedIn;
+        return false;
     }
 
     /**
