@@ -40,7 +40,7 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/sbapijwt?characterEncoding=UTF-8"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/shirojwt?characterEncoding=UTF-8"
                         userId="root"
                         password="root">
         </jdbcConnection>

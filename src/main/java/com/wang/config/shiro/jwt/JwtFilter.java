@@ -93,9 +93,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-
         this.sendChallenge(request, response);
-
         return false;
     }
 

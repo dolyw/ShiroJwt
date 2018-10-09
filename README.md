@@ -2,26 +2,23 @@
 
 > 前端地址:[https://github.com/wang926454/VueStudy/tree/master/VueStudy08-JWT](https://github.com/wang926454/VueStudy/tree/master/VueStudy08-JWT)
 
-### 搭建参考
+### 项目相关
 
-1. 感谢SmithCruise的Shiro+JWT+Spring Boot Restful简易教程:[https://www.jianshu.com/p/f37f8c295057](https://www.jianshu.com/p/f37f8c295057)
-2. 感谢王洪玉的[Shiro入门]（一）使用Redis作为缓存管理器:[https://blog.csdn.net/why15732625998/article/details/78729254](https://blog.csdn.net/why15732625998/article/details/78729254)
-3. 感谢袋🐴饲养员的springboot(七).springboot整合jedis实现redis缓存:[http://www.cnblogs.com/GodHeng/p/9301330.html](http://www.cnblogs.com/GodHeng/p/9301330.html)
-4. 感谢W_Z_W_888的spring注入静态变量的三种方法及其注意事项:[https://blog.csdn.net/W_Z_W_888/article/details/79979103](https://blog.csdn.net/W_Z_W_888/article/details/79979103)
-5. 感谢天降风云的Vue2.0+ElementUI+PageHelper实现的表格分页:[https://blog.csdn.net/u012907049/article/details/70237457](https://blog.csdn.net/u012907049/article/details/70237457)
-6. 感谢yaxx的Vuejs之axios获取Http响应头:[https://segmentfault.com/a/1190000009125333](https://segmentfault.com/a/1190000009125333)
-7. 感谢Twilight的解决使用jwt刷新token带来的问题:[https://segmentfault.com/a/1190000013151506](https://segmentfault.com/a/1190000013151506)
-7. 感谢chuhx的shiro拦截器，返回json数据:[https://blog.csdn.net/chuhx/article/details/51148877](https://blog.csdn.net/chuhx/article/details/51148877)
+* 接口文档:[https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt - Interface.md](https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt%20-%20Interface.md)
+* 教程目录:[https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt01.md](https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt01.md)
+* 改为数据库形式(MySQL):[https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt02-MySQL.md](https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt02-MySQL.md)
+* 解决无法直接返回401错误:[https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt03-401.md](https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt03-401.md)
+* 实现Shiro的Cache(Redis)功能:[https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt04-Redis.md](https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt04-Redis.md)
 
 ### 项目介绍
 
-1. RESTful API
-2. Maven集成Mybatis Geneator
+1. RESTful API 
+2. Maven集成Mybatis Geneator(逆向工程)
 3. Shiro + Java-JWT实现无状态鉴权机制(Token)
-4. 密码加密(未使用Shiro自带的MD5 + 盐的方式)，采用AES-128 + Base64的方式
-5. 集成Redis(Jedis)，重写Shiro缓存机制(Redis)
-6. 将Jedis工具类与SpringBoot整合，项目启动注入JedisPool连接池
-7. Redis中保存RefreshToken信息，做到JWT的可控性
+4. 密码加密(采用AES-128 + Base64的方式)
+5. 集成Redis(Jedis)
+6. 重写Shiro缓存机制(Redis)
+7. Redis中保存RefreshToken信息(做到JWT的可控性)
 8. 根据RefreshToken自动刷新AccessToken
 
 #### 关于Shiro + Java-JWT实现无状态鉴权机制(Token)
@@ -44,7 +41,7 @@ Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，�
 就改成静态注入JedisPool连接池，JedisUtil工具类还是直接调用静态方法，无需@Autowired注入
 ```
 
-#### 关于Redis中保存RefreshToken信息，做到JWT的可控性
+#### 关于Redis中保存RefreshToken信息(做到JWT的可控性)
 ```txt
 登录认证通过后返回AccessToken信息(在AccessToken中保存当前的时间戳和帐号)，同时在Redis中设置一条以帐号为Key，Value为当前时
 间戳(登录时间)的RefreshToken，现在认证时必须AccessToken没失效以及Redis存在所对应的RefreshToken，且RefreshToken时间戳和Ac
@@ -92,399 +89,37 @@ mvn mybatis-generator:generate
 ```txt
 先设置Content-Type为application/json
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060001.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060001.PNG)
 ```txt
 然后填写请求参数帐号密码信息
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060002.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060002.PNG)
 ```txt
 进行请求访问，请求访问成功
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060003.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060003.PNG)
 ```txt
 点击查看Header信息的Authorization属性即是Token字段
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060004.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060004.PNG)
 ```txt
 访问需要权限的请求将Token字段放在Header信息的Authorization属性访问即可
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/SBAPIJWT/image/201810060005.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060005.PNG)
 ```txt
 Token的自动刷新也是在Token失效时返回新的Token在Header信息的Authorization属性
 ```
 
-### 接口文档
-
-#### 接口目录
-
-[1、获取用户列表](#1获取用户列表)<br/>
-[2、获取在线用户](#2获取在线用户)<br/>
-[3、登录授权](#3登录授权)<br/>
-[4、测试登录](#4测试登录)<br/>
-[5、测试登录注解](#5测试登录注解)<br/>
-[6、获取指定用户](#6获取指定用户)<br/>
-[7、新增用户](#7新增用户)<br/>
-[8、更新用户](#8更新用户)<br/>
-[9、删除用户](#9删除用户)<br/>
-[10、剔除在线用户](#10剔除在线用户)<br/>
-
-#### 接口列表
-
-#### 1、获取用户列表
-
-##### 请求URL:  
-```
-http://localhost:8080/user
-```
-
-##### 示例：
- [http://localhost:8080/user?page=1&&rows=10](http://localhost:8080/user?page=1&&rows=10)
-
-##### 请求方式: 
-```
-GET
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |Y |string |header |Token |
-|page |Y |int |query |当前页数 |
-|rows |Y |int |query |每页条数 |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "查询成功(Query was successful)",
-    "data": {
-        "data": [
-            {
-                "id": 1,
-                "account": "admin",
-                "password": "QUJBNUYyM0M3OTNEN0I4MUFBOTZBOTkwOEI1NDI0MUE=",
-                "username": "admin",
-                "regTime": "2018-10-06 17:25:16",
-                "loginTime": null
-            },
-            ...  // 共10条数据
-        ],
-        "count": 3
-    }
-}
-```
-
-#### 2、获取在线用户
-
-##### 请求URL:  
-```
-http://localhost:8080/user/online
-```
-
-##### 示例：
- [http://localhost:8080/user/online](http://localhost:8080/user/online)
-
-##### 请求方式: 
-```
-GET
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |Y |string |header |Token |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "查询成功(Query was successful)",
-    "data": [
-        {
-            "id": 1,
-            "account": "admin",
-            "password": "QUJBNUYyM0M3OTNEN0I4MUFBOTZBOTkwOEI1NDI0MUE=",
-            "username": "admin",
-            "regTime": "2018-10-06 17:25:16",
-            "loginTime": "2018-10-06 21:10:02"
-        }
-    ]
-}
-```
-
-#### 3、登录授权
-
-##### 请求URL:  
-```
-http://localhost:8080/user/login
-```
-
-##### 请求方式: 
-```
-POST
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|account |Y |string |param |帐号 |
-|password |Y |string |param |密码 |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "登录成功(Login Success.)",
-    "data": null
-}
-```
-
-#### 4、测试登录
-
-##### 请求URL:  
-```
-http://localhost:8080/user/article
-```
-
-##### 示例：
- [http://localhost:8080/user/article](http://localhost:8080/user/article)
-
-##### 请求方式: 
-```
-GET
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |N |string |header |Token |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "您已经登录了(You are already logged in)",
-    "data": null
-}
-```
-
-#### 5、测试登录注解
-
-##### 请求URL:  
-```
-http://localhost:8080/user/article2
-```
-
-##### 示例：
- [http://localhost:8080/user/article2](http://localhost:8080/user/article2)
-
-##### 请求方式: 
-```
-GET
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |Y |string |header |Token |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "您已经登录了(You are already logged in)",
-    "data": null
-}
-```
-
-#### 6、获取指定用户
-
-##### 请求URL:  
-```
-http://localhost:8080/user/{id}
-```
-
-##### 示例：
- [http://localhost:8080/user/1](http://localhost:8080/user/1)
-
-##### 请求方式: 
-```
-GET
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |Y |string |header |Token |
-|id |Y |int |param |用户ID |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "查询成功(Query was successful)",
-    "data": {
-        "id": 1,
-        "account": "admin",
-        "password": "QUJBNUYyM0M3OTNEN0I4MUFBOTZBOTkwOEI1NDI0MUE=",
-        "username": "admin",
-        "regTime": "2018-10-06 17:25:16",
-        "loginTime": null
-    }
-}
-```
-
-#### 7、新增用户
-
-##### 请求URL:  
-```
-http://localhost:8080/user
-```
-
-##### 请求方式: 
-```
-POST
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |Y |string |header |Token |
-|account |Y |string |param |帐号 |
-|password |Y |string |param |密码 |
-|username |Y |string |param |用户名 |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "新增成功(Insert Success)",
-    "data": {
-        "id": 5,
-        "account": "wang926454",
-        "password": "ODg2OTZCOTEzNDA2NURGQjhBNjQzNTJBODE1QzNEQTI=",
-        "username": "wang926454",
-        "regTime": "2018-10-06 21:43:09",
-        "loginTime": null
-    }
-}
-```
-
-#### 8、更新用户
-
-##### 请求URL:  
-```
-http://localhost:8080/user
-```
-
-##### 请求方式: 
-```
-PUT
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |Y |string |header |Token |
-|account |Y |string |param |帐号 |
-|password |Y |string |param |密码 |
-|username |Y |string |param |用户名 |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "更新成功(Update Success)",
-    "data": {
-        "id": 5,
-        "account": "wang926454",
-        "password": "ODg2OTZCOTEzNDA2NURGQjhBNjQzNTJBODE1QzNEQTI=",
-        "username": "wang926454",
-        "regTime": null,
-        "loginTime": null
-    }
-}
-```
-
-#### 9、删除用户
-
-##### 请求URL:  
-```
-http://localhost:8080/user/{id}
-```
-
-##### 示例：
- [http://localhost:8080/user/5](http://localhost:8080/user/5)
-
-##### 请求方式: 
-```
-DELETE
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |Y |string |header |Token |
-|id |Y |int |param |用户ID |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "删除成功(Delete Success)",
-    "data": null
-}
-```
-
-#### 10、剔除在线用户
-
-##### 请求URL:  
-```
-http://localhost:8080/user/online/{id}
-```
-
-##### 示例：
- [http://localhost:8080/user/online/1](http://localhost:8080/user/online/1)
-
-##### 请求方式: 
-```
-DELETE
-```
-
-##### 请求参数
-
-|参数|是否必选|数据类型|参数类型|说明|
-|:- |:-: |:-:  |:-: |:- |
-|Authorization |Y |string |header |Token |
-|id |Y |int |param |用户ID |
-
-##### 返回示例：
-
-```javascript
-{
-    "code": 200,
-    "msg": "剔除成功(Delete Success)",
-    "data": null
-}
-```
+### 搭建参考
+
+1. 感谢SmithCruise的Shiro+JWT+Spring Boot Restful简易教程:[https://www.jianshu.com/p/f37f8c295057](https://www.jianshu.com/p/f37f8c295057)
+2. 感谢王洪玉的[Shiro入门]（一）使用Redis作为缓存管理器:[https://blog.csdn.net/why15732625998/article/details/78729254](https://blog.csdn.net/why15732625998/article/details/78729254)
+3. 感谢袋🐴饲养员的springboot(七).springboot整合jedis实现redis缓存:[http://www.cnblogs.com/GodHeng/p/9301330.html](http://www.cnblogs.com/GodHeng/p/9301330.html)
+4. 感谢W_Z_W_888的spring注入静态变量的三种方法及其注意事项:[https://blog.csdn.net/W_Z_W_888/article/details/79979103](https://blog.csdn.net/W_Z_W_888/article/details/79979103)
+5. 感谢天降风云的Vue2.0+ElementUI+PageHelper实现的表格分页:[https://blog.csdn.net/u012907049/article/details/70237457](https://blog.csdn.net/u012907049/article/details/70237457)
+6. 感谢yaxx的Vuejs之axios获取Http响应头:[https://segmentfault.com/a/1190000009125333](https://segmentfault.com/a/1190000009125333)
+7. 感谢Twilight的解决使用jwt刷新token带来的问题:[https://segmentfault.com/a/1190000013151506](https://segmentfault.com/a/1190000013151506)
+8. 感谢chuhx的shiro拦截器，返回json数据:[https://blog.csdn.net/chuhx/article/details/51148877](https://blog.csdn.net/chuhx/article/details/51148877)
 
 ### 参与贡献
 

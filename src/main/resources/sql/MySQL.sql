@@ -1,8 +1,8 @@
-drop database sbapijwt;
+drop database shirojwt;
 
-create database sbapijwt;
+create database shirojwt;
 
-use sbapijwt;
+use shirojwt;
 
 create table user (
 id int primary key auto_increment COMMENT "ID",
