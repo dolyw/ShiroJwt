@@ -89,23 +89,23 @@ mvn mybatis-generator:generate
 ```txt
 先设置Content-Type为application/json
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060001.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006001.PNG)
 ```txt
 然后填写请求参数帐号密码信息
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060002.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006002.PNG)
 ```txt
 进行请求访问，请求访问成功
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060003.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006003.PNG)
 ```txt
 点击查看Header信息的Authorization属性即是Token字段
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060004.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006004.PNG)
 ```txt
 访问需要权限的请求将Token字段放在Header信息的Authorization属性访问即可
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/201810060005.PNG)
+![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006005.PNG)
 ```txt
 Token的自动刷新也是在Token失效时返回新的Token在Header信息的Authorization属性
 ```
