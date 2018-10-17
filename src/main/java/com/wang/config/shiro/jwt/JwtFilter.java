@@ -132,19 +132,15 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         if(JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
             // Redis中RefreshToken还存在，获取RefreshToken的时间戳
             String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
-            // 获取当前AccessToken中的时间戳，与RefreshToken的时间戳对比
+            // 获取当前AccessToken中的时间戳，与RefreshToken的时间戳对比，如果当前时间戳一致，进行AccessToken刷新
             if(JwtUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){
-                // 通过说明该AccessToken时间戳与RefreshToken时间戳一致，进行AccessToken刷新
                 // 获取当前最新时间戳
                 String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-                // 获取RefreshToken剩余过期时间
-                Long refreshTokenExpireTimeRedis = JedisUtil.getExpireTime(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account);
-                // 读取配置文件，获取一个AccessToken的过期时间
+                // 读取配置文件，获取refreshTokenExpireTime属性
                 PropertiesUtil.readProperties("config.properties");
-                String accessTokenExpireTime = PropertiesUtil.getProperty("accessTokenExpireTime");
-                // 设置RefreshToken中的时间戳为当前最新时间戳，且过期时间为RefreshToken剩余过期时间加上一个新的AccessToken过期时间
-                JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account, currentTimeMillis,
-                        refreshTokenExpireTimeRedis.intValue() + Integer.parseInt(accessTokenExpireTime));
+                String refreshTokenExpireTime = PropertiesUtil.getProperty("refreshTokenExpireTime");
+                // 设置RefreshToken中的时间戳为当前最新时间戳，且刷新过期时间重新为30分钟过期(配置文件可配置refreshTokenExpireTime属性)
+                JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account, currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
                 // 刷新AccessToken，设置时间戳为当前最新时间戳
                 token = JwtUtil.sign(account, currentTimeMillis);
                 // 将新刷新的AccessToken再次进行Shiro的登录
