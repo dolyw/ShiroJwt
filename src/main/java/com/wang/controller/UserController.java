@@ -210,7 +210,7 @@ public class UserController {
         }
         userDto.setRegTime(new Date());
         // 密码以帐号+密码的形式进行AES加密
-        if(userDto.getPassword().length() > 8){
+        if(userDto.getPassword().length() > Constant.PASSWORD_MAX_LEN){
             throw new CustomException("密码最多8位(Password up to 8 bits.)");
         }
         String key = AesCipherUtil.enCrypto(userDto.getAccount() + userDto.getPassword());
@@ -244,7 +244,7 @@ public class UserController {
         // FIXME: 如果不一样就说明用户修改了密码，重新加密密码(这个处理不太好，但是没有想到好的处理方式)
         if(!userDtoTemp.getPassword().equals(userDto.getPassword())){
             // 密码以帐号+密码的形式进行AES加密
-            if(userDto.getPassword().length() > 8){
+            if(userDto.getPassword().length() > Constant.PASSWORD_MAX_LEN){
                 throw new CustomException("密码最多8位(Password up to 8 bits.)");
             }
             String key = AesCipherUtil.enCrypto(userDto.getAccount() + userDto.getPassword());

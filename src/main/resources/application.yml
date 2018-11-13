@@ -25,7 +25,6 @@ spring:
         maxOpenPreparedStatements: 20
 
 mybatis:
-    config-location: classpath:mybatis-config.xml
     mapper-locations: classpath:mapper/*.xml
     type-aliases-package: com.wang.model.entity
 
@@ -37,9 +36,6 @@ pagehelper:
 
 mapper:
     not-empty: true
-#   mappers:
-#    - tk.mybatis.mapper.common.Mapper
-#    - tk.mybatis.mapper.common.Mapper2
 
 logging:
   level.com.wang.mapper: debug

@@ -26,7 +26,6 @@ public class JwtUtil {
      * 过期时间改为从配置文件获取
      */
     private static String accessTokenExpireTime;
-    // private static final long EXPIRE_TIME = 5 * 60 * 1000;
 
     /**
      * JWT认证加密私钥(Base64加密)

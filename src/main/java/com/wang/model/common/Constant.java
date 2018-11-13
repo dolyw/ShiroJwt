@@ -6,15 +6,6 @@ package com.wang.model.common;
  * @date 2018/9/3 16:03
  */
 public class Constant {
-    /**
-     * 1
-     */
-    public static final Integer INTEGER_1 = 1;
-
-    /**
-     * 2
-     */
-    public static final Integer INTEGER_2 = 2;
 
     /**
      * redis-OK
@@ -60,5 +51,10 @@ public class Constant {
      * JWT-currentTimeMillis:
      */
     public final static String CURRENT_TIME_MILLIS = "currentTimeMillis";
+
+    /**
+     * PASSWORD_MAX_LEN
+     */
+    public static final Integer PASSWORD_MAX_LEN = 8;
 
 }

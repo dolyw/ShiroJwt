@@ -15,17 +15,13 @@ reg_time datetime not null COMMENT "注册时间"
 CREATE TABLE role (
 id int primary key auto_increment COMMENT "ID",
 name varchar(128) not null unique COMMENT "角色名称"
-/*available int COMMENT '是否可用 1-可用 0-不可用'*/
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT "角色表";
 
 
 CREATE TABLE permission (
 id int primary key auto_increment COMMENT "ID",
 name varchar(128) COMMENT '资源名称',
-/*type varchar(32) COMMENT '资源类型：menu,permission,button',
-url varchar(128) COMMENT '访问url地址',*/
 per_code varchar(128) not null unique COMMENT '权限代码字符串'
-/*available int COMMENT '是否可用 1-可用 0-不可用'*/
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT "资源表";
 
 CREATE TABLE user_role (

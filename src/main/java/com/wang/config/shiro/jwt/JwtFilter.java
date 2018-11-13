@@ -56,7 +56,6 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 Throwable throwable = e.getCause();
                 if(throwable != null && throwable instanceof SignatureVerificationException ){
                     // 该异常为JWT的AccessToken认证失败(Token或者密钥不正确)
-                    // throw (SignatureVerificationException) throwable;
                     msg = "Token或者密钥不正确(" + throwable.getMessage() + ")";
                 } else if(throwable != null && throwable instanceof TokenExpiredException){
                     // 该异常为JWT的AccessToken已过期，判断RefreshToken未过期就进行AccessToken刷新
