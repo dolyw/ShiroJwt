@@ -31,7 +31,7 @@ ization字段存放AccessToken)，没有就以游客直接访问(有权限管控
 
 #### 关于AES-128 + Base64当两个用户的明文密码相同时进行加密，会发现数据库中存在相同结构的暗文密码
 ```txt
-Shiro默认是以MD5 + 盐的形式解决了这个问题(详细自己百度)，我采用AES-128 + Base64是以帐号+密码的形式进行加密密码，因为帐号具
+大部分是以MD5 + 盐的形式解决了这个问题(详细自己百度)，我采用AES-128 + Base64是以帐号+密码的形式进行加密密码，因为帐号具
 有唯一性，所以也不会出现相同结构的暗文密码这个问题
 ```
 
@@ -90,23 +90,23 @@ mvn mybatis-generator:generate
 ```txt
 先设置Content-Type为application/json
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006001.PNG)
+![image text](https://res.wang64.cn/ShiroJwt/image/20181006001.PNG)
 ```txt
 然后填写请求参数帐号密码信息
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006002.PNG)
+![image text](https://res.wang64.cn/ShiroJwt/image/20181006002.PNG)
 ```txt
 进行请求访问，请求访问成功
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006003.PNG)
+![image text](https://res.wang64.cn/ShiroJwt/image/20181006003.PNG)
 ```txt
 点击查看Header信息的Authorization属性即是Token字段
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006004.PNG)
+![image text](https://res.wang64.cn/ShiroJwt/image/20181006004.PNG)
 ```txt
 访问需要权限的请求将Token字段放在Header信息的Authorization属性访问即可
 ```
-![image text](https://github.com/wang926454/Reader/blob/master/ShiroJwt/image/20181006005.PNG)
+![image text](https://res.wang64.cn/ShiroJwt/image/20181006005.PNG)
 ```txt
 Token的自动刷新也是在Token失效时返回新的Token在Header信息的Authorization属性
 ```
