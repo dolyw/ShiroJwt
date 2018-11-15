@@ -161,13 +161,13 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     private void response401(ServletRequest req, ServletResponse resp, String msg) {
         HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-        httpServletResponse.setStatus(401);
+        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json; charset=utf-8");
         PrintWriter out = null;
         try {
             out = httpServletResponse.getWriter();
-            String data = JsonConvertUtil.objectToJson(new ResponseBean(401, "无权访问(Unauthorized):" + msg, null));
+            String data = JsonConvertUtil.objectToJson(new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + msg, null));
             out.append(data);
         } catch (IOException e) {
             logger.error(e.getMessage());

@@ -23,11 +23,11 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -63,6 +63,10 @@ public class UserController {
     @GetMapping
     @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
     public ResponseBean user(@Validated BaseDto baseDto){
+        if(baseDto.getPage() == null || baseDto.getRows() == null){
+            baseDto.setPage(1);
+            baseDto.setRows(10);
+        }
         PageHelper.startPage(baseDto.getPage(), baseDto.getRows());
         List<UserDto> userDtos = userService.selectAll();
         PageInfo<UserDto> selectPage = new PageInfo<UserDto>(userDtos);
@@ -72,7 +76,7 @@ public class UserController {
         Map<String, Object> result = new HashMap<String, Object>(16);
         result.put("count", selectPage.getTotal());
         result.put("data", selectPage.getList());
-        return new ResponseBean(200, "查询成功(Query was successful)", result);
+        return new ResponseBean(HttpStatus.OK.value(), "查询成功(Query was successful)", result);
     }
 
     /**
@@ -103,7 +107,7 @@ public class UserController {
         if(userDtos == null || userDtos.size() <= 0){
             throw new CustomException("查询失败(Query Failure)");
         }
-        return new ResponseBean(200, "查询成功(Query was successful)", userDtos);
+        return new ResponseBean(HttpStatus.OK.value(), "查询成功(Query was successful)", userDtos);
     }
 
     /**
@@ -137,7 +141,7 @@ public class UserController {
             String token = JwtUtil.sign(userDto.getAccount(), currentTimeMillis);
             httpServletResponse.setHeader("Authorization", token);
             httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
-            return new ResponseBean(200, "登录成功(Login Success.)", null);
+            return new ResponseBean(HttpStatus.OK.value(), "登录成功(Login Success.)", null);
         } else {
             throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");
         }
@@ -155,9 +159,9 @@ public class UserController {
         Subject subject = SecurityUtils.getSubject();
         // 登录了返回true
         if (subject.isAuthenticated()) {
-            return new ResponseBean(200, "您已经登录了(You are already logged in)", null);
+            return new ResponseBean(HttpStatus.OK.value(), "您已经登录了(You are already logged in)", null);
         } else {
-            return new ResponseBean(200, "你是游客(You are guest)", null);
+            return new ResponseBean(HttpStatus.OK.value(), "你是游客(You are guest)", null);
         }
     }
 
@@ -171,7 +175,7 @@ public class UserController {
     @GetMapping("/article2")
     @RequiresAuthentication
     public ResponseBean requireAuth() {
-        return new ResponseBean(200, "您已经登录了(You are already logged in)", null);
+        return new ResponseBean(HttpStatus.OK.value(), "您已经登录了(You are already logged in)", null);
     }
 
     /**
@@ -188,7 +192,7 @@ public class UserController {
         if(userDto == null){
             throw new CustomException("查询失败(Query Failure)");
         }
-        return new ResponseBean(200, "查询成功(Query was successful)", userDto);
+        return new ResponseBean(HttpStatus.OK.value(), "查询成功(Query was successful)", userDto);
     }
 
     /**
@@ -219,7 +223,7 @@ public class UserController {
         if(count <= 0){
             throw new CustomException("新增失败(Insert Failure)");
         }
-        return new ResponseBean(200, "新增成功(Insert Success)", userDto);
+        return new ResponseBean(HttpStatus.OK.value(), "新增成功(Insert Success)", userDto);
     }
 
     /**
@@ -254,7 +258,7 @@ public class UserController {
         if(count <= 0){
             throw new CustomException("更新失败(Update Failure)");
         }
-        return new ResponseBean(200, "更新成功(Update Success)", userDto);
+        return new ResponseBean(HttpStatus.OK.value(), "更新成功(Update Success)", userDto);
     }
 
     /**
@@ -271,7 +275,7 @@ public class UserController {
         if(count <= 0){
             throw new CustomException("删除失败，ID不存在(Deletion Failed. ID does not exist.)");
         }
-        return new ResponseBean(200, "删除成功(Delete Success)", null);
+        return new ResponseBean(HttpStatus.OK.value(), "删除成功(Delete Success)", null);
     }
 
     /**
@@ -287,7 +291,7 @@ public class UserController {
         UserDto userDto = userService.selectByPrimaryKey(id);
         if(JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount())){
             if(JedisUtil.delKey(Constant.PREFIX_SHIRO_REFRESH_TOKEN + userDto.getAccount()) > 0){
-                return new ResponseBean(200, "剔除成功(Delete Success)", null);
+                return new ResponseBean(HttpStatus.OK.value(), "剔除成功(Delete Success)", null);
             }
         }
         throw new CustomException("剔除失败，Account不存在(Deletion Failed. Account does not exist.)");

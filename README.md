@@ -13,7 +13,7 @@
 ### 项目介绍
 
 1. RESTful API 
-2. Maven集成Mybatis Geneator(逆向工程)
+2. Maven集成Mybatis Generator(逆向工程)
 3. Shiro + Java-JWT实现无状态鉴权机制(Token)
 4. 密码加密(采用AES-128 + Base64的方式)
 5. 集成Redis(Jedis)
@@ -77,7 +77,7 @@ AccessToken认证，Redis的RefreshToken也可以用来判断用户是否在线�
 
 ### 使用说明
 
-#### Mybatis Geneator使用
+#### Mybatis Generator使用(推荐快速生成代码:[https://github.com/wang926454/SpringBootGenerator](https://github.com/wang926454/SpringBootGenerator))
 
 ##### 先配置src\main\resources\generator\generatorConfig.xml文件(默认配置都在原来包的下一级reverse包下)，在pom.xml这一级目录(即项目根目录下)的命令行窗口执行(前提是配置了mvn)(IDEA可以直接在Maven窗口Plugins中双击执行)
 ```

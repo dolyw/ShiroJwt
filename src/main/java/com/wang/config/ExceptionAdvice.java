@@ -1,4 +1,4 @@
-package com.wang.controller;
+package com.wang.config;
 
 import com.wang.exception.CustomException;
 import com.wang.exception.CustomUnauthorizedException;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +27,7 @@ import java.util.Map;
  * @date 2018/8/30 14:02
  */
 @RestControllerAdvice
-public class ExceptionController {
+public class ExceptionAdvice {
     /**
      * 捕捉所有Shiro异常
      * @param e
@@ -34,7 +36,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ShiroException.class)
     public ResponseBean handle401(ShiroException e) {
-        return new ResponseBean(401, "无权访问(Unauthorized):" + e.getMessage(), null);
+        return new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + e.getMessage(), null);
     }
 
     /**
@@ -46,7 +48,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseBean handle401(UnauthorizedException e) {
-        return new ResponseBean(401, "无权访问(Unauthorized):当前Subject没有此请求所需权限(" + e.getMessage() + ")", null);
+        return new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):当前Subject没有此请求所需权限(" + e.getMessage() + ")", null);
     }
 
     /**
@@ -58,7 +60,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthenticatedException.class)
     public ResponseBean handle401(UnauthenticatedException e) {
-        return new ResponseBean(401, "无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)", null);
+        return new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)", null);
     }
 
     /**
@@ -68,7 +70,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(CustomUnauthorizedException.class)
     public ResponseBean handle401(CustomUnauthorizedException e) {
-        return new ResponseBean(401, "无权访问(Unauthorized):" + e.getMessage(), null);
+        return new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + e.getMessage(), null);
     }
 
     /**
@@ -80,7 +82,7 @@ public class ExceptionController {
     public ResponseBean validException(BindException e) {
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         Map<String, Object> result = this.getValidError(fieldErrors);
-        return new ResponseBean(400, result.get("errorMsg").toString(), result.get("errorList"));
+        return new ResponseBean(HttpStatus.BAD_REQUEST.value(), result.get("errorMsg").toString(), result.get("errorList"));
     }
 
     /**
@@ -92,7 +94,7 @@ public class ExceptionController {
     public ResponseBean validException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         Map<String, Object> result = this.getValidError(fieldErrors);
-        return new ResponseBean(400, result.get("errorMsg").toString(), result.get("errorList"));
+        return new ResponseBean(HttpStatus.BAD_REQUEST.value(), result.get("errorMsg").toString(), result.get("errorList"));
     }
 
     /**
@@ -102,7 +104,17 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomException.class)
     public ResponseBean handle(CustomException e) {
-        return new ResponseBean(500, e.getMessage(), null);
+        return new ResponseBean(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+    }
+
+    /**
+     * 捕捉404异常
+     * @return
+     */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseBean handle(NoHandlerFoundException e) {
+        return new ResponseBean(HttpStatus.NOT_FOUND.value(), e.getMessage(), null);
     }
 
     /**
@@ -111,7 +123,7 @@ public class ExceptionController {
      * @param ex
      * @return
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ResponseBean globalException(HttpServletRequest request, Throwable ex) {
         return new ResponseBean(this.getStatus(request).value(), ex.toString() + ": " + ex.getMessage(), null);
