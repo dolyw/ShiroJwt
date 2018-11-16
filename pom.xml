@@ -140,6 +140,12 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+            <!-- JavaDoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
             <!-- Mybatis Generator 逆向工程 -->
             <plugin>
                 <groupId>org.mybatis.generator</groupId>

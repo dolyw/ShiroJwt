@@ -4,6 +4,7 @@
 
 ### 项目相关
 
+* JavaDoc:[https://apidoc.gitee.com/wang926454/ShiroJwt](https://apidoc.gitee.com/wang926454/ShiroJwt)
 * 接口文档:[https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt - Interface.md](https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt%20-%20Interface.md)
 * 教程目录:[https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt01.md](https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt01.md)
 * 改为数据库形式(MySQL):[https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt02-MySQL.md](https://github.com/wang926454/Reader/blob/master/ShiroJwt/ShiroJwt02-MySQL.md)
@@ -77,7 +78,7 @@ AccessToken认证，Redis的RefreshToken也可以用来判断用户是否在线�
 
 ### 使用说明
 
-#### Mybatis Generator使用(推荐快速生成代码:[https://github.com/wang926454/SpringBootGenerator](https://github.com/wang926454/SpringBootGenerator))
+#### Mybatis Generator使用(快速生成基础代码:[https://github.com/wang926454/SpringBootGenerator](https://github.com/wang926454/SpringBootGenerator))
 
 ##### 先配置src\main\resources\generator\generatorConfig.xml文件(默认配置都在原来包的下一级reverse包下)，在pom.xml这一级目录(即项目根目录下)的命令行窗口执行(前提是配置了mvn)(IDEA可以直接在Maven窗口Plugins中双击执行)
 ```
