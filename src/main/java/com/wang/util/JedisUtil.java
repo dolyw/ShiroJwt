@@ -4,8 +4,6 @@ import com.wang.exception.CustomException;
 import com.wang.model.common.Constant;
 import com.wang.util.common.StringUtil;
 import com.wang.util.common.SerializableUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
@@ -20,11 +18,6 @@ import java.util.Set;
  */
 @Component
 public class JedisUtil {
-
-    /**
-     * Logger
-     */
-    private static Logger logger = LoggerFactory.getLogger(JedisUtil.class);
 
     /**
      * 静态注入JedisPool连接池

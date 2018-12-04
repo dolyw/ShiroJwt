@@ -23,7 +23,10 @@ import redis.clients.jedis.JedisPoolConfig;
 @ConfigurationProperties(prefix = "redis")
 public class JedisConfig {
 
-    private static Logger logger = LoggerFactory.getLogger(JedisConfig.class);
+    /**
+     * LOGGER
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(JedisConfig.class);
 
     private String host;
 
@@ -55,10 +58,10 @@ public class JedisConfig {
             jedisPoolConfig.setMinIdle(minIdle);
             // JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
             JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, null);
-            logger.info("初始化Redis连接池JedisPool成功!" + " Redis地址: " + host + ":" + port);
+            LOGGER.info("初始化Redis连接池JedisPool成功!地址: " + host + ":" + port);
             return jedisPool;
         } catch (Exception e) {
-            logger.error("初始化Redis连接池JedisPool异常:" + e.getMessage());
+            LOGGER.error("初始化Redis连接池JedisPool异常:" + e.getMessage());
         }
         return null;
     }

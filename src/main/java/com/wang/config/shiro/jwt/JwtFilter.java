@@ -29,9 +29,9 @@ import java.io.PrintWriter;
  */
 public class JwtFilter extends BasicHttpAuthenticationFilter {
     /**
-     * Logger
+     * LOGGER
      */
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtFilter.class);
 
     /**
      * 这里我们详细说明下为什么最终返回的都是true，即允许访问
@@ -170,8 +170,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             String data = JsonConvertUtil.objectToJson(new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + msg, null));
             out.append(data);
         } catch (IOException e) {
-            logger.error(e.getMessage());
-            throw new CustomException("直接返回Response信息出现IOException异常");
+            LOGGER.error("直接返回Response信息出现IOException异常:" + e.getMessage());
+            throw new CustomException("直接返回Response信息出现IOException异常:" + e.getMessage());
         } finally {
             if (out != null) {
                 out.close();

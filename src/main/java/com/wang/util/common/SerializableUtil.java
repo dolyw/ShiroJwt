@@ -1,6 +1,8 @@
 package com.wang.util.common;
 
 import com.wang.exception.CustomException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
@@ -10,6 +12,11 @@ import java.io.*;
  * @date 2018/9/4 15:13
  */
 public class SerializableUtil {
+
+    /**
+     * LOGGER
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SerializableUtil.class);
 
     /**
      * 序列化
@@ -28,8 +35,8 @@ public class SerializableUtil {
             byte[] bytes = baos.toByteArray();
             return bytes;
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new CustomException("SerializableUtil工具类序列化出现IOException异常");
+            LOGGER.error("SerializableUtil工具类序列化出现IOException异常:" + e.getMessage());
+            throw new CustomException("SerializableUtil工具类序列化出现IOException异常:" + e.getMessage());
         } finally {
             try {
                 if(oos != null) {
@@ -39,7 +46,8 @@ public class SerializableUtil {
                     baos.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("SerializableUtil工具类反序列化出现IOException异常:" + e.getMessage());
+                throw new CustomException("SerializableUtil工具类反序列化出现IOException异常:" + e.getMessage());
             }
         }
     }
@@ -59,11 +67,11 @@ public class SerializableUtil {
             ois = new ObjectInputStream(bais);
             return ois.readObject();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new CustomException("SerializableUtil工具类反序列化出现ClassNotFoundException异常");
+            LOGGER.error("SerializableUtil工具类反序列化出现ClassNotFoundException异常:" + e.getMessage());
+            throw new CustomException("SerializableUtil工具类反序列化出现ClassNotFoundException异常:" + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new CustomException("SerializableUtil工具类反序列化出现IOException异常");
+            LOGGER.error("SerializableUtil工具类反序列化出现IOException异常:" + e.getMessage());
+            throw new CustomException("SerializableUtil工具类反序列化出现IOException异常:" + e.getMessage());
         } finally {
             try {
                 if(ois != null) {
@@ -73,7 +81,8 @@ public class SerializableUtil {
                     bais.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("SerializableUtil工具类反序列化出现IOException异常:" + e.getMessage());
+                throw new CustomException("SerializableUtil工具类反序列化出现IOException异常:" + e.getMessage());
             }
         }
     }

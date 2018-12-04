@@ -1,6 +1,8 @@
 package com.wang.util.common;
 
 import com.wang.exception.CustomException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +16,11 @@ import java.util.Properties;
  * @date 2018/8/31 17:29
  */
 public class PropertiesUtil {
+
+    /**
+     * LOGGER
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesUtil.class);
 
     /**
      * PROP
@@ -34,15 +41,16 @@ public class PropertiesUtil {
             BufferedReader bf = new BufferedReader(new InputStreamReader(in));
             PROP.load(bf);
         } catch (IOException e){
-            e.printStackTrace();
+            LOGGER.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
+            throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
         } finally {
             try{
                 if(in != null){
                     in.close();
                 }
             }catch (IOException e){
-                e.printStackTrace();
-                throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常");
+                LOGGER.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
+                throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
             }
         }
     }

@@ -19,8 +19,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +31,6 @@ import java.util.List;
  */
 @Service
 public class UserRealm extends AuthorizingRealm {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserRealm.class);
 
     private final UserMapper userMapper;
     private final RoleMapper roleMapper;
