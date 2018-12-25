@@ -54,19 +54,19 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 String msg = e.getMessage();
                 // 获取应用异常(该Cause是导致抛出此throwable(异常)的throwable(异常))
                 Throwable throwable = e.getCause();
-                if(throwable != null && throwable instanceof SignatureVerificationException ){
+                if (throwable != null && throwable instanceof SignatureVerificationException) {
                     // 该异常为JWT的AccessToken认证失败(Token或者密钥不正确)
                     msg = "Token或者密钥不正确(" + throwable.getMessage() + ")";
-                } else if(throwable != null && throwable instanceof TokenExpiredException){
+                } else if (throwable != null && throwable instanceof TokenExpiredException) {
                     // 该异常为JWT的AccessToken已过期，判断RefreshToken未过期就进行AccessToken刷新
-                    if(this.refreshToken(request, response)){
+                    if (this.refreshToken(request, response)) {
                         return true;
-                    }else{
+                    } else {
                         msg = "Token已过期(" + throwable.getMessage() + ")";
                     }
-                } else{
+                } else {
                     // 应用异常不为空
-                    if(throwable != null) {
+                    if (throwable != null) {
                         // 获取应用异常msg
                         msg = throwable.getMessage();
                     }
@@ -128,11 +128,11 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         // 获取当前Token的帐号信息
         String account = JwtUtil.getClaim(token, Constant.ACCOUNT);
         // 判断Redis中RefreshToken是否存在
-        if(JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
+        if (JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)) {
             // Redis中RefreshToken还存在，获取RefreshToken的时间戳
             String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
             // 获取当前AccessToken中的时间戳，与RefreshToken的时间戳对比，如果当前时间戳一致，进行AccessToken刷新
-            if(JwtUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){
+            if (JwtUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
                 // 获取当前最新时间戳
                 String currentTimeMillis = String.valueOf(System.currentTimeMillis());
                 // 读取配置文件，获取refreshTokenExpireTime属性

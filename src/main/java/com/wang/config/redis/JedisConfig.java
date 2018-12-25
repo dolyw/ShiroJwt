@@ -49,7 +49,7 @@ public class JedisConfig {
     private int minIdle;
 
     @Bean
-    public JedisPool redisPoolFactory(){
+    public JedisPool redisPoolFactory() {
         try {
             JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
             jedisPoolConfig.setMaxIdle(maxIdle);

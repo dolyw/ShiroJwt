@@ -34,21 +34,21 @@ public class PropertiesUtil {
      * @author Wang926454
      * @date 2018/8/31 17:29
      */
-    public static void readProperties(String fileName){
+    public static void readProperties(String fileName) {
         InputStream in = null;
         try {
             in = PropertiesUtil.class.getResourceAsStream("/" + fileName);
             BufferedReader bf = new BufferedReader(new InputStreamReader(in));
             PROP.load(bf);
-        } catch (IOException e){
+        } catch (IOException e) {
             LOGGER.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
             throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
         } finally {
-            try{
-                if(in != null){
+            try {
+                if (in != null) {
                     in.close();
                 }
-            }catch (IOException e){
+            } catch (IOException e) {
                 LOGGER.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
                 throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
             }

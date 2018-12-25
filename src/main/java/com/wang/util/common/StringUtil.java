@@ -40,7 +40,7 @@ public class StringUtil {
      * @author Wang926454
      * @date 2018/9/4 15:39
      */
-    public static boolean isNull(byte[] bytes){
+    public static boolean isNull(byte[] bytes) {
         // 根据byte数组长度为0判断
         return bytes.length == 0 || bytes == null;
     }
@@ -67,7 +67,7 @@ public class StringUtil {
         if (isNotBlank(param)) {
             int len = param.length();
             StringBuilder sb = new StringBuilder(len);
-            for (int i = 0; i < len; ++i) {
+            for (int i = 0; i < len; i++) {
                 char c = param.charAt(i);
                 if (Character.isUpperCase(c)) {
                     sb.append(UNDERLINE);
@@ -93,7 +93,7 @@ public class StringUtil {
         if (isNotBlank(param)) {
             int len = param.length();
             StringBuilder sb = new StringBuilder(len);
-            for (int i = 0; i < len; ++i) {
+            for (int i = 0; i < len; i++) {
                 char c = param.charAt(i);
                 if (c == 95) {
                     ++i;

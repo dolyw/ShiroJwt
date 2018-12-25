@@ -147,11 +147,11 @@ public class ExceptionAdvice {
      * @param fieldErrors
      * @return
      */
-    private Map<String, Object> getValidError(List<FieldError> fieldErrors){
+    private Map<String, Object> getValidError(List<FieldError> fieldErrors) {
         Map<String, Object> result = new HashMap<String, Object>(16);
         List<String> errorList = new ArrayList<String>();
         StringBuffer errorMsg = new StringBuffer("校验异常(ValidException):");
-        for (FieldError error : fieldErrors){
+        for (FieldError error : fieldErrors) {
             errorList.add(error.getField() + "-" + error.getDefaultMessage());
             errorMsg.append(error.getField() + "-" + error.getDefaultMessage() + ".");
         }

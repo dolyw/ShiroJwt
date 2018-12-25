@@ -39,10 +39,10 @@ public class SerializableUtil {
             throw new CustomException("SerializableUtil工具类序列化出现IOException异常:" + e.getMessage());
         } finally {
             try {
-                if(oos != null) {
+                if (oos != null) {
                     oos.close();
                 }
-                if(baos != null) {
+                if (baos != null) {
                     baos.close();
                 }
             } catch (IOException e) {
@@ -74,10 +74,10 @@ public class SerializableUtil {
             throw new CustomException("SerializableUtil工具类反序列化出现IOException异常:" + e.getMessage());
         } finally {
             try {
-                if(ois != null) {
+                if (ois != null) {
                     ois.close();
                 }
-                if(bais != null) {
+                if (bais != null) {
                     bais.close();
                 }
             } catch (IOException e) {

@@ -47,7 +47,7 @@ public class AesCipherUtil {
      * @date 2018/8/31 16:56
      */
     public static String enCrypto(String str) {
-        try{
+        try {
             Security.addProvider(new com.sun.crypto.provider.SunJCE());
             // 实例化支持AES算法的密钥生成器(算法名称命名需按规定，否则抛出异常)
             // KeyGenerator 提供对称密钥生成器的功能，支持各种算法
@@ -67,22 +67,22 @@ public class AesCipherUtil {
             byte[] cipherByte = c.doFinal(src);
             // 先将二进制转换成16进制，再返回Bsae64加密后的String
             return Base64ConvertUtil.encode(HexConvertUtil.parseByte2HexStr(cipherByte));
-        } catch (NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             LOGGER.error("getInstance()方法异常:" + e.getMessage());
             throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
-        } catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             LOGGER.error("Bsae64加密异常:" + e.getMessage());
             throw new CustomUnauthorizedException("Bsae64加密异常:" + e.getMessage());
-        } catch (NoSuchPaddingException e){
+        } catch (NoSuchPaddingException e) {
             LOGGER.error("getInstance()方法异常:" + e.getMessage());
             throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
-        } catch (InvalidKeyException e){
+        } catch (InvalidKeyException e) {
             LOGGER.error("初始化Cipher对象异常:" + e.getMessage());
             throw new CustomUnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
-        } catch (IllegalBlockSizeException e){
+        } catch (IllegalBlockSizeException e) {
             LOGGER.error("加密异常，密钥有误:" + e.getMessage());
             throw new CustomUnauthorizedException("加密异常，密钥有误:" + e.getMessage());
-        } catch (BadPaddingException e){
+        } catch (BadPaddingException e) {
             LOGGER.error("加密异常，密钥有误:" + e.getMessage());
             throw new CustomUnauthorizedException("加密异常，密钥有误:" + e.getMessage());
         }
@@ -96,7 +96,7 @@ public class AesCipherUtil {
      * @date 2018/8/31 16:56
      */
     public static String deCrypto(String str) {
-        try{
+        try {
             Security.addProvider(new com.sun.crypto.provider.SunJCE());
             // 实例化支持AES算法的密钥生成器(算法名称命名需按规定，否则抛出异常)
             // KeyGenerator 提供对称密钥生成器的功能，支持各种算法
@@ -114,22 +114,22 @@ public class AesCipherUtil {
             // 该字节数组负责保存加密的结果，先对str进行Bsae64解密，将16进制转换为二进制
             byte[] cipherByte = c.doFinal(HexConvertUtil.parseHexStr2Byte(Base64ConvertUtil.decode(str)));
             return new String(cipherByte);
-        } catch (NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             LOGGER.error("getInstance()方法异常:" + e.getMessage());
             throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
-        } catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             LOGGER.error("Bsae64加密异常:" + e.getMessage());
             throw new CustomUnauthorizedException("Bsae64加密异常:" + e.getMessage());
-        } catch (NoSuchPaddingException e){
+        } catch (NoSuchPaddingException e) {
             LOGGER.error("getInstance()方法异常:" + e.getMessage());
             throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
-        } catch (InvalidKeyException e){
+        } catch (InvalidKeyException e) {
             LOGGER.error("初始化Cipher对象异常:" + e.getMessage());
             throw new CustomUnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
-        } catch (IllegalBlockSizeException e){
+        } catch (IllegalBlockSizeException e) {
             LOGGER.error("解密异常，密钥有误:" + e.getMessage());
             throw new CustomUnauthorizedException("解密异常，密钥有误:" + e.getMessage());
-        } catch (BadPaddingException e){
+        } catch (BadPaddingException e) {
             LOGGER.error("解密异常，密钥有误:" + e.getMessage());
             throw new CustomUnauthorizedException("解密异常，密钥有误:" + e.getMessage());
         }
