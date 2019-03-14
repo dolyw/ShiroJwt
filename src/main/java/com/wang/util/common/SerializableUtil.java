@@ -32,8 +32,7 @@ public class SerializableUtil {
             baos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(baos);
             oos.writeObject(object);
-            byte[] bytes = baos.toByteArray();
-            return bytes;
+            return baos.toByteArray();
         } catch (IOException e) {
             LOGGER.error("SerializableUtil工具类序列化出现IOException异常:" + e.getMessage());
             throw new CustomException("SerializableUtil工具类序列化出现IOException异常:" + e.getMessage());

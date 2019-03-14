@@ -68,7 +68,7 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public void clear() throws CacheException {
-        JedisUtil.getJedis().flushDB();
+        Objects.requireNonNull(JedisUtil.getJedis()).flushDB();
     }
 
     /**
@@ -76,7 +76,7 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public int size() {
-        Long size = JedisUtil.getJedis().dbSize();
+        Long size = Objects.requireNonNull(JedisUtil.getJedis()).dbSize();
         return size.intValue();
     }
 
@@ -85,7 +85,7 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public Set keys() {
-        Set<byte[]> keys = JedisUtil.getJedis().keys(new String("*").getBytes());
+        Set<byte[]> keys = Objects.requireNonNull(JedisUtil.getJedis()).keys("*".getBytes());
         Set<Object> set = new HashSet<Object>();
         for (byte[] bs : keys) {
             set.add(SerializableUtil.unserializable(bs));

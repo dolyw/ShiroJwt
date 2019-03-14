@@ -19,15 +19,15 @@ public class HexConvertUtil {
 
     /**
      * 将二进制转换成16进制
-     * @param buff
+     * @param bytes
      * @return java.lang.String
      * @author Wang926454
      * @date 2018/8/31 17:20
      */
-    public static String parseByte2HexStr(byte[] buff) {
+    public static String parseByte2HexStr(byte[] bytes) {
         StringBuffer sb = new StringBuffer();
-        for (int i = 0, len = buff.length; i < len; i++) {
-            String hex = Integer.toHexString(buff[i] & 0xFF);
+        for (byte buff : bytes) {
+            String hex = Integer.toHexString(buff & 0xFF);
             if (hex.length() == INTEGER_1) {
                 hex = '0' + hex;
             }

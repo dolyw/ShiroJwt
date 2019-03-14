@@ -153,7 +153,7 @@ public class ExceptionAdvice {
         StringBuffer errorMsg = new StringBuffer("校验异常(ValidException):");
         for (FieldError error : fieldErrors) {
             errorList.add(error.getField() + "-" + error.getDefaultMessage());
-            errorMsg.append(error.getField() + "-" + error.getDefaultMessage() + ".");
+            errorMsg.append(error.getField()).append("-").append(error.getDefaultMessage()).append(".");
         }
         result.put("errorList", errorList);
         result.put("errorMsg", errorMsg);

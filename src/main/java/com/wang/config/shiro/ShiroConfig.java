@@ -33,6 +33,7 @@ public class ShiroConfig {
      * @author Wang926454
      * @date 2018/8/31 10:55
      */
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean("securityManager")
     public DefaultWebSecurityManager getManager(UserRealm userRealm) {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();

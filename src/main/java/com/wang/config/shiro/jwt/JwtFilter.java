@@ -54,10 +54,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 String msg = e.getMessage();
                 // 获取应用异常(该Cause是导致抛出此throwable(异常)的throwable(异常))
                 Throwable throwable = e.getCause();
-                if (throwable != null && throwable instanceof SignatureVerificationException) {
+                if (throwable instanceof SignatureVerificationException) {
                     // 该异常为JWT的AccessToken认证失败(Token或者密钥不正确)
                     msg = "Token或者密钥不正确(" + throwable.getMessage() + ")";
-                } else if (throwable != null && throwable instanceof TokenExpiredException) {
+                } else if (throwable instanceof TokenExpiredException) {
                     // 该异常为JWT的AccessToken已过期，判断RefreshToken未过期就进行AccessToken刷新
                     if (this.refreshToken(request, response)) {
                         return true;
@@ -71,11 +71,11 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                         msg = throwable.getMessage();
                     }
                 }
-                /**
-                 * 错误两种处理方式
-                 * 1. 将非法请求转发到/401的Controller处理，抛出自定义无权访问异常被全局捕捉再返回Response信息
-                 * 2. 无需转发，直接返回Response信息
-                 * 一般使用第二种(更方便)
+                /*
+                  错误两种处理方式
+                  1. 将非法请求转发到/401的Controller处理，抛出自定义无权访问异常被全局捕捉再返回Response信息
+                  2. 无需转发，直接返回Response信息
+                  一般使用第二种(更方便)
                  */
                 // 直接返回Response信息
                 this.response401(request, response, msg);
@@ -164,18 +164,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json; charset=utf-8");
-        PrintWriter out = null;
-        try {
-            out = httpServletResponse.getWriter();
+        try (PrintWriter out = httpServletResponse.getWriter()) {
             String data = JsonConvertUtil.objectToJson(new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + msg, null));
             out.append(data);
         } catch (IOException e) {
             LOGGER.error("直接返回Response信息出现IOException异常:" + e.getMessage());
             throw new CustomException("直接返回Response信息出现IOException异常:" + e.getMessage());
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
     }
 
