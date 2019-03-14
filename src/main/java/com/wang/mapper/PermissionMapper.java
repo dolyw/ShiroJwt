@@ -19,5 +19,5 @@ public interface PermissionMapper extends Mapper<PermissionDto> {
      * @author Wang926454
      * @date 2018/8/31 11:30
      */
-    public List<PermissionDto> findPermissionByRole(RoleDto roleDto);
+    List<PermissionDto> findPermissionByRole(RoleDto roleDto);
 }

@@ -42,7 +42,7 @@ public class StringUtil {
      */
     public static boolean isNull(byte[] bytes) {
         // 根据byte数组长度为0判断
-        return bytes.length == 0 || bytes == null;
+        return bytes == null || bytes.length == 0;
     }
 
     /**

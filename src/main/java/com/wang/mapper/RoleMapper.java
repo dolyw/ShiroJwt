@@ -19,5 +19,5 @@ public interface RoleMapper extends Mapper<RoleDto> {
      * @author Wang926454
      * @date 2018/8/31 11:30
      */
-    public List<RoleDto> findRoleByUser(UserDto userDto);
+    List<RoleDto> findRoleByUser(UserDto userDto);
 }
