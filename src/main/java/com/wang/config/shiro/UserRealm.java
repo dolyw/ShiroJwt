@@ -100,7 +100,7 @@ public class UserRealm extends AuthorizingRealm {
             String currentTimeMillisRedis = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
             // 获取AccessToken时间戳，与RefreshToken的时间戳对比
             if (JwtUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
-                return new SimpleAuthenticationInfo(token, token, "userRealm");
+                return new SimpleAuthenticationInfo(userDto, token, token);
             }
         }
         throw new AuthenticationException("Token已过期(Token expired or incorrect.)");

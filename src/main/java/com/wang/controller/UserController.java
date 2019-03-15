@@ -14,6 +14,7 @@ import com.wang.model.common.ResponseBean;
 import com.wang.service.IUserService;
 import com.wang.util.AesCipherUtil;
 import com.wang.util.JwtUtil;
+import com.wang.util.UserUtil;
 import com.wang.util.common.StringUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -46,10 +47,13 @@ public class UserController {
     @Value("${refreshTokenExpireTime}")
     private String refreshTokenExpireTime;
 
+    private final UserUtil userUtil;
+
     private final IUserService userService;
 
     @Autowired
-    public UserController(IUserService userService) {
+    public UserController(UserUtil userUtil, IUserService userService) {
+        this.userUtil = userUtil;
         this.userService = userService;
     }
 
@@ -176,6 +180,27 @@ public class UserController {
     @RequiresAuthentication
     public ResponseBean requireAuth() {
         return new ResponseBean(HttpStatus.OK.value(), "您已经登录了(You are already logged in)", null);
+    }
+
+    /**
+     * 获取当前登录用户信息
+     * @param
+     * @return com.wang.model.common.ResponseBean
+     * @author Wang926454
+     * @date 2019/3/15 11:51
+     */
+    @GetMapping("/info")
+    @RequiresAuthentication
+    public ResponseBean info() {
+        // 获取当前登录用户
+        UserDto userDto = userUtil.getUser();
+        // 获取当前登录用户Id
+        Integer id = userUtil.getUserId();
+        // 获取当前登录用户Token
+        String Token = userUtil.getToken();
+        // 获取当前登录用户Account
+        String account = userUtil.getAccount();
+        return new ResponseBean(HttpStatus.OK.value(), "您已经登录了(You are already logged in)", userDto);
     }
 
     /**
