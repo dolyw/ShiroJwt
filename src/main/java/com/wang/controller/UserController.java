@@ -197,7 +197,7 @@ public class UserController {
         // 获取当前登录用户Id
         Integer id = userUtil.getUserId();
         // 获取当前登录用户Token
-        String Token = userUtil.getToken();
+        String token = userUtil.getToken();
         // 获取当前登录用户Account
         String account = userUtil.getAccount();
         return new ResponseBean(HttpStatus.OK.value(), "您已经登录了(You are already logged in)", userDto);

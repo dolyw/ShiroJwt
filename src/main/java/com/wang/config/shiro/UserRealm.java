@@ -63,13 +63,17 @@ public class UserRealm extends AuthorizingRealm {
         // 查询用户角色
         List<RoleDto> roleDtos = roleMapper.findRoleByUser(userDto);
         for (RoleDto roleDto : roleDtos) {
-            // 添加角色
-            simpleAuthorizationInfo.addRole(roleDto.getName());
-            // 根据用户角色查询权限
-            List<PermissionDto> permissionDtos = permissionMapper.findPermissionByRole(roleDto);
-            for (PermissionDto permissionDto : permissionDtos) {
-                // 添加权限
-                simpleAuthorizationInfo.addStringPermission(permissionDto.getPerCode());
+            if (roleDto != null) {
+                // 添加角色
+                simpleAuthorizationInfo.addRole(roleDto.getName());
+                // 根据用户角色查询权限
+                List<PermissionDto> permissionDtos = permissionMapper.findPermissionByRole(roleDto);
+                for (PermissionDto permissionDto : permissionDtos) {
+                    if (permissionDto != null) {
+                        // 添加权限
+                        simpleAuthorizationInfo.addStringPermission(permissionDto.getPerCode());
+                    }
+                }
             }
         }
         return simpleAuthorizationInfo;

@@ -10,6 +10,7 @@ import com.wang.util.JwtUtil;
 import com.wang.util.common.JsonConvertUtil;
 import com.wang.util.common.PropertiesUtil;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -44,7 +45,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        // 判断用户是否想要登入
+        // 查看当前Header中是否携带Authorization属性(Token)，有的话就进行登录认证授权
         if (this.isLoginAttempt(request, response)) {
             try {
                 // 进行Shiro的登录UserRealm
@@ -79,6 +80,21 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                  */
                 // 直接返回Response信息
                 this.response401(request, response, msg);
+                return false;
+            }
+        } else {
+            // 没有携带Token
+            HttpServletRequest httpRequest = WebUtils.toHttp(request);
+            // 获取当前请求类型
+            String httpMethod = httpRequest.getMethod();
+            // 获取当前请求URI
+            String requestURI = httpRequest.getRequestURI();
+            LOGGER.info("当前请求 {} Authorization属性(Token)为空 请求类型 {}", requestURI, httpMethod);
+
+            // mustLoginFlag = true 开启任何请求必须登录才可访问
+            Boolean mustLoginFlag = false;
+            if (mustLoginFlag) {
+                this.response401(request, response, "请先登录");
                 return false;
             }
         }

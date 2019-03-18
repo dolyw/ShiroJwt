@@ -15,6 +15,7 @@ import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -66,11 +67,11 @@ public class ShiroConfig {
         filterMap.put("jwt", new JwtFilter());
         factoryBean.setFilters(filterMap);
         factoryBean.setSecurityManager(securityManager);
-        // 自定义url规则
-        Map<String, String> filterRuleMap = new HashMap<>(16);
+        // 自定义url规则使用LinkedHashMap有序Map
+        LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>(16);
         // 所有请求通过我们自己的JWTFilter
-        filterRuleMap.put("/**", "jwt");
-        factoryBean.setFilterChainDefinitionMap(filterRuleMap);
+        filterChainDefinitionMap.put("/**", "jwt");
+        factoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return factoryBean;
     }
 
