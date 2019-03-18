@@ -1,10 +1,12 @@
 package com.wang.util;
 
+import com.wang.exception.CustomException;
+import com.wang.mapper.UserMapper;
 import com.wang.model.UserDto;
+import com.wang.model.common.Constant;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.Set;
 
 /**
  * 获取当前登录用户工具类
@@ -14,6 +16,13 @@ import java.util.Set;
 @Component
 public class UserUtil {
 
+    private final UserMapper userMapper;
+
+    @Autowired
+    public UserUtil(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
     /**
      * 获取当前登录用户
      * @param
@@ -22,7 +31,17 @@ public class UserUtil {
      * @date 2019/3/15 11:48
      */
     public UserDto getUser() {
-        return (UserDto) SecurityUtils.getSubject().getPrincipal();
+        String token = SecurityUtils.getSubject().getPrincipal().toString();
+        // 解密获得Account
+        String account = JwtUtil.getClaim(token, Constant.ACCOUNT);
+        UserDto userDto = new UserDto();
+        userDto.setAccount(account);
+        userDto = userMapper.selectOne(userDto);
+        // 用户是否存在
+        if (userDto == null) {
+            throw new CustomException("该帐号不存在(The account does not exist.)");
+        }
+        return userDto;
     }
 
     /**
@@ -44,14 +63,7 @@ public class UserUtil {
      * @date 2019/3/15 11:48
      */
     public String getToken() {
-        PrincipalCollection principalCollection = SecurityUtils.getSubject().getPrincipals();
-        if (principalCollection != null) {
-            Set<String> realmNames = principalCollection.getRealmNames();
-            for (String realmName : realmNames) {
-                return realmName;
-            }
-        }
-        return null;
+        return SecurityUtils.getSubject().getPrincipal().toString();
     }
 
     /**
@@ -62,6 +74,8 @@ public class UserUtil {
      * @date 2019/3/15 11:48
      */
     public String getAccount() {
-        return getUser().getAccount();
+        String token = SecurityUtils.getSubject().getPrincipal().toString();
+        // 解密获得Account
+        return JwtUtil.getClaim(token, Constant.ACCOUNT);
     }
 }
