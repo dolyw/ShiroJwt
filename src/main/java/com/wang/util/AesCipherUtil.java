@@ -57,11 +57,11 @@ public class AesCipherUtil {
             secureRandom.setSeed(Base64ConvertUtil.decode(encryptAESKey).getBytes());
             keygen.init(128, secureRandom);
             // SecretKey 负责保存对称密钥 生成密钥
-            SecretKey deskey = keygen.generateKey();
+            SecretKey desKey = keygen.generateKey();
             // 生成Cipher对象,指定其支持的AES算法，Cipher负责完成加密或解密工作
             Cipher c = Cipher.getInstance("AES");
             // 根据密钥，对Cipher对象进行初始化，ENCRYPT_MODE表示加密模式
-            c.init(Cipher.ENCRYPT_MODE, deskey);
+            c.init(Cipher.ENCRYPT_MODE, desKey);
             byte[] src = str.getBytes();
             // 该字节数组负责保存加密的结果
             byte[] cipherByte = c.doFinal(src);
@@ -100,20 +100,20 @@ public class AesCipherUtil {
             secureRandom.setSeed(Base64ConvertUtil.decode(encryptAESKey).getBytes());
             keygen.init(128, secureRandom);
             // SecretKey 负责保存对称密钥 生成密钥
-            SecretKey deskey = keygen.generateKey();
+            SecretKey desKey = keygen.generateKey();
             // 生成Cipher对象,指定其支持的AES算法，Cipher负责完成加密或解密工作
             Cipher c = Cipher.getInstance("AES");
             // 根据密钥，对Cipher对象进行初始化，DECRYPT_MODE表示解密模式
-            c.init(Cipher.DECRYPT_MODE, deskey);
-            // 该字节数组负责保存加密的结果，先对str进行Base64解密，将16进制转换为二进制
+            c.init(Cipher.DECRYPT_MODE, desKey);
+            // 该字节数组负责保存解密的结果，先对str进行Base64解密，将16进制转换为二进制
             byte[] cipherByte = c.doFinal(HexConvertUtil.parseHexStr2Byte(Base64ConvertUtil.decode(str)));
             return new String(cipherByte);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             LOGGER.error("getInstance()方法异常:" + e.getMessage());
             throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (UnsupportedEncodingException e) {
-            LOGGER.error("Base64加密异常:" + e.getMessage());
-            throw new CustomUnauthorizedException("Base64加密异常:" + e.getMessage());
+            LOGGER.error("Base64解密异常:" + e.getMessage());
+            throw new CustomUnauthorizedException("Base64解密异常:" + e.getMessage());
         } catch (InvalidKeyException e) {
             LOGGER.error("初始化Cipher对象异常:" + e.getMessage());
             throw new CustomUnauthorizedException("初始化Cipher对象异常:" + e.getMessage());

@@ -79,22 +79,21 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                   一般使用第二种(更方便)
                  */
                 // 直接返回Response信息
-                this.response401(request, response, msg);
+                this.response401(response, msg);
                 return false;
             }
         } else {
             // 没有携带Token
-            HttpServletRequest httpRequest = WebUtils.toHttp(request);
+            HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
             // 获取当前请求类型
-            String httpMethod = httpRequest.getMethod();
+            String httpMethod = httpServletRequest.getMethod();
             // 获取当前请求URI
-            String requestURI = httpRequest.getRequestURI();
+            String requestURI = httpServletRequest.getRequestURI();
             LOGGER.info("当前请求 {} Authorization属性(Token)为空 请求类型 {}", requestURI, httpMethod);
-
             // mustLoginFlag = true 开启任何请求必须登录才可访问
             Boolean mustLoginFlag = false;
             if (mustLoginFlag) {
-                this.response401(request, response, "请先登录");
+                this.response401(response, "请先登录");
                 return false;
             }
         }
@@ -136,6 +135,24 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
+     * 对跨域提供支持
+     */
+    @Override
+    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+        HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
+        HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
+        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
+        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
+        // 跨域时会首先发送一个OPTIONS请求，这里我们给OPTIONS请求直接返回正常状态
+        if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
+            httpServletResponse.setStatus(HttpStatus.OK.value());
+            return false;
+        }
+        return super.preHandle(request, response);
+    }
+
+    /**
      * 此处为AccessToken刷新，进行判断RefreshToken是否过期，未过期就返回新的AccessToken且继续正常访问
      */
     private boolean refreshToken(ServletRequest request, ServletResponse response) {
@@ -163,7 +180,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获，如果没有抛出异常则代表登入成功，返回true
                 this.getSubject(request, response).login(jwtToken);
                 // 最后将刷新的AccessToken存放在Response的Header中的Authorization字段返回
-                HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+                HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
                 httpServletResponse.setHeader("Authorization", token);
                 httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
                 return true;
@@ -175,8 +192,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     /**
      * 无需转发，直接返回Response信息
      */
-    private void response401(ServletRequest req, ServletResponse resp, String msg) {
-        HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
+    private void response401(ServletResponse response, String msg) {
+        HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json; charset=utf-8");
@@ -187,23 +204,5 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             LOGGER.error("直接返回Response信息出现IOException异常:" + e.getMessage());
             throw new CustomException("直接返回Response信息出现IOException异常:" + e.getMessage());
         }
-    }
-
-    /**
-     * 对跨域提供支持
-     */
-    @Override
-    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
-        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
-        // 跨域时会首先发送一个OPTIONS请求，这里我们给OPTIONS请求直接返回正常状态
-        if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
-            httpServletResponse.setStatus(HttpStatus.OK.value());
-            return false;
-        }
-        return super.preHandle(request, response);
     }
 }

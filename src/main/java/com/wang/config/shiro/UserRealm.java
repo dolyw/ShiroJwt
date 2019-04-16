@@ -47,17 +47,17 @@ public class UserRealm extends AuthorizingRealm {
      * 大坑，必须重写此方法，不然Shiro会报错
      */
     @Override
-    public boolean supports(AuthenticationToken token) {
-        return token instanceof JwtToken;
+    public boolean supports(AuthenticationToken authenticationToken) {
+        return authenticationToken instanceof JwtToken;
     }
 
     /**
      * 只有当需要检测用户权限的时候才会调用此方法，例如checkRole,checkPermission之类的
      */
     @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        String account = JwtUtil.getClaim(principals.toString(), Constant.ACCOUNT);
+        String account = JwtUtil.getClaim(principalCollection.toString(), Constant.ACCOUNT);
         UserDto userDto = new UserDto();
         userDto.setAccount(account);
         // 查询用户角色
@@ -83,8 +83,8 @@ public class UserRealm extends AuthorizingRealm {
      * 默认使用此方法进行用户名正确与否验证，错误抛出异常即可。
      */
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
-        String token = (String) auth.getCredentials();
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        String token = (String) authenticationToken.getCredentials();
         // 解密获得account，用于和数据库进行对比
         String account = JwtUtil.getClaim(token, Constant.ACCOUNT);
         // 帐号为空
