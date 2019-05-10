@@ -1,5 +1,6 @@
 package com.wang.config.redis;
 
+import com.wang.util.common.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +58,8 @@ public class JedisConfig {
             jedisPoolConfig.setMaxTotal(maxActive);
             jedisPoolConfig.setMinIdle(minIdle);
             // JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
-            JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, null);
+            String pwd = StringUtil.isBlank(password) ? null : password;
+            JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, pwd);
             LOGGER.info("初始化Redis连接池JedisPool成功!地址: " + host + ":" + port);
             return jedisPool;
         } catch (Exception e) {
