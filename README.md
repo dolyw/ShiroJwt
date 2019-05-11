@@ -9,7 +9,7 @@
 
 #### 项目相关
 
-* JavaDoc:[https://apidoc.gitee.com/wang926454/ShiroJwt](https://apidoc.gitee.com/wang926454/ShiroJwt)
+* JavaDoc:[https://apidoc.gitee.com/dolyw/ShiroJwt](https://apidoc.gitee.com/dolyw/ShiroJwt)
 * 接口文档:[https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt-Interface.md](https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt-Interface.md)
 * 教程目录:[https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt01.md](https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt01.md)
 * 改为数据库形式(MySQL):[https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt02-MySQL.md](https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt02-MySQL.md)
@@ -95,23 +95,23 @@ mvn mybatis-generator:generate
 ```txt
 先设置Content-Type为application/json
 ```
-![image text](https://docs.wang64.cn/Project/ShiroJwt/image/20181006001.PNG)
+![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006001.PNG)
 ```txt
 然后填写请求参数帐号密码信息
 ```
-![image text](https://docs.wang64.cn/Project/ShiroJwt/image/20181006002.PNG)
+![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006002.PNG)
 ```txt
 进行请求访问，请求访问成功
 ```
-![image text](https://docs.wang64.cn/Project/ShiroJwt/image/20181006003.PNG)
+![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006003.PNG)
 ```txt
 点击查看Header信息的Authorization属性即是Token字段
 ```
-![image text](https://docs.wang64.cn/Project/ShiroJwt/image/20181006004.PNG)
+![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006004.PNG)
 ```txt
 访问需要权限的请求将Token字段放在Header信息的Authorization属性访问即可
 ```
-![image text](https://docs.wang64.cn/Project/ShiroJwt/image/20181006005.PNG)
+![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006005.PNG)
 ```txt
 Token的自动刷新也是在Token失效时返回新的Token在Header信息的Authorization属性
 ```
