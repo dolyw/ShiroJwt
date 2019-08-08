@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * Shiro配置
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/30 15:49
  */
 @Configuration
@@ -31,7 +31,7 @@ public class ShiroConfig {
      * 详情见文档 http://shiro.apache.org/session-management.html#SessionManagement-StatelessApplications%28Sessionless%29
      * @param userRealm
      * @return org.apache.shiro.web.mgt.DefaultWebSecurityManager
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/31 10:55
      */
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -66,7 +66,7 @@ public class ShiroConfig {
      * 详情见文档 http://shiro.apache.org/web.html#urls-
      * @param securityManager
      * @return org.apache.shiro.spring.web.ShiroFilterFactoryBean
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/31 10:57
      */
     @Bean("shiroFilter")

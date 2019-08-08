@@ -12,15 +12,15 @@ import java.util.Properties;
 
 /**
  * Properties工具
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/31 17:29
  */
 public class PropertiesUtil {
 
     /**
-     * LOGGER
+     * logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
 
     /**
      * PROP
@@ -31,7 +31,7 @@ public class PropertiesUtil {
      * 读取配置文件
      * @param fileName
      * @return void
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/31 17:29
      */
     public static void readProperties(String fileName) {
@@ -41,7 +41,7 @@ public class PropertiesUtil {
             BufferedReader bf = new BufferedReader(new InputStreamReader(in));
             PROP.load(bf);
         } catch (IOException e) {
-            LOGGER.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
+            logger.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
             throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
         } finally {
             try {
@@ -49,7 +49,7 @@ public class PropertiesUtil {
                     in.close();
                 }
             } catch (IOException e) {
-                LOGGER.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
+                logger.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
                 throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
             }
         }
@@ -59,7 +59,7 @@ public class PropertiesUtil {
      * 根据key读取对应的value
      * @param key
      * @return java.lang.String
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/31 17:29
      */
     public static String getProperty(String key){

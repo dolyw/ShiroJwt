@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * User
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/31 14:43
  */
 @Table(name = "user")

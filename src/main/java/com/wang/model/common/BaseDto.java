@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 /**
  * 分页排序通用Dto
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/9/10 10:10
  */
 public class BaseDto implements Serializable {

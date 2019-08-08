@@ -15,7 +15,7 @@ import redis.clients.jedis.JedisPoolConfig;
 /**
  * Jedis配置，项目启动注入JedisPool
  * http://www.cnblogs.com/GodHeng/p/9301330.html
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/9/5 10:35
  */
 @Configuration
@@ -25,9 +25,9 @@ import redis.clients.jedis.JedisPoolConfig;
 public class JedisConfig {
 
     /**
-     * LOGGER
+     * logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(JedisConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(JedisConfig.class);
 
     private String host;
 
@@ -60,10 +60,10 @@ public class JedisConfig {
             // JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
             String pwd = StringUtil.isBlank(password) ? null : password;
             JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, pwd);
-            LOGGER.info("初始化Redis连接池JedisPool成功!地址: " + host + ":" + port);
+            logger.info("初始化Redis连接池JedisPool成功!地址: " + host + ":" + port);
             return jedisPool;
         } catch (Exception e) {
-            LOGGER.error("初始化Redis连接池JedisPool异常:" + e.getMessage());
+            logger.error("初始化Redis连接池JedisPool异常:" + e.getMessage());
         }
         return null;
     }

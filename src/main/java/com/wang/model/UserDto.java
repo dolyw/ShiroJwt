@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  *
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/30 10:34
  */
 @Table(name = "user")

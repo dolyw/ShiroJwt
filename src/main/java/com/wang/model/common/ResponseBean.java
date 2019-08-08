@@ -2,7 +2,7 @@ package com.wang.model.common;
 
 /**
  * ResponseBean
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/30 11:39
  */
 public class ResponseBean {

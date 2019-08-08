@@ -2,7 +2,7 @@ package com.wang.model.common;
 
 /**
  * 常量
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/9/3 16:03
  */
 public class Constant {

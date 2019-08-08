@@ -25,9 +25,9 @@ import java.util.Date;
 public class JwtUtil {
 
     /**
-     * LOGGER
+     * logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     /**
      * 过期时间改为从配置文件获取
@@ -66,7 +66,7 @@ public class JwtUtil {
             DecodedJWT jwt = verifier.verify(token);
             return true;
         } catch (UnsupportedEncodingException e) {
-            LOGGER.error("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
+            logger.error("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
             throw new CustomException("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
         }
     }
@@ -85,7 +85,7 @@ public class JwtUtil {
             // 只能输出String类型，如果是其他类型返回null
             return jwt.getClaim(claim).asString();
         } catch (JWTDecodeException e) {
-            LOGGER.error("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
+            logger.error("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
             throw new CustomException("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
         }
     }
@@ -111,7 +111,7 @@ public class JwtUtil {
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (UnsupportedEncodingException e) {
-            LOGGER.error("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
+            logger.error("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
             throw new CustomException("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
         }
     }

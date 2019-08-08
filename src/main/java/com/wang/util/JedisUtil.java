@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * JedisUtil(推荐存Byte数组，存Json字符串效率更慢)
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/9/4 15:45
  */
 @Component
@@ -36,7 +36,7 @@ public class JedisUtil {
      * 获取Jedis实例
      * @param 
      * @return redis.clients.jedis.Jedis
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/9/4 15:47
      */
     public static synchronized Jedis getJedis() {
@@ -55,7 +55,7 @@ public class JedisUtil {
      * 释放Jedis资源
      * @param
      * @return void
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/9/5 9:16
      */
     public static void closePool() {
@@ -70,7 +70,7 @@ public class JedisUtil {
      * 获取redis键值-object
      * @param key
      * @return java.lang.Object
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/9/4 15:47
      */
     public static Object getObject(String key) {
@@ -90,7 +90,7 @@ public class JedisUtil {
      * @param key
 	 * @param value
      * @return java.lang.String
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/9/4 15:49
      */
     public static String setObject(String key, Object value) {
@@ -107,7 +107,7 @@ public class JedisUtil {
 	 * @param value
 	 * @param expiretime
      * @return java.lang.String
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/9/4 15:50
      */
     public static String setObject(String key, Object value, int expiretime) {
@@ -127,7 +127,7 @@ public class JedisUtil {
      * 获取redis键值-Json
      * @param key
      * @return java.lang.Object
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/9/4 15:47
      */
     public static String getJson(String key) {

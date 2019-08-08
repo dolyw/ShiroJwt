@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 /**
  * Permission
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/31 14:41
  */
 @Table(name = "permission")

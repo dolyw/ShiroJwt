@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 /**
  * Role
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/31 14:42
  */
 @Table(name = "role")

@@ -5,7 +5,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/30 10:48
  */
 @Table(name = "permission")

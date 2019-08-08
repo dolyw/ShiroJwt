@@ -17,7 +17,7 @@ import java.security.Security;
 
 /**
  * AES加密解密工具类
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/31 16:39
  */
 @Component
@@ -35,15 +35,15 @@ public class AesCipherUtil {
     }
 
     /**
-     * LOGGER
+     * logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AesCipherUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(AesCipherUtil.class);
 
     /**
      * 加密
      * @param str
      * @return java.lang.String
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/31 16:56
      */
     public static String enCrypto(String str) {
@@ -68,16 +68,16 @@ public class AesCipherUtil {
             // 先将二进制转换成16进制，再返回Base64加密后的String
             return Base64ConvertUtil.encode(HexConvertUtil.parseByte2HexStr(cipherByte));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            LOGGER.error("getInstance()方法异常:" + e.getMessage());
+            logger.error("getInstance()方法异常:" + e.getMessage());
             throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (UnsupportedEncodingException e) {
-            LOGGER.error("Base64加密异常:" + e.getMessage());
+            logger.error("Base64加密异常:" + e.getMessage());
             throw new CustomUnauthorizedException("Base64加密异常:" + e.getMessage());
         } catch (InvalidKeyException e) {
-            LOGGER.error("初始化Cipher对象异常:" + e.getMessage());
+            logger.error("初始化Cipher对象异常:" + e.getMessage());
             throw new CustomUnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
         } catch (IllegalBlockSizeException | BadPaddingException e) {
-            LOGGER.error("加密异常，密钥有误:" + e.getMessage());
+            logger.error("加密异常，密钥有误:" + e.getMessage());
             throw new CustomUnauthorizedException("加密异常，密钥有误:" + e.getMessage());
         }
     }
@@ -86,7 +86,7 @@ public class AesCipherUtil {
      * 解密
      * @param str
      * @return java.lang.String
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/31 16:56
      */
     public static String deCrypto(String str) {
@@ -109,16 +109,16 @@ public class AesCipherUtil {
             byte[] cipherByte = c.doFinal(HexConvertUtil.parseHexStr2Byte(Base64ConvertUtil.decode(str)));
             return new String(cipherByte);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            LOGGER.error("getInstance()方法异常:" + e.getMessage());
+            logger.error("getInstance()方法异常:" + e.getMessage());
             throw new CustomUnauthorizedException("getInstance()方法异常:" + e.getMessage());
         } catch (UnsupportedEncodingException e) {
-            LOGGER.error("Base64解密异常:" + e.getMessage());
+            logger.error("Base64解密异常:" + e.getMessage());
             throw new CustomUnauthorizedException("Base64解密异常:" + e.getMessage());
         } catch (InvalidKeyException e) {
-            LOGGER.error("初始化Cipher对象异常:" + e.getMessage());
+            logger.error("初始化Cipher对象异常:" + e.getMessage());
             throw new CustomUnauthorizedException("初始化Cipher对象异常:" + e.getMessage());
         } catch (IllegalBlockSizeException | BadPaddingException e) {
-            LOGGER.error("解密异常，密钥有误:" + e.getMessage());
+            logger.error("解密异常，密钥有误:" + e.getMessage());
             throw new CustomUnauthorizedException("解密异常，密钥有误:" + e.getMessage());
         }
     }

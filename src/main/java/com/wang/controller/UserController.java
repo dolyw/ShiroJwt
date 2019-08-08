@@ -33,7 +33,7 @@ import java.util.*;
 
 /**
  * UserController
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/29 15:45
  */
 @RestController
@@ -61,7 +61,7 @@ public class UserController {
      * 获取用户列表
      * @param 
      * @return java.util.Map<java.lang.String,java.lang.Object>
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/30 10:41
      */
     @GetMapping
@@ -87,7 +87,7 @@ public class UserController {
      * 获取在线用户(查询Redis中的RefreshToken)
      * @param 
      * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/9/6 9:58
      */
     @GetMapping("/online")
@@ -118,7 +118,7 @@ public class UserController {
      * 登录授权
      * @param userDto
      * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/30 16:21
      */
     @PostMapping("/login")
@@ -155,7 +155,7 @@ public class UserController {
      * 测试登录
      * @param
      * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/30 16:18
      */
     @GetMapping("/article")
@@ -173,7 +173,7 @@ public class UserController {
      * 测试登录注解(@RequiresAuthentication和subject.isAuthenticated()返回true一个性质)
      * @param
      * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/30 16:18
      */
     @GetMapping("/article2")
@@ -186,7 +186,7 @@ public class UserController {
      * 获取当前登录用户信息
      * @param
      * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2019/3/15 11:51
      */
     @GetMapping("/info")
@@ -207,7 +207,7 @@ public class UserController {
      * 获取指定用户
      * @param id
      * @return java.util.Map<java.lang.String,java.lang.Object>
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/30 10:42
      */
     @GetMapping("/{id}")
@@ -224,7 +224,7 @@ public class UserController {
      * 新增用户
      * @param userDto
      * @return java.util.Map<java.lang.String,java.lang.Object>
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/30 10:42
      */
     @PostMapping
@@ -255,7 +255,7 @@ public class UserController {
      * 更新用户
      * @param userDto
      * @return java.util.Map<java.lang.String,java.lang.Object>
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/30 10:42
      */
     @PutMapping
@@ -290,7 +290,7 @@ public class UserController {
      * 删除用户
      * @param id
      * @return java.util.Map<java.lang.String,java.lang.Object>
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/8/30 10:43
      */
     @DeleteMapping("/{id}")
@@ -307,7 +307,7 @@ public class UserController {
      * 剔除在线用户
      * @param id
      * @return com.wang.model.common.ResponseBean
-     * @author Wang926454
+     * @author dolyw.com
      * @date 2018/9/6 10:20
      */
     @DeleteMapping("/online/{id}")

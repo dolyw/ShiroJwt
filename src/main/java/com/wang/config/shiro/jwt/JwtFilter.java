@@ -25,14 +25,14 @@ import java.io.PrintWriter;
 
 /**
  * JWT过滤
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/8/30 15:47
  */
 public class JwtFilter extends BasicHttpAuthenticationFilter {
     /**
-     * LOGGER
+     * logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
     /**
      * 这里我们详细说明下为什么最终返回的都是true，即允许访问
@@ -72,13 +72,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                         msg = throwable.getMessage();
                     }
                 }
-                /*
-                  错误两种处理方式
-                  1. 将非法请求转发到/401的Controller处理，抛出自定义无权访问异常被全局捕捉再返回Response信息
-                  2. 无需转发，直接返回Response信息
-                  一般使用第二种(更方便)
-                 */
-                // 直接返回Response信息
+                // Token认证失败直接返回Response信息
                 this.response401(response, msg);
                 return false;
             }
@@ -89,7 +83,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             String httpMethod = httpServletRequest.getMethod();
             // 获取当前请求URI
             String requestURI = httpServletRequest.getRequestURI();
-            LOGGER.info("当前请求 {} Authorization属性(Token)为空 请求类型 {}", requestURI, httpMethod);
+            logger.info("当前请求 {} Authorization属性(Token)为空 请求类型 {}", requestURI, httpMethod);
             // mustLoginFlag = true 开启任何请求必须登录才可访问
             Boolean mustLoginFlag = false;
             if (mustLoginFlag) {
@@ -201,7 +195,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             String data = JsonConvertUtil.objectToJson(new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + msg, null));
             out.append(data);
         } catch (IOException e) {
-            LOGGER.error("直接返回Response信息出现IOException异常:" + e.getMessage());
+            logger.error("直接返回Response信息出现IOException异常:" + e.getMessage());
             throw new CustomException("直接返回Response信息出现IOException异常:" + e.getMessage());
         }
     }

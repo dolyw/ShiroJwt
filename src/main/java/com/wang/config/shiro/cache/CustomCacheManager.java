@@ -6,7 +6,7 @@ import org.apache.shiro.cache.CacheManager;
 
 /**
  * 重写Shiro缓存管理器
- * @author Wang926454
+ * @author dolyw.com
  * @date 2018/9/4 17:41
  */
 public class CustomCacheManager implements CacheManager {
