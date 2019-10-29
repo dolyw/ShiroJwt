@@ -16,11 +16,11 @@
 #### 项目相关
 
 * JavaDoc:[https://apidoc.gitee.com/dolyw/ShiroJwt](https://apidoc.gitee.com/dolyw/ShiroJwt)
-* 接口文档:[https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt-Interface.md](https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt-Interface.md)
-* 教程目录:[https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt01.md](https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt01.md)
-* 改为数据库形式(MySQL):[https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt02-MySQL.md](https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt02-MySQL.md)
-* 解决无法直接返回401错误:[https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt03-401.md](https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt03-401.md)
-* 实现Shiro的Cache(Redis)功能:[https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt04-Redis.md](https://github.com/wang926454/MyDocs/blob/master/Project/ShiroJwt/ShiroJwt04-Redis.md)
+* 接口文档:[https://note.dolyw.com/shirojwt/ShiroJwt-Interface.html](https://note.dolyw.com/shirojwt/ShiroJwt-Interface.html)
+* 教程目录:[https://note.dolyw.com/shirojwt](https://note.dolyw.com/shirojwt)
+* 改为数据库形式(MySQL):[https://note.dolyw.com/shirojwt/ShiroJwt02-MySQL.html](https://note.dolyw.com/shirojwt/ShiroJwt02-MySQL.html)
+* 解决无法直接返回401错误:[https://note.dolyw.com/shirojwt/ShiroJwt03-401.html](https://note.dolyw.com/shirojwt/ShiroJwt03-401.html)
+* 实现Shiro的Cache(Redis)功能:[https://note.dolyw.com/shirojwt/ShiroJwt04-Redis.html](https://note.dolyw.com/shirojwt/ShiroJwt04-Redis.html)
 
 #### 项目介绍
 
@@ -34,44 +34,35 @@
 8. 根据RefreshToken自动刷新AccessToken
 
 ##### 关于Shiro + Java-JWT实现无状态鉴权机制(Token)
-```txt
-首先Post用户名与密码到user/login进行登入，如果成功返回一个加密的AccessToken，失败的话直接返回401错误(帐号或密码不正确)，以
-后访问都带上这个AccessToken即可，鉴权流程主要是重写了Shiro的入口过滤器JWTFilter(BasicHttpAuthenticationFilter)，判断请求
-Header里面是否包含Authorization字段，有就进行Shiro的Token登录认证授权(用户访问每一个需要权限的请求必须在Header中添加Author
-ization字段存放AccessToken)，没有就以游客直接访问(有权限管控的话，以游客访问就会被拦截)
-```
+
+> 1. 首先**Post**用户名与密码到**user/login**登入，成功返回加密的**AccessToken**，失败直接返回401错误(帐号或密码不正确)
+> 2. 以后访问都带上这个**AccessToken**即可
+> 3. 鉴权流程主要是重写了**Shiro**的入口过滤器**JWTFilter**(**BasicHttpAuthenticationFilter**)，判断请求**Header**里面是否包含**Authorization**字段
+> 4. 有就进行**Shiro**的**Token**登录认证授权(用户访问每一个需要权限的请求必须在**Header**中添加**Authorization**字段存放**AccessToken**)，没有就以游客直接访问(有权限管控的话，以游客访问就会被拦截)
 
 ##### 关于AES-128 + Base64当两个用户的明文密码相同时进行加密，会发现数据库中存在相同结构的暗文密码
-```txt
-大部分是以MD5 + 盐的形式解决了这个问题(详细自己百度)，我采用AES-128 + Base64是以帐号+密码的形式进行加密密码，因为帐号具
-有唯一性，所以也不会出现相同结构的暗文密码这个问题
-```
+
+> 大部分是以**MD5 + 盐**的形式解决了这个问题(详细自己百度)，我采用**AES-128 + Base64**是以帐号+密码的形式进行加密密码，因为帐号具有唯一性，所以也不会出现相同结构的暗文密码这个问题
 
 ##### 关于将Jedis工具类与SpringBoot整合
-```txt
-本来是直接将JedisUtil注入为Bean，每次使用直接@Autowired注入使用即可，但是在重写Shiro的CustomCache无法注入JedisUtil，所以
-就改成静态注入JedisPool连接池，JedisUtil工具类还是直接调用静态方法，无需@Autowired注入
-```
+
+> 本来是直接将**JedisUtil**注入为**Bean**，每次使用直接`@Autowired`注入使用即可，但是在重写**Shiro**的**CustomCache**无法注入**JedisUtil**，所以就改成静态注入**JedisPool连接池**，**JedisUtil工具类**还是直接调用静态方法，无需`@Autowired`注入
 
 ##### 关于Redis中保存RefreshToken信息(做到JWT的可控性)
-```txt
-登录认证通过后返回AccessToken信息(在AccessToken中保存当前的时间戳和帐号)，同时在Redis中设置一条以帐号为Key，Value为当前时
-间戳(登录时间)的RefreshToken，现在认证时必须AccessToken没失效以及Redis存在所对应的RefreshToken，且RefreshToken时间戳和Ac
-cessToken信息中时间戳一致才算认证通过，这样可以做到JWT的可控性，如果重新登录获取了新的AccessToken，旧的AccessToken就认证不
-了，因为Redis中所存放的的RefreshToken时间戳信息只会和最新的AccessToken信息中携带的时间戳一致，这样每个用户就只能使用最新的
-AccessToken认证，Redis的RefreshToken也可以用来判断用户是否在线，如果删除Redis的某个RefreshToken，那这个RefreshToken所对
-应的AccessToken之后也无法通过认证了，就相当于控制了用户的登录，可以剔除用户
-```
+
+> 1. 登录认证通过后返回**AccessToken**信息(在**AccessToken**中**保存当前的时间戳和帐号**)
+> 2. 同时在**Redis**中设置一条以**帐号为Key，Value为当前时间戳(登录时间)**的**RefreshToken**
+> 3. 现在认证时必须**AccessToken**没失效以及**Redis**存在所对应的**RefreshToken**，且**RefreshToken时间戳**和**AccessToken信息中时间戳一致**才算认证通过，这样可以做到**JWT的可控性**
+> 4. 如果重新登录获取了新的**AccessToken**，旧的**AccessToken**就认证不了，因为**Redis**中所存放的的**RefreshToken时间戳信息**只会和最新生成的**AccessToken信息中携带的时间戳一致**，这样每个用户就只能使用最新的**AccessToken**认证
+> 5. **Redis**的**RefreshToken**也可以用来判断用户是否在线，如果删除**Redis**的某个**RefreshToken**，那这个**RefreshToken**所对应的**AccessToken**之后也无法通过认证了，就相当于控制了用户的登录，可以剔除用户
 
 ##### 关于根据RefreshToken自动刷新AccessToken
-```txt
-本身AccessToken的过期时间为5分钟(配置文件可配置)，RefreshToken过期时间为30分钟(配置文件可配置)，当登录后时间过了5分钟之后
-，当前AccessToken便会过期失效，再次带上AccessToken访问JWT会抛出TokenExpiredException异常说明Token过期，开始判断是否要进
-行AccessToken刷新，首先Redis查询RefreshToken是否存在，以及时间戳和过期AccessToken所携带的时间戳是否一致，如果存在且一致就
-进行AccessToken刷新，过期时间为5分钟(配置文件可配置)，时间戳为当前最新时间戳，同时也设置RefreshToken中的时间戳为当前最新时
-间戳，刷新过期时间重新为30分钟过期(配置文件可配置)，最终将刷新的AccessToken存放在Response的Header中的Authorization字段返
-回(前端进行获取替换，下次用新的AccessToken进行访问)
-```
+
+> 1. 本身**AccessToken的过期时间为5分钟**(配置文件可配置)，**RefreshToken过期时间为30分钟**(配置文件可配置)
+> 2. 当登录后时间过了5分钟之后，当前**AccessToken**便会过期失效，再次带上**AccessToken**访问**JWT**会抛出**TokenExpiredException**异常说明**Token**过期
+> 3. 开始判断是否要**进行AccessToken刷新**，**Redis查询当前用户的RefreshToken是否存在**，**以及这个RefreshToken所携带时间戳**和**过期AccessToken所携带的时间戳**是否**一致**
+> 4. **如果存在且一致就进行AccessToken刷新，设置过期时间为5分钟(配置文件可配置)，时间戳为当前最新时间戳，同时也设置RefreshToken中的时间戳为当前最新时间戳，刷新过期时间重新为30分钟过期(配置文件可配置)**
+> 5. 最终将刷新的**AccessToken**存放在**Response的Header中的Authorization字段**返回(前端进行获取替换，下次用新的**AccessToken**进行访问)
 
 #### 软件架构
 
@@ -92,33 +83,33 @@ AccessToken认证，Redis的RefreshToken也可以用来判断用户是否在线�
 ##### Mybatis Generator使用(可视化自定义模板快速生成基础代码:[https://github.com/wang926454/ViewGenerator](https://github.com/wang926454/ViewGenerator))
 
 先配置src\main\resources\generator\generatorConfig.xml文件(默认配置都在原来包的下一级reverse包下)，在pom.xml这一级目录(即项目根目录下)的命令行窗口执行(前提是配置了mvn)(IDEA可以直接在Maven窗口Plugins中双击执行)
-```txt
+```shell
 mvn mybatis-generator:generate
 ```
 
 ##### PostMan使用(Token获取及使用)
 
-```txt
+```java
 先设置Content-Type为application/json
 ```
 ![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006001.PNG)
-```txt
+```text
 然后填写请求参数帐号密码信息
 ```
 ![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006002.PNG)
-```txt
+```text
 进行请求访问，请求访问成功
 ```
 ![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006003.PNG)
-```txt
+```java
 点击查看Header信息的Authorization属性即是Token字段
 ```
 ![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006004.PNG)
-```txt
+```java
 访问需要权限的请求将Token字段放在Header信息的Authorization属性访问即可
 ```
 ![image text](https://docs.dolyw.com/Project/ShiroJwt/image/20181006005.PNG)
-```txt
+```java
 Token的自动刷新也是在Token失效时返回新的Token在Header信息的Authorization属性
 ```
 
