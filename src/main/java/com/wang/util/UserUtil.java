@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 获取当前登录用户工具类
- * @author Wang926454
+ *
+ * @author wliduo[i@dolyw.com]
  * @date 2019/3/15 11:45
  */
 @Component
@@ -25,9 +26,10 @@ public class UserUtil {
 
     /**
      * 获取当前登录用户
+     *
      * @param
      * @return com.wang.model.UserDto
-     * @author Wang926454
+     * @author wliduo[i@dolyw.com]
      * @date 2019/3/15 11:48
      */
     public UserDto getUser() {
@@ -46,9 +48,10 @@ public class UserUtil {
 
     /**
      * 获取当前登录用户Id
+     *
      * @param
      * @return com.wang.model.UserDto
-     * @author Wang926454
+     * @author wliduo[i@dolyw.com]
      * @date 2019/3/15 11:48
      */
     public Integer getUserId() {
@@ -57,9 +60,10 @@ public class UserUtil {
 
     /**
      * 获取当前登录用户Token
+     *
      * @param
      * @return com.wang.model.UserDto
-     * @author Wang926454
+     * @author wliduo[i@dolyw.com]
      * @date 2019/3/15 11:48
      */
     public String getToken() {
@@ -68,9 +72,10 @@ public class UserUtil {
 
     /**
      * 获取当前登录用户Account
+     *
      * @param
      * @return com.wang.model.UserDto
-     * @author Wang926454
+     * @author wliduo[i@dolyw.com]
      * @date 2019/3/15 11:48
      */
     public String getAccount() {

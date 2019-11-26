@@ -13,6 +13,10 @@
 2. [#19 跨域sso问题](https://github.com/dolyw/ShiroJwt/issues/19)
 3. [#22 如果是微服务的话，是不是每个微服务都的写一套这样的shiro?](https://github.com/dolyw/ShiroJwt/issues/22)
 
+<img src="https://cdn.jsdelivr.net/gh/wliduo/CDN@master/feed/qq.png" height="180"></img>
+
+有疑问请扫码加**QQ**群交流: **779168604**
+
 #### 项目相关
 
 * JavaDoc:[https://apidoc.gitee.com/dolyw/ShiroJwt](https://apidoc.gitee.com/dolyw/ShiroJwt)
