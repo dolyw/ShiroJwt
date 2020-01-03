@@ -7,6 +7,8 @@ package com.wang.util.common;
  */
 public class HexConvertUtil {
 
+    private HexConvertUtil() {}
+
     /**
      * 1
      */
@@ -25,7 +27,7 @@ public class HexConvertUtil {
      * @date 2018/8/31 17:20
      */
     public static String parseByte2HexStr(byte[] bytes) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (byte buff : bytes) {
             String hex = Integer.toHexString(buff & 0xFF);
             if (hex.length() == INTEGER_1) {

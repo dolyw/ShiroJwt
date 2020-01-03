@@ -8,6 +8,9 @@ import com.alibaba.fastjson.JSONObject;
  * @date 2018/8/9 15:37
  */
 public class JsonConvertUtil {
+
+    private JsonConvertUtil() {}
+
     /**
      * JSON 转 Object
      */

@@ -17,6 +17,8 @@ import java.util.Properties;
  */
 public class PropertiesUtil {
 
+    private PropertiesUtil() {}
+
     /**
      * logger
      */
@@ -41,7 +43,7 @@ public class PropertiesUtil {
             BufferedReader bf = new BufferedReader(new InputStreamReader(in));
             PROP.load(bf);
         } catch (IOException e) {
-            logger.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
+            logger.error("PropertiesUtil工具类读取配置文件出现IOException异常:{}", e.getMessage());
             throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
         } finally {
             try {
@@ -49,7 +51,7 @@ public class PropertiesUtil {
                     in.close();
                 }
             } catch (IOException e) {
-                logger.error("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
+                logger.error("PropertiesUtil工具类读取配置文件出现IOException异常:{}", e.getMessage());
                 throw new CustomException("PropertiesUtil工具类读取配置文件出现IOException异常:" + e.getMessage());
             }
         }

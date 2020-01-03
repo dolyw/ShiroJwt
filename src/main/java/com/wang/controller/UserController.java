@@ -74,7 +74,7 @@ public class UserController {
         PageHelper.startPage(baseDto.getPage(), baseDto.getRows());
         List<UserDto> userDtos = userService.selectAll();
         PageInfo<UserDto> selectPage = new PageInfo<UserDto>(userDtos);
-        if (userDtos == null || userDtos.size() <= 0) {
+        if (userDtos == null || userDtos.size() < 0) {
             throw new CustomException("查询失败(Query Failure)");
         }
         Map<String, Object> result = new HashMap<String, Object>(16);
@@ -108,7 +108,7 @@ public class UserController {
                 userDtos.add(userDto);
             }
         }
-        if (userDtos == null || userDtos.size() <= 0) {
+        if (userDtos == null || userDtos.size() < 0) {
             throw new CustomException("查询失败(Query Failure)");
         }
         return new ResponseBean(HttpStatus.OK.value(), "查询成功(Query was successful)", userDtos);

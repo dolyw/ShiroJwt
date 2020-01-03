@@ -6,6 +6,9 @@ package com.wang.util.common;
  * @date 2018/9/4 14:48
  */
 public class StringUtil {
+
+    private StringUtil() {}
+
     /**
      * 定义下划线
      */
@@ -96,7 +99,7 @@ public class StringUtil {
             for (int i = 0; i < len; i++) {
                 char c = param.charAt(i);
                 if (c == 95) {
-                    ++i;
+                    i++;
                     if (i < len) {
                         sb.append(Character.toUpperCase(param.charAt(i)));
                     }

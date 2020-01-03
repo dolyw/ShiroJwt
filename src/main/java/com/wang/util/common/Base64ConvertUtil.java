@@ -10,6 +10,8 @@ import java.util.Base64;
  */
 public class Base64ConvertUtil {
 
+    private Base64ConvertUtil() {}
+
     /**
      * 加密JDK1.8
      * @param str

@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wang.exception.CustomException;
 import com.wang.model.common.Constant;
@@ -62,10 +63,10 @@ public class JwtUtil {
             String secret = getClaim(token, Constant.ACCOUNT) + Base64ConvertUtil.decode(encryptJWTKey);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm).build();
-            DecodedJWT jwt = verifier.verify(token);
+            verifier.verify(token);
             return true;
         } catch (UnsupportedEncodingException e) {
-            logger.error("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
+            logger.error("JWTToken认证解密出现UnsupportedEncodingException异常:{}", e.getMessage());
             throw new CustomException("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
         }
     }
@@ -84,7 +85,7 @@ public class JwtUtil {
             // 只能输出String类型，如果是其他类型返回null
             return jwt.getClaim(claim).asString();
         } catch (JWTDecodeException e) {
-            logger.error("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
+            logger.error("解密Token中的公共信息出现JWTDecodeException异常:{}", e.getMessage());
             throw new CustomException("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
         }
     }
@@ -110,7 +111,7 @@ public class JwtUtil {
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (UnsupportedEncodingException e) {
-            logger.error("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
+            logger.error("JWTToken加密出现UnsupportedEncodingException异常:{}", e.getMessage());
             throw new CustomException("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
         }
     }

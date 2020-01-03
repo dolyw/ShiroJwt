@@ -62,10 +62,10 @@ public class JedisConfig {
                 password = null;
             }
             JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
-            logger.info("初始化Redis连接池JedisPool成功!地址: " + host + ":" + port);
+            logger.info("初始化Redis连接池JedisPool成功!地址: {}:{}", host, port);
             return jedisPool;
         } catch (Exception e) {
-            logger.error("初始化Redis连接池JedisPool异常:" + e.getMessage());
+            logger.error("初始化Redis连接池JedisPool异常:{}", e.getMessage());
         }
         return null;
     }

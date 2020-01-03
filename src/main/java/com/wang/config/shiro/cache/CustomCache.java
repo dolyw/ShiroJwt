@@ -33,7 +33,7 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public Object get(Object key) throws CacheException {
-        if(!JedisUtil.exists(this.getKey(key))){
+        if(Boolean.FALSE.equals(JedisUtil.exists(this.getKey(key)))){
             return null;
         }
         return JedisUtil.getObject(this.getKey(key));
@@ -56,7 +56,7 @@ public class CustomCache<K,V> implements Cache<K,V> {
      */
     @Override
     public Object remove(Object key) throws CacheException {
-        if(!JedisUtil.exists(this.getKey(key))){
+        if(Boolean.FALSE.equals(JedisUtil.exists(this.getKey(key)))){
             return null;
         }
         JedisUtil.delKey(this.getKey(key));
