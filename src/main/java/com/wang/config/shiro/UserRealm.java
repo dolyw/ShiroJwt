@@ -98,6 +98,15 @@ public class UserRealm extends AuthorizingRealm {
         if (userDto == null) {
             throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
+        // 判断当前帐号是否在RefreshToken过渡时间，是就放行
+        if (JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN_TRANSITION + account)) {
+            // 获取RefreshToken过渡时间Key保存的旧Token
+            String oldToken = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN_TRANSITION + account).toString();
+            // 判断旧Token是否一致
+            if (token.equals(oldToken)) {
+                return new SimpleAuthenticationInfo(oldToken, oldToken, "userRealm");
+            }
+        }
         // 开始认证，要AccessToken认证通过，且Redis中存在RefreshToken，且两个Token时间戳一致
         if (JwtUtil.verify(token) && JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN + account)) {
             // 获取RefreshToken的时间戳

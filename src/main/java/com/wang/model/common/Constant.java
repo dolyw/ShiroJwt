@@ -45,6 +45,11 @@ public class Constant {
     public static final String PREFIX_SHIRO_REFRESH_TOKEN = "shiro:refresh_token:";
 
     /**
+     * redis-key-前缀-shiro:refresh_token:transition:
+     */
+    public static final String PREFIX_SHIRO_REFRESH_TOKEN_TRANSITION = "shiro:refresh_token_transition:";
+
+    /**
      * JWT-account:
      */
     public static final String ACCOUNT = "account";

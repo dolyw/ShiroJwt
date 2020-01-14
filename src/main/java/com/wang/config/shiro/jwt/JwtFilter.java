@@ -150,7 +150,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     /**
      * 此处为AccessToken刷新，进行判断RefreshToken是否过期，未过期就返回新的AccessToken且继续正常访问
      */
-    private boolean refreshToken(ServletRequest request, ServletResponse response) {
+    private synchronized boolean refreshToken(ServletRequest request, ServletResponse response) {
         // 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
         String token = this.getAuthzHeader(request);
         // 获取当前Token的帐号信息
@@ -174,11 +174,27 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 JwtToken jwtToken = new JwtToken(token);
                 // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获，如果没有抛出异常则代表登入成功，返回true
                 this.getSubject(request, response).login(jwtToken);
+                // 刷新AccessToken成功，Redis设置RefreshToken过渡时间，value为旧Token，这个是为了解决Token刷新并发的问题
+                String refreshTokenTransitionExpireTime = PropertiesUtil.getProperty("refreshTokenTransitionExpireTime");
+                // 保存当前旧的Token
+                JedisUtil.setObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN_TRANSITION + account, this.getAuthzHeader(request), Integer.parseInt(refreshTokenTransitionExpireTime));
                 // 最后将刷新的AccessToken存放在Response的Header中的Authorization字段返回
                 HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
                 httpServletResponse.setHeader("Authorization", token);
                 httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
                 return true;
+            } else {
+                // 说明当前Token已经被刷新，判断当前帐号是否在RefreshToken过渡时间，是就放行
+                if (JedisUtil.exists(Constant.PREFIX_SHIRO_REFRESH_TOKEN_TRANSITION + account)) {
+                    // 获取RefreshToken过渡时间Key保存的新旧Token
+                    String oldToken = JedisUtil.getObject(Constant.PREFIX_SHIRO_REFRESH_TOKEN_TRANSITION + account).toString();
+                    // 判断旧Token是否一致
+                    if (this.getAuthzHeader(request).equals(oldToken)) {
+                        // 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获，如果没有抛出异常则代表登入成功，返回true
+                        this.getSubject(request, response).login(new JwtToken(oldToken));
+                        return true;
+                    }
+                }
             }
         }
         return false;
