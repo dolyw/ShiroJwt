@@ -7,11 +7,11 @@
 
 > 前端地址:[https://github.com/wang926454/VueStudy/tree/master/VueStudy08-JWT](https://github.com/wang926454/VueStudy/tree/master/VueStudy08-JWT)
 
-#### Issues
+#### 疑问查看
 
 1. [#14 重复请求会不会生成多个token](https://github.com/dolyw/ShiroJwt/issues/14)
 2. [#19 跨域sso问题](https://github.com/dolyw/ShiroJwt/issues/19)
-3. [#22 如果是微服务的话，是不是每个微服务都的写一套这样的shiro?](https://github.com/dolyw/ShiroJwt/issues/22)
+3. [#29 Token刷新并发处理](https://github.com/dolyw/ShiroJwt/issues/29)
 
 <img src="https://cdn.jsdelivr.net/gh/wliduo/CDN@master/feed/qq.png" height="180"></img>
 
